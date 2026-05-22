@@ -1,0 +1,108 @@
+# iGaps Knockout Rules — v1
+# These are evaluated AFTER the tree scoring produces the signalsMap.
+# 'signal' keys here are signalsMap keys (flat snake_case), NOT tree node IDs.
+#
+# Severity options:
+#   hard_stop      — application marked Not Passed; no human review needed
+#   route_to_human — application paused; flagged for manual review before scoring
+#   warn_only      — evaluation continues; reviewer sees a warning in the gap report
+#
+# To add a new knockout: append a new entry under `knockouts`, set enabled: true.
+# To disable a knockout: set enabled: false. Never delete — preserves audit history.
+# Rule DSL: boolean composition (any / all / not) over { signal, op, value } predicates.
+# Ops: equals, not_equals, less_than, greater_than, in, not_in, contains, exists, missing
+
+version: 1
+
+defaults:
+  evaluationOrder:
+    - K1
+    - K2
+  # 'hold' = wait for all scraping to complete before evaluating knockouts
+  # 'evaluate' = proceed with whatever signals are available (mark missing as 0)
+  partialDataPolicy: hold
+
+knockouts:
+  - id: K1
+    name: No connected insight
+    enabled: true
+    severity: hard_stop
+    notes: >
+      PDF Section 5, Knockout 1. Fires if the founder has zero domain exposure
+      (K1a) OR if they claim to be neither customer nor operator AND their journey
+      narrative is incoherent (K1b). K1b uses the LLM causality score from openQ1,
+      which is only available after tree scoring runs — knockouts are evaluated after
+      the full tree evaluation completes.
+    rule:
+      any:
+        # K1a: zero months of prior exposure to the problem — hard evidence
+        - signal: closedQ2_exposure_months
+          op: equals
+          value: 0
+        # K1b: not customer / not operator AND narrative score is very weak
+        - all:
+            - signal: closedQ1_role_before
+              op: equals
+              value: neither
+            - signal: openQ1_causality_coherence_score
+              op: less_than
+              value: 30
+
+  - id: K2
+    name: Nothing on the ground
+    enabled: true
+    severity: hard_stop
+    notes: >
+      PDF Section 5, Knockout 2. All three conditions must be true simultaneously:
+      zero customer discovery, TRL 1 (concept only), and earliest traction stage.
+      Any one of these alone is not a knockout — the combination signals a team
+      that has not yet meaningfully started. Sector-adjusted: for Deeptech, the
+      traction condition is relaxed to allow early LOI/pilot stage.
+    rule:
+      all:
+        - signal: closedQ8_discovery_total
+          op: equals
+          value: 0
+        - signal: closedQ13_trl
+          op: equals
+          value: 1
+        - signal: closedQ17_traction_stage
+          op: equals
+          value: early_conversations
+
+  # ── Future knockouts (disabled; enable by setting enabled: true) ─────────────
+
+  - id: K3_ai_no_technical_evidence
+    name: AI startup with no model, no data, no GitHub
+    enabled: false
+    severity: route_to_human
+    notes: >
+      Specific to AI sector. A team claiming to build an AI product but showing
+      zero GitHub activity, zero patent filings, and a very weak hard-problem
+      score is likely pre-technical. Routes to human for a quick call rather
+      than auto-rejecting — some genuinely strong founding teams are still
+      assembling their tech stack.
+    rule:
+      all:
+        - signal: scrape_github_commits_per_week
+          op: equals
+          value: 0
+        - signal: scrape_patent_count
+          op: equals
+          value: 0
+        - signal: openQ8_hard_problem_score
+          op: less_than
+          value: 35
+
+  - id: K4_timeline_contradiction
+    name: Claimed timeline contradicts MCA incorporation date
+    enabled: false
+    severity: warn_only
+    notes: >
+      Fires when the Zauba/MCA incorporation date is more than 12 months later
+      than the founding date the team claims in their open answer. A warn_only
+      knockout — evaluation continues but reviewer sees the flag prominently.
+    rule:
+      - signal: derived_timeline_contradiction_months
+        op: greater_than
+        value: 12
