@@ -26,6 +26,7 @@ const STATUS_BADGE: Record<string, string> = {
 
 export default function AdminApplicationsPage() {
   const [apps, setApps] = useState<AppRow[]>([]);
+  const [searchTerm, setSearchTerm] = useState('');
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
 
@@ -48,6 +49,13 @@ export default function AdminApplicationsPage() {
       <div className="flex items-center justify-between mb-6">
         <h1 className="text-2xl font-bold text-gray-900">Applications</h1>
         <div className="flex gap-3">
+          <input
+            type="text"
+            placeholder="Search email or startup..."
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+            className="px-4 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
+          />
           <Link
             to="/admin/knockouts"
             className="px-4 py-2 rounded-lg border border-gray-200 text-sm font-medium text-gray-700 hover:bg-gray-50 transition"
@@ -69,14 +77,20 @@ export default function AdminApplicationsPage() {
             </tr>
           </thead>
           <tbody className="divide-y divide-gray-50">
-            {apps.length === 0 && (
+            {apps.filter(app => 
+              app.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
+              app.startupName.toLowerCase().includes(searchTerm.toLowerCase())
+            ).length === 0 && (
               <tr>
                 <td colSpan={6} className="px-5 py-8 text-center text-gray-400">
-                  No applications yet.
+                  No applications found.
                 </td>
               </tr>
             )}
-            {apps.map((app) => (
+            {apps.filter(app => 
+              app.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
+              app.startupName.toLowerCase().includes(searchTerm.toLowerCase())
+            ).map((app) => (
               <tr key={app._id} className="hover:bg-gray-50 transition">
                 <td className="px-5 py-4 font-medium text-gray-900">{app.startupName}</td>
                 <td className="px-5 py-4 text-gray-700">{app.founderName}</td>

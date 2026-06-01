@@ -54,7 +54,7 @@ export default function OpenQuestionsPage() {
 
         setError(
           data.message ??
-            'Your personalised questions are not ready yet. Please wait a moment and refresh, or go back to the documents step.',
+          'Your personalised questions are not ready yet. Please wait a moment and refresh, or go back to the documents step.',
         );
         setLoading(false);
       } catch (e) {

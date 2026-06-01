@@ -13,6 +13,7 @@ export type ApplicationStatus =
 export interface IApplication extends Document {
   email: string;
   founderName: string;
+  coFounders?: string[];
   startupName: string;
   linkedinUrl: string;
   websiteUrl: string;
@@ -31,6 +32,7 @@ const ApplicationSchema = new Schema<IApplication>(
   {
     email: { type: String, required: true, lowercase: true, trim: true, index: true },
     founderName: { type: String, required: true, trim: true },
+    coFounders: [{ type: String, trim: true }],
     startupName: { type: String, required: true, trim: true },
     linkedinUrl: { type: String, required: true, trim: true },
     websiteUrl: { type: String, required: true, trim: true },

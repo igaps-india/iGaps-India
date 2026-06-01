@@ -14,13 +14,16 @@
     "render-tree": "tsx tools/render-tree.ts",
     "render-tree:depth3": "tsx tools/render-tree.ts --depth 3",
     "seed:qa": "tsx src/seed/qa-applications.ts",
-    "dump:submission": "tsx tools/dump-submission.ts"
+    "dump:submission": "tsx tools/dump-submission.ts",
+    "test:zauba": "tsx tools/test-zauba.ts"
   },
   "dependencies": {
     "@google/genai": "^2.6.0",
+    "@types/cheerio": "^0.22.35",
     "@types/cors": "^2.8.19",
     "axios": "^1.16.1",
     "bcryptjs": "^2.4.3",
+    "cheerio": "^1.2.0",
     "cors": "^2.8.6",
     "crypto-js": "^4.2.0",
     "dotenv": "^17.4.2",
@@ -34,6 +37,9 @@
     "octokit": "^5.0.5",
     "p-queue": "^8.1.0",
     "pdf-parse": "^1.1.1",
+    "puppeteer": "^25.1.0",
+    "puppeteer-extra": "^3.3.6",
+    "puppeteer-extra-plugin-stealth": "^2.11.2",
     "resend": "^4.5.1"
   },
   "devDependencies": {

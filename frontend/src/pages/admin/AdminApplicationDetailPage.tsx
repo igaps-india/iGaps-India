@@ -84,6 +84,7 @@ interface EvaluationData {
 interface ApplicationData {
   email: string;
   founderName: string;
+  coFounders?: string[];
   startupName: string;
   status: string;
   createdAt: string;
@@ -203,6 +204,9 @@ export default function AdminApplicationDetailPage() {
           <div className="space-y-4">
             <Row label="Status" value={application.status.replace(/_/g, ' ')} />
             <Row label="Applied" value={new Date(application.createdAt).toLocaleString('en-IN')} />
+            {application.coFounders && application.coFounders.length > 0 && (
+              <Row label="Co-founders" value={application.coFounders.join(', ')} />
+            )}
             {evaluation && (
               <>
                 <Row label="Composite score" value={`${Math.round(evaluation.compositeScore)}%`} />

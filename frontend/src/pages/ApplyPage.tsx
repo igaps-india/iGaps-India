@@ -5,6 +5,8 @@ import { api, ApiError } from '@/lib/api';
 interface FormState {
   email: string;
   founderName: string;
+  coFoundersCount: number;
+  coFounders: string[];
   startupName: string;
   linkedinUrl: string;
   websiteUrl: string;
@@ -15,6 +17,8 @@ interface FormState {
 const INITIAL: FormState = {
   email: '',
   founderName: '',
+  coFoundersCount: 0,
+  coFounders: [],
   startupName: '',
   linkedinUrl: '',
   websiteUrl: '',
@@ -48,6 +52,7 @@ export default function ApplyPage() {
       }>('/applications', {
         ...form,
         githubUrl: form.githubUrl.trim() || undefined,
+        coFounders: form.coFounders.filter((c) => c.trim().length > 0),
       });
 
       // Redirect immediately to the questionnaire — no waiting for email
@@ -112,7 +117,7 @@ export default function ApplyPage() {
           />
         </Field>
 
-        <Field label="Your full name" required>
+        <Field label="Founder's name" required>
           <input
             type="text"
             value={form.founderName}
@@ -122,6 +127,45 @@ export default function ApplyPage() {
             className={inputCls}
           />
         </Field>
+
+        <Field label="Number of Co-founders">
+          <select
+            value={form.coFoundersCount}
+            onChange={(e) => {
+              const count = parseInt(e.target.value, 10);
+              setForm((prev) => {
+                const newCoFounders = [...prev.coFounders];
+                while (newCoFounders.length < count) newCoFounders.push('');
+                newCoFounders.length = count;
+                return { ...prev, coFoundersCount: count, coFounders: newCoFounders };
+              });
+            }}
+            className={inputCls}
+          >
+            <option value={0}>0 (Just me)</option>
+            <option value={1}>1</option>
+            <option value={2}>2</option>
+            <option value={3}>3</option>
+            <option value={4}>4</option>
+          </select>
+        </Field>
+
+        {form.coFounders.map((cf, idx) => (
+          <Field key={idx} label={`Co-founder ${idx + 1} name`} required>
+            <input
+              type="text"
+              value={cf}
+              onChange={(e) => {
+                const newCoFounders = [...form.coFounders];
+                newCoFounders[idx] = e.target.value;
+                setForm((prev) => ({ ...prev, coFounders: newCoFounders }));
+              }}
+              placeholder={`e.g. Co-founder ${idx + 1}`}
+              required
+              className={inputCls}
+            />
+          </Field>
+        ))}
 
         <Field label="Startup name" required>
           <input

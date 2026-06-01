@@ -6,6 +6,7 @@ import { generateMagicToken, hashToken } from '../utils/tokens';
 import { sendMagicLink } from '../utils/email';
 import { getQueue } from '../queue';
 import { config } from '../config';
+import { seedFutureScrapePlaceholders } from '../utils/scrapeStorage';
 
 const router = Router();
 
@@ -18,10 +19,11 @@ const LINKEDIN_REGEX = /^https?:\/\/(www\.)?linkedin\.com\//i;
  * Creates a new application from the minimal intake form.
  */
 router.post('/', async (req: Request, res: Response): Promise<void> => {
-  const { email, founderName, startupName, linkedinUrl, websiteUrl, cinNumber, githubUrl } =
+  const { email, founderName, coFounders, startupName, linkedinUrl, websiteUrl, cinNumber, githubUrl } =
     req.body as {
       email: string;
       founderName: string;
+      coFounders?: string[];
       startupName: string;
       linkedinUrl: string;
       websiteUrl: string;
@@ -68,6 +70,7 @@ router.post('/', async (req: Request, res: Response): Promise<void> => {
   const app = await Application.create({
     email: email.toLowerCase().trim(),
     founderName: founderName.trim(),
+    coFounders: coFounders?.filter(c => c.trim().length > 0).map(c => c.trim()) || [],
     startupName: startupName.trim(),
     linkedinUrl: linkedinUrl.trim(),
     websiteUrl: websiteUrl.trim(),
@@ -91,17 +94,21 @@ router.post('/', async (req: Request, res: Response): Promise<void> => {
   app.magicTokenExpiry = expiry;
   await app.save();
 
-  // ── Enqueue scraping jobs ──────────────────────────────────────────────────
+  // ── Background scraping (runs while founder fills closed questions) ─────────
   const queue = getQueue();
   const appId = (app._id as { toString(): string }).toString();
 
-  await queue.enqueue('scrape:linkedin', { applicationId: appId, url: linkedinUrl });
-  if (githubUrl) {
-    await queue.enqueue('scrape:github', { applicationId: appId, url: githubUrl });
-  }
-  await queue.enqueue('scrape:zauba', { applicationId: appId, cin: cinNumber.trim().toUpperCase() });
-  await queue.enqueue('scrape:press', { applicationId: appId, startupName: startupName.trim(), websiteUrl: websiteUrl.trim() });
-  await queue.enqueue('scrape:patents', { applicationId: appId, startupName: startupName.trim() });
+  // Reserve direct_relation/ + background/ slots for future LinkedIn + pitch-deck scrapes
+  seedFutureScrapePlaceholders(appId);
+
+  // Step 1 (active): ZaubaCorp CIN scrape — no API key required
+  await queue.enqueue('scrape:zauba', {
+    applicationId: appId,
+    cin: cinNumber.trim().toUpperCase(),
+  });
+
+  // Step 2 (future): LinkedIn microservice — enqueue when LINKEDIN_SCRAPER_URL is set
+  // Step 3 (future): Pitch deck LLM parse — enqueue after uploads on closed-Q complete
 
   const continueUrl = `${config.frontendUrl}/q/closed?app=${appId}&token=${token}`;
 

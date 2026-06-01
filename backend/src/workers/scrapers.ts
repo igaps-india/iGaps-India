@@ -1,18 +1,37 @@
 /**
- * Scraper worker jobs.
- * Each job reads application data, calls its respective API, and writes results
- * into Submission.scrapedData. On failure after maxAttempts, marks as 'unavailable'.
- *
- * Registration: call registerScrapers(queue) once at server boot.
+ * Scraper worker jobs — Zauba saves one plain-text public summary per CIN.
  */
 
 import axios from 'axios';
+import { existsSync, unlinkSync } from 'fs';
+import { join } from 'path';
 import { Application } from '../models/Application';
 import { Submission } from '../models/Submission';
 import { JobHandler, JobQueue } from '../queue';
 import { config } from '../config';
+import { scrapeZaubaCorp } from '../scrapers/zauba/zaubaScraper';
+import {
+  saveScrapedText,
+  updateScrapeManifest,
+  seedFutureScrapePlaceholders,
+  scrapeAppDir,
+  ZAUBA_SUMMARY_FILE,
+} from '../utils/scrapeStorage';
 
-// ── Helpers ───────────────────────────────────────────────────────────────────
+const LEGACY_ZAUBA_FILES = [
+  'direct_relation/zauba_company_master.json',
+  'background/zauba_directors.json',
+  'background/zauba_charges.json',
+  'background/zauba_financials.json',
+  'background/zauba_all_tables.json',
+];
+
+function removeLegacyZaubaFiles(applicationId: string): void {
+  for (const rel of LEGACY_ZAUBA_FILES) {
+    const full = join(scrapeAppDir(applicationId), rel);
+    if (existsSync(full)) unlinkSync(full);
+  }
+}
 
 async function getSubmission(applicationId: string) {
   const app = await Application.findById(applicationId);
@@ -38,7 +57,73 @@ async function githubApi<T>(path: string): Promise<T> {
   return res.data;
 }
 
-// ── LinkedIn via Proxycurl ────────────────────────────────────────────────────
+export const zaubaHandler: JobHandler<{ applicationId: string; cin: string }> = async (job) => {
+  const { applicationId, cin } = job.data;
+  const sub = await getSubmission(applicationId);
+
+  seedFutureScrapePlaceholders(applicationId);
+
+  try {
+    console.info(`[Scraper][Zauba] Starting scrape for ${applicationId} (CIN: ${cin})`);
+
+    const result = await scrapeZaubaCorp(cin);
+    const summaryPath = saveScrapedText(
+      applicationId,
+      'direct_relation',
+      ZAUBA_SUMMARY_FILE,
+      result.summaryText,
+    );
+
+    removeLegacyZaubaFiles(applicationId);
+
+    const scrapedAt = result.scrapedAt;
+    updateScrapeManifest(applicationId, {
+      source: 'zauba',
+      tier: 'direct_relation',
+      file: ZAUBA_SUMMARY_FILE,
+      scrapedAt,
+      status: 'success',
+    });
+
+    sub.scrapedData = {
+      ...sub.scrapedData,
+      zauba: {
+        status: 'success',
+        cin: result.cin,
+        companyName: result.companyName,
+        sourceUrl: result.sourceUrl,
+        summaryPath,
+        summaryCharCount: result.summaryText.length,
+        scrapedAt: new Date(),
+      },
+    };
+    await sub.save();
+
+    console.info(
+      `[Scraper][Zauba] Done for ${applicationId}\n` +
+        `  direct_relation/${ZAUBA_SUMMARY_FILE} (${result.summaryText.length} chars)`,
+    );
+  } catch (err) {
+    const msg = err instanceof Error ? err.message : String(err);
+    console.error(`[Scraper][Zauba] Failed for ${applicationId}: ${msg}`);
+
+    if (job.attempts >= job.maxAttempts) {
+      sub.scrapedData = {
+        ...sub.scrapedData,
+        zauba: { status: 'unavailable', reason: msg, cin, scrapedAt: new Date() },
+      };
+      await sub.save();
+      updateScrapeManifest(applicationId, {
+        source: 'zauba',
+        tier: 'direct_relation',
+        file: ZAUBA_SUMMARY_FILE,
+        scrapedAt: new Date().toISOString(),
+        status: 'unavailable',
+      });
+    }
+    throw err;
+  }
+};
 
 export const linkedinHandler: JobHandler<{ applicationId: string; url: string }> = async (
   job,
@@ -71,13 +156,10 @@ export const linkedinHandler: JobHandler<{ applicationId: string; url: string }>
   }
 };
 
-// ── GitHub via REST API ───────────────────────────────────────────────────────
-
 export const githubHandler: JobHandler<{ applicationId: string; url: string }> = async (job) => {
   const { applicationId, url } = job.data;
   const sub = await getSubmission(applicationId);
 
-  // Extract org/user name from URL: https://github.com/<org>
   const match = url.match(/github\.com\/([^/]+)/);
   if (!match) {
     sub.scrapedData = { ...sub.scrapedData, github: unavailable('Invalid GitHub URL') };
@@ -98,31 +180,11 @@ export const githubHandler: JobHandler<{ applicationId: string; url: string }> =
       ),
     ]);
 
-    const sixMonthsAgo = new Date(Date.now() - 180 * 24 * 60 * 60 * 1000).toISOString();
-
-    let commitsLast6m = 0;
-    if (reposData.status === 'fulfilled') {
-      const repos = reposData.value;
-      for (const repo of repos.slice(0, 3)) {
-        if (repo.pushed_at && repo.pushed_at > sixMonthsAgo) {
-          try {
-            const commits = await githubApi<unknown[]>(
-              `/repos/${org}/${repo.name}/commits?since=${sixMonthsAgo}&per_page=1`,
-            );
-            commitsLast6m += commits.length;
-          } catch {
-            // ignore per-repo errors
-          }
-        }
-      }
-    }
-
     sub.scrapedData = {
       ...sub.scrapedData,
       github: {
         org: orgData.status === 'fulfilled' ? orgData.value : null,
         recentRepos: reposData.status === 'fulfilled' ? reposData.value.slice(0, 5) : [],
-        commitsLast6mSample: commitsLast6m,
         scrapedAt: new Date(),
       },
     };
@@ -137,54 +199,6 @@ export const githubHandler: JobHandler<{ applicationId: string; url: string }> =
     throw err;
   }
 };
-
-// ── Zauba/MCA via SerpAPI ─────────────────────────────────────────────────────
-
-export const zaubaHandler: JobHandler<{ applicationId: string; cin: string }> = async (job) => {
-  const { applicationId, cin } = job.data;
-  const sub = await getSubmission(applicationId);
-
-  if (!config.scraping.serpapiKey) {
-    sub.scrapedData = { ...sub.scrapedData, zauba: unavailable('SERPAPI_KEY not set') };
-    await sub.save();
-    return;
-  }
-
-  try {
-    const res = await axios.get('https://serpapi.com/search', {
-      params: {
-        engine: 'google',
-        q: `${cin} site:zaubacorp.com OR site:mca.gov.in`,
-        api_key: config.scraping.serpapiKey,
-        num: 5,
-      },
-      timeout: 20_000,
-    });
-
-    const organicResults = res.data?.organic_results ?? [];
-
-    sub.scrapedData = {
-      ...sub.scrapedData,
-      zauba: {
-        cin,
-        searchResults: organicResults.slice(0, 5),
-        scrapedAt: new Date(),
-        source: 'serpapi_google',
-      },
-    };
-    await sub.save();
-    console.info(`[Scraper] Zauba scraped for ${applicationId} (CIN: ${cin})`);
-  } catch (err) {
-    if (job.attempts >= job.maxAttempts) {
-      const msg = err instanceof Error ? err.message : String(err);
-      sub.scrapedData = { ...sub.scrapedData, zauba: unavailable(msg) };
-      await sub.save();
-    }
-    throw err;
-  }
-};
-
-// ── Press / News via SerpAPI ──────────────────────────────────────────────────
 
 export const pressHandler: JobHandler<{
   applicationId: string;
@@ -202,13 +216,12 @@ export const pressHandler: JobHandler<{
 
   try {
     const domain = new URL(websiteUrl).hostname.replace('www.', '');
-
     const res = await axios.get('https://serpapi.com/search', {
       params: {
         engine: 'google',
         q: `"${startupName}" OR site:${domain} funding OR launch OR AI startup India`,
         api_key: config.scraping.serpapiKey,
-        tbm: 'nws', // news
+        tbm: 'nws',
         num: 10,
       },
       timeout: 20_000,
@@ -233,8 +246,6 @@ export const pressHandler: JobHandler<{
     throw err;
   }
 };
-
-// ── Patents via SerpAPI ───────────────────────────────────────────────────────
 
 export const patentsHandler: JobHandler<{
   applicationId: string;
@@ -280,13 +291,11 @@ export const patentsHandler: JobHandler<{
   }
 };
 
-// ── Registration ──────────────────────────────────────────────────────────────
-
 export function registerScrapers(queue: JobQueue): void {
+  queue.register('scrape:zauba', zaubaHandler);
   queue.register('scrape:linkedin', linkedinHandler);
   queue.register('scrape:github', githubHandler);
-  queue.register('scrape:zauba', zaubaHandler);
   queue.register('scrape:press', pressHandler);
   queue.register('scrape:patents', patentsHandler);
-  console.info('[Scrapers] All scraper handlers registered');
+  console.info('[Scrapers] Handlers registered (Zauba → plain-text summary on intake)');
 }

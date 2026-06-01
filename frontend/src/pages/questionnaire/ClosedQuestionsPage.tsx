@@ -65,7 +65,7 @@ export default function ClosedQuestionsPage() {
   useEffect(() => {
     if (!isValid || Object.keys(answers).length === 0) return;
     const timer = setInterval(() => {
-      api.post(`/questionnaire/closed?app=${appId}&token=${token}`, { answers }).catch(() => {});
+      api.post(`/questionnaire/closed?app=${appId}&token=${token}`, { answers }).catch(() => { });
     }, 30_000);
     return () => clearInterval(timer);
   }, [answers, appId, token, isValid]);
@@ -176,11 +176,10 @@ function QuestionCard({
           {q.options.map(opt => (
             <label
               key={opt.value}
-              className={`flex items-start gap-3 p-3 rounded-lg border cursor-pointer transition ${
-                value === opt.value
+              className={`flex items-start gap-3 p-3 rounded-lg border cursor-pointer transition ${value === opt.value
                   ? 'border-indigo-500 bg-indigo-50'
                   : 'border-gray-200 hover:border-gray-300'
-              }`}
+                }`}
             >
               <input
                 type="radio"
@@ -203,9 +202,8 @@ function QuestionCard({
             return (
               <label
                 key={opt.value}
-                className={`flex items-start gap-3 p-3 rounded-lg border cursor-pointer transition ${
-                  selected ? 'border-indigo-500 bg-indigo-50' : 'border-gray-200 hover:border-gray-300'
-                }`}
+                className={`flex items-start gap-3 p-3 rounded-lg border cursor-pointer transition ${selected ? 'border-indigo-500 bg-indigo-50' : 'border-gray-200 hover:border-gray-300'
+                  }`}
               >
                 <input
                   type="checkbox"
@@ -235,9 +233,8 @@ function QuestionCard({
             return (
               <label
                 key={opt.value}
-                className={`flex items-center gap-3 p-3 rounded-lg border cursor-pointer transition ${
-                  selected ? 'border-indigo-500 bg-indigo-50' : 'border-gray-200 hover:border-gray-300'
-                }`}
+                className={`flex items-center gap-3 p-3 rounded-lg border cursor-pointer transition ${selected ? 'border-indigo-500 bg-indigo-50' : 'border-gray-200 hover:border-gray-300'
+                  }`}
               >
                 {selected && (
                   <span className="w-5 h-5 rounded-full bg-indigo-600 text-white text-xs flex items-center justify-center font-bold shrink-0">

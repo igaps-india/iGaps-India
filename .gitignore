@@ -35,5 +35,8 @@ coverage/
 uploads/
 backend/data/uploads/
 
+# Scraped data (per-application direct_relation/ + background/)
+backend/data/scraped/
+
 # Cursor
 .cursor/plans/

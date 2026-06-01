@@ -52,6 +52,9 @@ export const config = {
     proxycurlApiKey: optional('PROXYCURL_API_KEY', ''),
     serpapiKey: optional('SERPAPI_KEY', ''),
     githubToken: optional('GITHUB_TOKEN', ''),
+    zaubaBaseUrl: optional('ZAUBA_BASE_URL', 'https://www.zaubacorp.com'),
+    /** Future LinkedIn microservice base URL (separate git branch). */
+    linkedinServiceUrl: optional('LINKEDIN_SCRAPER_URL', ''),
   },
 
   queue: {
