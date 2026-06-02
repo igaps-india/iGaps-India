@@ -29,11 +29,13 @@ export interface Upload {
 }
 
 export interface ScrapedData {
-  linkedin?: Record<string, unknown> | 'unavailable';
-  github?: Record<string, unknown> | 'unavailable';
-  zauba?: Record<string, unknown> | 'unavailable';
-  press?: Record<string, unknown> | 'unavailable';
-  patents?: Record<string, unknown> | 'unavailable';
+  linkedin?: Record<string, unknown> | { status: string; [key: string]: unknown };
+  github?: Record<string, unknown> | { status: string; [key: string]: unknown };
+  zauba?: Record<string, unknown> | { status: string; [key: string]: unknown };
+  press?: Record<string, unknown> | { status: string; [key: string]: unknown };
+  patents?: Record<string, unknown> | { status: string; [key: string]: unknown };
+  /** License signals fetched alongside patents via the Google CSE pipeline. */
+  licenses?: Record<string, unknown> | { status: string; [key: string]: unknown };
 }
 
 export interface ISubmission extends Document {

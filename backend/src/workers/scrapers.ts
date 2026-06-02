@@ -130,28 +130,29 @@ export const linkedinHandler: JobHandler<{ applicationId: string; url: string }>
 ) => {
   const { applicationId, url } = job.data;
   const sub = await getSubmission(applicationId);
-
-  if (!config.scraping.proxycurlApiKey) {
-    sub.scrapedData = { ...sub.scrapedData, linkedin: unavailable('PROXYCURL_API_KEY not set') };
-    await sub.save();
-    return;
-  }
+  const app = await Application.findById(applicationId);
+  if (!app) throw new Error('App not found');
 
   try {
-    const res = await axios.get('https://nubela.co/proxycurl/api/v2/linkedin/company', {
-      params: { url, use_cache: 'if-recent' },
-      headers: { Authorization: `Bearer ${config.scraping.proxycurlApiKey}` },
-      timeout: 30_000,
-    });
-    sub.scrapedData = { ...sub.scrapedData, linkedin: res.data };
+    const res = await axios.post('http://127.0.0.1:8000/scrape/linkedin', {
+      company_name: app.startupName,
+      founder_name: app.founderName,
+      linkedin_url: url,
+      website_url: app.websiteUrl
+    }, { timeout: 300_000 }); // 5 minutes timeout for scraping
+    
+    // Always save whatever the Python service returned (even partial data)
+    sub.scrapedData = { ...sub.scrapedData, linkedin: { ...res.data, scrapedAt: new Date(), status: 'success' } };
+    sub.markModified('scrapedData');
     await sub.save();
     console.info(`[Scraper] LinkedIn scraped for ${applicationId}`);
   } catch (err) {
-    if (job.attempts >= job.maxAttempts) {
-      const msg = err instanceof Error ? err.message : String(err);
-      sub.scrapedData = { ...sub.scrapedData, linkedin: unavailable(msg) };
-      await sub.save();
-    }
+    // Save error state immediately on every failure so MongoDB always has a linkedin key
+    const msg = err instanceof Error ? err.message : String(err);
+    console.error(`[Scraper][LinkedIn] Failed for ${applicationId} (attempt ${job.attempts}/${job.maxAttempts}): ${msg}`);
+    sub.scrapedData = { ...sub.scrapedData, linkedin: unavailable(msg) };
+    sub.markModified('scrapedData');
+    await sub.save();
     throw err;
   }
 };
@@ -191,11 +192,11 @@ export const githubHandler: JobHandler<{ applicationId: string; url: string }> =
     await sub.save();
     console.info(`[Scraper] GitHub scraped for ${applicationId}`);
   } catch (err) {
-    if (job.attempts >= job.maxAttempts) {
-      const msg = err instanceof Error ? err.message : String(err);
-      sub.scrapedData = { ...sub.scrapedData, github: unavailable(msg) };
-      await sub.save();
-    }
+    const msg = err instanceof Error ? err.message : String(err);
+    console.error(`[Scraper][GitHub] Failed for ${applicationId} (attempt ${job.attempts}/${job.maxAttempts}): ${msg}`);
+    sub.scrapedData = { ...sub.scrapedData, github: unavailable(msg) };
+    sub.markModified('scrapedData');
+    await sub.save();
     throw err;
   }
 };
@@ -238,11 +239,11 @@ export const pressHandler: JobHandler<{
     await sub.save();
     console.info(`[Scraper] Press scraped for ${applicationId}`);
   } catch (err) {
-    if (job.attempts >= job.maxAttempts) {
-      const msg = err instanceof Error ? err.message : String(err);
-      sub.scrapedData = { ...sub.scrapedData, press: unavailable(msg) };
-      await sub.save();
-    }
+    const msg = err instanceof Error ? err.message : String(err);
+    console.error(`[Scraper][Press] Failed for ${applicationId} (attempt ${job.attempts}/${job.maxAttempts}): ${msg}`);
+    sub.scrapedData = { ...sub.scrapedData, press: unavailable(msg) };
+    sub.markModified('scrapedData');
+    await sub.save();
     throw err;
   }
 };
@@ -253,40 +254,40 @@ export const patentsHandler: JobHandler<{
 }> = async (job) => {
   const { applicationId, startupName } = job.data;
   const sub = await getSubmission(applicationId);
-
-  if (!config.scraping.serpapiKey) {
-    sub.scrapedData = { ...sub.scrapedData, patents: unavailable('SERPAPI_KEY not set') };
-    await sub.save();
-    return;
-  }
+  const app = await Application.findById(applicationId);
+  if (!app) throw new Error('App not found');
 
   try {
-    const res = await axios.get('https://serpapi.com/search', {
-      params: {
-        engine: 'google_patents',
-        q: startupName,
-        api_key: config.scraping.serpapiKey,
-        num: 10,
-      },
-      timeout: 20_000,
-    });
+    const res = await axios.post('http://127.0.0.1:8000/scrape/google', {
+      company_name: startupName,
+      founder_name: app.founderName
+    }, { timeout: 120_000 });
 
     sub.scrapedData = {
       ...sub.scrapedData,
       patents: {
-        results: res.data?.organic_results ?? [],
-        total: res.data?.search_information?.total_results ?? 0,
+        results: res.data.patents ?? [],
+        total: res.data.patents?.length ?? 0,
         scrapedAt: new Date(),
       },
+      licenses: {
+        results: res.data.licenses ?? [],
+        scrapedAt: new Date(),
+      }
     };
+    sub.markModified('scrapedData');
     await sub.save();
-    console.info(`[Scraper] Patents scraped for ${applicationId}`);
+    console.info(`[Scraper] Patents & Licenses scraped for ${applicationId}`);
   } catch (err) {
-    if (job.attempts >= job.maxAttempts) {
-      const msg = err instanceof Error ? err.message : String(err);
-      sub.scrapedData = { ...sub.scrapedData, patents: unavailable(msg) };
-      await sub.save();
-    }
+    const msg = err instanceof Error ? err.message : String(err);
+    console.error(`[Scraper][Patents] Failed for ${applicationId} (attempt ${job.attempts}/${job.maxAttempts}): ${msg}`);
+    sub.scrapedData = {
+      ...sub.scrapedData,
+      patents: unavailable(msg),
+      licenses: unavailable(msg),
+    };
+    sub.markModified('scrapedData');
+    await sub.save();
     throw err;
   }
 };

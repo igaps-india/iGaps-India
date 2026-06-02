@@ -139,6 +139,13 @@ export async function planOpenQuestions(applicationId: string, opts: { force?: b
     return;
   }
 
+  if (process.env.MOCK_LLM_FOR_TESTING === 'true') {
+    console.warn(`[QuestionAgent] MOCK_LLM_FOR_TESTING is enabled. Skipping LLM call.`);
+    submission.openQPlan = fallbackPlan(skillVersion, 'mock-llm');
+    await submission.save();
+    return;
+  }
+
   if (!isLLMConfigured()) {
     console.warn(`[QuestionAgent] LLM not configured for ${applicationId}. Using fallback plan.`);
     submission.openQPlan = fallbackPlan(skillVersion, 'none');

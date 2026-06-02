@@ -57,6 +57,17 @@ export async function scoreWithRubric(
     return emptyScore(rubricId, 'Answer is empty or too short to evaluate.');
   }
 
+  if (process.env.MOCK_LLM_FOR_TESTING === 'true') {
+    return {
+      rubricId,
+      score: 75,
+      band: 'strong',
+      evidence: '[MOCK] Scored via testing bypass to save API credits.',
+      weaknesses: ['[MOCK] No weaknesses identified.'],
+      rawJson: { mock: true },
+    };
+  }
+
   const rubricContent = loadRubric(rubricId);
   const llm = getLLMProvider();
 

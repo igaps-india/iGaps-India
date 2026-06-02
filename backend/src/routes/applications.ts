@@ -107,8 +107,33 @@ router.post('/', async (req: Request, res: Response): Promise<void> => {
     cin: cinNumber.trim().toUpperCase(),
   });
 
-  // Step 2 (future): LinkedIn microservice — enqueue when LINKEDIN_SCRAPER_URL is set
-  // Step 3 (future): Pitch deck LLM parse — enqueue after uploads on closed-Q complete
+  // Step 2 (active): Python Microservice Scrapers (LinkedIn & Patents/Licenses)
+  await queue.enqueue('scrape:linkedin', {
+    applicationId: appId,
+    url: linkedinUrl.trim(),
+  });
+
+  await queue.enqueue('scrape:patents', {
+    applicationId: appId,
+    startupName: startupName.trim(),
+  });
+
+  // Step 3 (active): GitHub org scrape — only if githubUrl was provided
+  if (githubUrl?.trim()) {
+    await queue.enqueue('scrape:github', {
+      applicationId: appId,
+      url: githubUrl.trim(),
+    });
+  }
+
+  // Step 4 (active): Press / news search via SerpApi
+  await queue.enqueue('scrape:press', {
+    applicationId: appId,
+    startupName: startupName.trim(),
+    websiteUrl: websiteUrl.trim(),
+  });
+
+  // Step 5 (future): Pitch deck LLM parse — enqueued after uploads on closed-Q complete
 
   const continueUrl = `${config.frontendUrl}/q/closed?app=${appId}&token=${token}`;
 
