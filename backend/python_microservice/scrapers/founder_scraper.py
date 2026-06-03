@@ -83,8 +83,8 @@ def _build_driver() -> webdriver.Chrome:
     options.add_argument("--disable-infobars")
     options.add_argument("--disable-extensions")
 
-    # Uncomment the next line to run headless (less detectable on servers):
-    # options.add_argument("--headless=new")
+    # Enable headless mode to run invisibly in the background
+    options.add_argument("--headless=new")
 
     service = Service(ChromeDriverManager().install())
     driver = webdriver.Chrome(service=service, options=options)
