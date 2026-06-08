@@ -3,9 +3,8 @@
 Home
 My Network
 Jobs
-1
 Messaging
-9
+12
 Notifications
 Me
 For Business
@@ -16,235 +15,23 @@ Gurugram, Haryana, India
 ·
 Contact info
 iGaps
-4,583 followers
+4,589 followers
 ·
 500+
 connections
 Follow
 Message
-People who follow Indranil also follow
-Jeetendra Lalwani 
-Building India’s fastest emergency network. Constantly learning, improving, and pushing limits.
-8,288 followers
-Follow
-Dr. Ati Priye 
-Emerging Venture Capital & Investment Strategist | Startup Valuation & Deal Flow Specialist | CEO – VentureNest | Mentor @ Startup India & NITI Aayog
-9,618 followers
-Follow
 About
 I help early-stage AI founders raise capital and structure deals. I combine operator experience in AI (Strategic Advisor, Dectrocel) with portfolio-level investing and fundraising as CBO at PadUp Ventures, where I have supported Rs. 18 Cr+ in funding across 30+ startups. My work sits at the intersection of AI, finance, and strategy: translating technical depth into investor-ready narratives, robust financial models, and clean deal structures. I am currently pursuing a PGP in AI/ML from Texas McCombs, strengthening my ability to evaluate AI products, data moats, and long-term value creation for both founders and investors.
 … more
 Top skills
 Business Development • Strategic Partnerships • Negotiation • Team Building • P&L Management
 Activity
-4,583 followers
+4,589 followers
 Follow
 Posts
 Comments
 Images
-Indranil Datta
- • 3rd+
-Early-Stage AI | Capital Raising | CBO, PadUp Ventures | Strategic Advisor, AI Healthtech | PGP AIML - Texas McCombs
-3w • 
-“50,000 GPUs for 1.4 billion people.
-One guy in the US reportedly has 2 million".
-
-India is capped at importing just 50,000 high-performance GPUs a year under the US AI Diffusion Framework. Tier-2 status. Meanwhile, unverified numbers suggest one American founder aka Elon Musk alone has access to 2 million. The US as a whole? 35–40 million.
-
-Welcome to the real geopolitics of AI in 2026. 🙄 
-2 reactions
-2
-1 comment
-1 comment
-Like
-Comment
-Repost
-Send
-Indranil Datta
- • 3rd+
-Early-Stage AI | Capital Raising | CBO, PadUp Ventures | Strategic Advisor, AI Healthtech | PGP AIML - Texas McCombs
-1mo • 
-“The winners won’t hate wrappers. They’ll master them.”
-“It’s just a wrapper” — The most misused phrase in AI right now. Just when I thought the “it’s just a wrapper” noise couldn’t get louder, a16z drops the take I’ve been quietly chewing on for months.
-
-If a lawyer tells you they’ve built a legal AI product, don’t roll your eyes and call it a wrapper.
-Ask the real questions instead:
-- Does it actually work at scale? 
-- What’s the engineering? 
-- How have they cracked the compute economics? 
-- Is the workflow genuinely better than the old ways? 
-
-Because the difference between a toy and a defensible product almost always sits in that “wrapper.”
-
-Shoutout toand thefor not dismissing the wrapper conversation
-… more
-Andrew Chen
-  • 3rd+
-a16z speedrun / andrewchen.substack.com
-View my newsletter
-1mo • 
-the "AI wrapper" critique assumes the wrapper is the easy part
-
-But being the wrapper also includes figuring out:
-- getting distribution without paying infinite CAC
-- creating an amazing UX that's AI native, not derivative
-- building a brand, trust in a very noisy landscape
-- creating an ecosystem/community
-- generating network effects
-- making customer service great
-- ... plus pricing, hiring, raising money, and everything else
-
-these are not easy!
-… more
-2 reactions
-2
-Like
-Comment
-Repost
-Send
-I spent 3 hours fighting withto build one presentation… and thendid it in 5 minutes.
-
-Yesterday was painful.
-
-I had a clean project setup, a high-quality concept note, and extremely detailed prompts. Everything was structured exactly how I wanted.
-
-#ChatGPTfollowed instructions perfectly. But that’s all it did.
-
-No spark. No improvisation. No “let me push this one level higher for you.” It felt like working with a uninspired junior who only executes — never thinks ahead. Prompt after prompt, edit after edit, until I slammed my laptop at midnight in frustration.
-
-This morning, fresh Claude quota in hand, I recreated the same project. Same concept note. Similar instructions.
-Five minutes later — voilà.
-Not just done. Done beautifully. With the exact ingenuity and taste I was craving. The difference was night and day.
-
-Here’s what I’m observing as someone who lives deep in the AI trenches — 
-The hype cycle has quietly shifted.
-
-ChatGPT, once the undisputed king, is slowly slipping into the sea of average copilots. Mediocre.
-Claude (Anthropic) is eating everyone’s lunch when it comes to deep reasoning, creative improvisation, and actually understanding intent.
-
-My current rough ranking for serious work:
-Claude — clear leader # 1
-Gemini — surprisingly capable in many cases at # 6
-# 7-10. ChatGPT, Grok, Copilot
-
-The bigger point isn’t just which model wins today.
-It’s that the gap between “following instructions” and “showing real intelligence” is becoming the real differentiator — especially for AI-native founders building products that actually feel intelligent.
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-Show all posts
 More profiles for you
 Avinish Jain 
 · 3rd+
@@ -268,21 +55,21 @@ Founder at ESTATE BRIDGE
 Connect
 Show all
 Explore Premium profiles
-Urgen Moktan 
+Rishi Singhal 
 · 3rd+
-Student at Siliguri Institute of Technology
+Student 
 Connect
-ikshit singhal 
+Yuvraj Sutar 
 · 3rd+
-Student at nc jindal public school 
+Student at Savitribai Phule Pune University (SPPU)
 Connect
-Rahul undefined 
+RAKSHIT BHARGAVA 
 · 3rd+
-Student at Harvard University
+Business Development Executive @fuel it up | Team Leadership, Social Media Marketing
 Connect
-Hostelova Hostelova 
+Arushi . 
 · 3rd+
-Find, Compare & Book Verified Hostels Across India
+Full stach developer with a better grip on backend node, meta ads unlocked getting used to with ai automation, crm systems, chatbots and voice agents.
 Connect
 About
 Accessibility
@@ -347,9 +134,8 @@ Tiếng Việt (Vietnamese)
 Home
 My Network
 Jobs
-1
 Messaging
-9
+12
 Notifications
 Me
 For Business
@@ -525,20 +311,14 @@ Türkçe (Turkish)
 Tiếng Việt (Vietnamese)
 简体中文 (Chinese (Simplified))
 正體中文 (Chinese (Traditional))
-Messaging
-You are on the messaging overlay. Press enter to open the list of conversations.
-1
-Compose message
-You are on the messaging overlay. Press enter to open the list of conversations.
 
 === EDUCATION ===
 0 notifications
 Home
 My Network
 Jobs
-1
 Messaging
-9
+12
 Notifications
 Me
 For Business
@@ -643,15 +423,18 @@ Türkçe (Turkish)
 Tiếng Việt (Vietnamese)
 简体中文 (Chinese (Simplified))
 正體中文 (Chinese (Traditional))
+Messaging
+You are on the messaging overlay. Press enter to open the list of conversations.
+Compose message
+You are on the messaging overlay. Press enter to open the list of conversations.
 
 === SKILLS ===
 0 notifications
 Home
 My Network
 Jobs
-1
 Messaging
-9
+12
 Notifications
 Me
 For Business

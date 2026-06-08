@@ -317,8 +317,9 @@ nodes:
     sourceRef: openQ3
     signalKey: openQ3_leverage_specificity_score
     scoringRule:
-      type: llm_rubric
-      rubric: rubric.leverage_specificity.v1
+      type: vector_similarity
+      # Upgraded from llm_rubric to local vector similarity (Phase 2)
+      # Signal: does founder have a SPECIFIC non-obvious insight vs vague claim?
 
   - nodeId: trackA.L3.network_density
     kind: signal
@@ -399,7 +400,7 @@ nodes:
     enabled: true
     order: 3
     sourceType: scraped
-    sourceRef: scrape.github
+    sourceRef: scrape.github_velocity
     signalKey: scrape_github_commits_per_week
     scoringRule:
       type: scrape_threshold
@@ -482,8 +483,9 @@ nodes:
     sourceRef: openQ4
     signalKey: openQ4_problem_customer_language_score
     scoringRule:
-      type: llm_rubric
-      rubric: rubric.problem_customer_language.v1
+      type: vector_similarity
+      # Upgraded from llm_rubric to local vector similarity (Phase 2)
+      # Signal: founder uses customer words vs pitch/marketing language?
 
   - nodeId: trackB.L1.problem_severity_quant
     kind: signal
@@ -498,8 +500,9 @@ nodes:
     sourceRef: derived.problem_severity
     signalKey: derived_problem_severity_score
     scoringRule:
-      type: derived_formula
-      formula: "extract_severity_score(openQ4_answer, openQ10_answer)"
+      type: vector_similarity
+      # Upgraded from derived_formula to local vector similarity (Phase 2)
+      # Signal: does founder QUANTIFY pain with real numbers vs vague description?
 
   - nodeId: trackB.L1.persona_spend_on_workarounds
     kind: signal
@@ -632,8 +635,9 @@ nodes:
     sourceRef: openQ4
     signalKey: openQ4_persona_vividity_score
     scoringRule:
-      type: llm_rubric
-      rubric: rubric.persona_vividity.v1
+      type: vector_similarity
+      # Upgraded from llm_rubric to local vector similarity (Phase 2)
+      # Signal: specific real human (Priya, 34, ICU nurse) vs demographic (millennial professionals)?
 
   # ── Layer B4 — Need Gap (20% of Track B) ──────────────────────
   - nodeId: trackB.L4
@@ -763,8 +767,9 @@ nodes:
     sourceRef: openQ7
     signalKey: openQ7_solution_persona_fit_score
     scoringRule:
-      type: llm_rubric
-      rubric: rubric.solution_persona_fit.v1
+      type: vector_similarity
+      # Upgraded from llm_rubric to local vector similarity (Phase 2)
+      # Signal: persona would say "built for me" vs generic enterprise platform?
 
   - nodeId: trackC.L1.trl_level
     kind: signal
@@ -906,7 +911,7 @@ nodes:
     enabled: true
     order: 1
     sourceType: scraped
-    sourceRef: scrape.github
+    sourceRef: scrape.github_signals
     signalKey: scrape_github_repo_quality
     scoringRule:
       type: scrape_threshold
@@ -1160,5 +1165,6 @@ nodes:
     sourceRef: openQ10
     signalKey: openQ10_customer_initiated_score
     scoringRule:
-      type: llm_rubric
-      rubric: rubric.customer_initiated.v1
+      type: vector_similarity
+      # Upgraded from llm_rubric to local vector similarity (Phase 2)
+      # Signal: customers came unprompted vs engineered via cold outreach?

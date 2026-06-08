@@ -7,7 +7,7 @@ Uses the new google-genai SDK (google.genai) — NOT the deprecated google-gener
 
 Environment variables:
   GOOGLE_API_KEY  -- Google AI / Gemini API key (required)
-  GEMINI_MODEL    (optional) -- defaults to 'gemini-2.5-flash'
+  GEMINI_MODEL    (optional) -- defaults to 'gemini-3.1-pro'
 """
 
 from __future__ import annotations
@@ -37,7 +37,7 @@ logger = logging.getLogger(__name__)
 # ---------------------------------------------------------------------------
 # Gemini configuration
 # ---------------------------------------------------------------------------
-_GEMINI_MODEL: str = os.environ.get("GEMINI_MODEL", "gemini-2.5-flash")
+_GEMINI_MODEL: str = os.environ.get("GEMINI_MODEL", "gemini-3.1-pro")
 _GOOGLE_API_KEY: str = os.environ.get("GOOGLE_API_KEY", "")
 
 if not _GOOGLE_API_KEY:

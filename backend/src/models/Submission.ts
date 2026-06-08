@@ -31,6 +31,8 @@ export interface Upload {
 export interface ScrapedData {
   linkedin?: Record<string, unknown> | { status: string; [key: string]: unknown };
   github?: Record<string, unknown> | { status: string; [key: string]: unknown };
+  github_velocity?: Record<string, unknown> | { status: string; [key: string]: unknown };
+  github_signals?: Record<string, unknown> | { status: string; [key: string]: unknown };
   zauba?: Record<string, unknown> | { status: string; [key: string]: unknown };
   press?: Record<string, unknown> | { status: string; [key: string]: unknown };
   patents?: Record<string, unknown> | { status: string; [key: string]: unknown };

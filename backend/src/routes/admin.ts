@@ -79,7 +79,9 @@ router.get('/applications/:id', requireAdmin, async (req: Request, res: Response
     return;
   }
 
-  const evaluation = await Evaluation.findOne({ applicationId: req.params.id }).lean();
+  const evaluation = await Evaluation.findOne({ applicationId: req.params.id })
+    .sort({ generatedAt: -1 })
+    .lean();
   const submission = await Submission.findOne({ applicationId: req.params.id })
     .select('closedAnswers openAnswers uploads openQPlan scrapedData completedAt')
     .lean();

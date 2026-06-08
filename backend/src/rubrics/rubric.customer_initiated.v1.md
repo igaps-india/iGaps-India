@@ -17,10 +17,15 @@ Score 30–49: All customer acquisition has been founder-initiated. No inbound d
 
 Score 0–29: Founder has not yet acquired any customers. Answer does not address customer initiation.
 
-## Output format (strict JSON)
+## Output format
+
+Return ONLY valid JSON. Do not include markdown codeblocks or any other text.
+The JSON must strictly follow this exact structure:
+
 {
-  "score": <integer 0–100>,
-  "band": "<exceptional|strong|adequate|weak|very_weak>",
-  "evidence": "<1–2 sentences>",
-  "weaknesses": []
+  "score": 0, // integer 0-100
+  "band": "weak", // MUST be EXACTLY ONE OF: "exceptional", "strong", "adequate", "weak", "very_weak"
+  "raw_text_evidence": "...", // exact quote from text
+  "weakness": "...", // weakness identified
+  "confidence": "high" // "high", "medium", or "low"
 }

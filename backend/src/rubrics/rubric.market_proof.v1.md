@@ -17,10 +17,18 @@ Score 30–49: Founder describes their own interpretation of signals ("the marke
 
 Score 0–29: No evidence. Founder describes why the market should want the product but provides no data that it does.
 
-## Output format (strict JSON)
+## Calibration examples
+{{RAG_EXAMPLES}}
+
+## Output format
+
+Return ONLY valid JSON. Do not include markdown codeblocks or any other text.
+The JSON must strictly follow this exact structure:
+
 {
-  "score": <integer 0–100>,
-  "band": "<exceptional|strong|adequate|weak|very_weak>",
-  "evidence": "<1–2 sentences>",
-  "weaknesses": []
+  "score": 0, // integer 0-100
+  "band": "weak", // MUST be EXACTLY ONE OF: "exceptional", "strong", "adequate", "weak", "very_weak"
+  "raw_text_evidence": "...", // exact quote from text
+  "weakness": "...", // weakness identified
+  "confidence": "high" // "high", "medium", or "low"
 }

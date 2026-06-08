@@ -180,14 +180,74 @@ export const githubHandler: JobHandler<{ applicationId: string; url: string }> =
   try {
     const [orgData, reposData] = await Promise.allSettled([
       githubApi(`/orgs/${org}`).catch(() => githubApi(`/users/${org}`)),
-      githubApi<Array<{ name: string; pushed_at: string | null }>>(
+      githubApi<Array<{ name: string; pushed_at: string | null; language: string | null; owner: { login: string } }>>(
         `/orgs/${org}/repos?sort=updated&per_page=10`,
       ).catch(() =>
-        githubApi<Array<{ name: string; pushed_at: string | null }>>(
+        githubApi<Array<{ name: string; pushed_at: string | null; language: string | null; owner: { login: string } }>>(
           `/users/${org}/repos?sort=updated&per_page=10`,
         ),
       ),
     ]);
+
+    let velocityCategory = 'none';
+    let repoQualityCategory = 'none';
+    let commitsPerWeek = 0;
+    let qualityScore = 0;
+
+    if (reposData.status === 'fulfilled' && reposData.value.length > 0) {
+      // ── QUALITY SCORING LOGIC ──────────────────────────────────────────────
+      // Fetch commits for top 3 recently active repos to limit API calls
+      const topRepos = reposData.value.filter((r) => r.pushed_at).slice(0, 3);
+      let allCommits: Array<{ commit: { message: string, author: { name: string, date: string } } }> = [];
+      let realCodeFound = false;
+
+      const since = new Date(Date.now() - 90 * 24 * 60 * 60 * 1000).toISOString();
+      for (const repo of topRepos) {
+        // Signal: Are they using real programming languages?
+        if (repo.language && ['TypeScript', 'Python', 'Go', 'Rust', 'Java', 'C++', 'JavaScript'].includes(repo.language)) {
+          realCodeFound = true;
+        }
+        try {
+          const commits = await githubApi<any[]>(`/repos/${repo.owner.login}/${repo.name}/commits?since=${since}&per_page=30`);
+          allCommits = allCommits.concat(commits);
+        } catch {
+          // Ignore individual repo fetch errors (e.g. empty repo)
+        }
+      }
+
+      // Signal 1: Meaningful commits (not just "update" or "fix")
+      const meaningfulCommits = allCommits.filter((c) => {
+        const msg = c.commit?.message?.toLowerCase() ?? '';
+        return msg.length > 15 && !['update', 'test', 'fix', 'wip', 'init'].includes(msg.trim());
+      });
+      qualityScore += Math.min(40, meaningfulCommits.length * 2); // Max 40 points
+
+      // Signal 2: Real code diversity
+      if (realCodeFound) qualityScore += 30; // Max 30 points
+
+      // Signal 3: Contributor diversity (not a 1-person bot)
+      const uniqueAuthors = new Set(allCommits.map((c) => c.commit?.author?.name).filter(Boolean));
+      qualityScore += Math.min(20, uniqueAuthors.size * 7); // Max 20 points
+
+      qualityScore = Math.min(100, qualityScore);
+
+      // Map to velocity bucket
+      commitsPerWeek = allCommits.length / 13; // over 90 days (~13 weeks)
+      if (commitsPerWeek > 15) velocityCategory = 'very_high';
+      else if (commitsPerWeek >= 5) velocityCategory = 'high';
+      else if (commitsPerWeek >= 1) velocityCategory = 'medium';
+      else if (commitsPerWeek > 0) velocityCategory = 'low';
+
+      // Map to repo quality bucket
+      if (allCommits.length > 0) {
+        if (qualityScore >= 75) repoQualityCategory = 'exists_high_activity';
+        else if (qualityScore >= 45) repoQualityCategory = 'exists_active';
+        else if (qualityScore >= 20) repoQualityCategory = 'exists_low_activity';
+        else repoQualityCategory = 'exists_inactive';
+      } else {
+        repoQualityCategory = 'exists_inactive';
+      }
+    }
 
     const freshSub = await getSubmission(applicationId);
     freshSub.scrapedData = {
@@ -195,17 +255,27 @@ export const githubHandler: JobHandler<{ applicationId: string; url: string }> =
       github: {
         org: orgData.status === 'fulfilled' ? orgData.value : null,
         recentRepos: reposData.status === 'fulfilled' ? reposData.value.slice(0, 5) : [],
+        qualityScore,
+        commitsPerWeek,
         scrapedAt: new Date(),
       },
+      // Output buckets explicitly mapped to tree.yaml thresholds
+      github_velocity: { status: velocityCategory },
+      github_signals: { status: repoQualityCategory },
     };
     freshSub.markModified('scrapedData');
     await freshSub.save();
-    console.info(`[Scraper] GitHub scraped for ${applicationId}`);
+    console.info(`[Scraper] GitHub scraped for ${applicationId} | Quality: ${qualityScore} | Velocity: ${velocityCategory}`);
   } catch (err) {
     const msg = err instanceof Error ? err.message : String(err);
     console.error(`[Scraper][GitHub] Failed for ${applicationId} (attempt ${job.attempts}/${job.maxAttempts}): ${msg}`);
     const errSub = await getSubmission(applicationId);
-    errSub.scrapedData = { ...errSub.scrapedData, github: unavailable(msg) };
+    errSub.scrapedData = { 
+      ...errSub.scrapedData, 
+      github: unavailable(msg),
+      github_velocity: unavailable(msg),
+      github_signals: unavailable(msg)
+    };
     errSub.markModified('scrapedData');
     await errSub.save();
     throw err;

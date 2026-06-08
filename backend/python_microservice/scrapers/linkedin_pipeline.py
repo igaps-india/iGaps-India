@@ -133,9 +133,13 @@ def _search_linkedin_profile_url(full_name: str, company_name: str) -> Optional[
     }
     LI_PATTERN = re.compile(r"https?://(?:www\.)?linkedin\.com/in/[\w\-]+", re.I)
 
+    # ── Clean up names for better search results ──────────────────────────────
+    clean_name = re.sub(r'^(Dr\.|Mr\.|Ms\.|Mrs\.|Prof\.)\s+', '', full_name, flags=re.IGNORECASE).strip()
+    clean_company = re.sub(r'\s+(Pvt\.?\s*Ltd\.?|Inc\.?|LLC|Ltd\.?|Private\s+Limited|Corporation|Corp\.?)$', '', company_name, flags=re.IGNORECASE).strip()
+
     # ── Strategy 1: DuckDuckGo HTML (requests, no browser) ──────────────────
     try:
-        query = f'site:linkedin.com/in/ "{full_name}" "{company_name}"'
+        query = f'site:linkedin.com/in/ "{clean_name}" {clean_company}'
         ddg_url = (
             f"https://html.duckduckgo.com/html/?q={urllib.parse.quote_plus(query)}"
         )
@@ -166,7 +170,7 @@ def _search_linkedin_profile_url(full_name: str, company_name: str) -> Optional[
 
     # ── Strategy 2: Bing search via requests ────────────────────────────────
     try:
-        query2 = f'site:linkedin.com/in "{full_name}" "{company_name}"'
+        query2 = f'site:linkedin.com/in "{clean_name}" {clean_company}'
         bing_url = (
             f"https://www.bing.com/search?q={urllib.parse.quote_plus(query2)}"
         )

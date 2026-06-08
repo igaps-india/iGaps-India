@@ -12,8 +12,15 @@ export interface AlgorithmTraceEntry {
   categoryMultiplier: number;
   siblingWeight: number;
   weightedContribution: number;
+  // Legacy fields (kept for backward compatibility)
   llmEvidence?: string;
   llmWeaknesses?: string[];
+  // New strict audit fields (populated for llm_rubric signals)
+  rawTextEvidence?: string | null;   // Exact quote from founder text used as evidence
+  weakness?: string | null;          // Specific weakness the LLM identified
+  confidence?: 'high' | 'medium' | 'low'; // LLM confidence in this score
+  scoringMethod?: string;            // 'llm_rubric' | 'closed_mapping' | 'numeric_curve' | 'scrape_threshold' | 'derived_formula'
+  zodValidated?: boolean;            // Whether LLM output passed strict Zod schema
   flags: string[];
   sourceType: string;
   sourceRef?: string;
