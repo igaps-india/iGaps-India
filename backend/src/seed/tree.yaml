@@ -1,21 +1,14 @@
-# iGaps Evaluation Tree — v1
-# Single source of truth for the scoring DAG.
-# Edit weights, categories, scoringRules here and run `npm run seed` to apply.
-# INVARIANT: sibling weights (among enabled nodes with same parent) must sum to 100.
-# The seed loader validates this and warns (does not block) on violation.
-
 version: 1
-
 biasProfile:
   name: default-v1
   description: Default iGaps bias profile for AI startup screening
-  threshold: 40               # composite >= 40 = passed; edit freely
+  threshold: 40
   categoryMultipliers:
-    required: 0.5             # baseline hygiene; present = half credit
-    must_have: 1.0            # differentiating signal; full credit
-    good_to_have: 0.75        # bonus confidence signal
-    not_required: 0.0         # recorded for review; no score contribution
-  categoryShares:             # default % allocation when seeding a new layer
+    required: 0.5
+    must_have: 1.0
+    good_to_have: 0.75
+    not_required: 0.0
+  categoryShares:
     required: 35
     must_have: 35
     good_to_have: 20
@@ -25,7 +18,7 @@ biasProfile:
       enabled: true
       thresholdTrackAL3: 70
       thresholdTrackBL3L4Avg: 70
-      multiplier: 1.10
+      multiplier: 1.1
     inarticulateGenius:
       enabled: true
       thresholdTrackABelow: 50
@@ -33,1138 +26,1036 @@ biasProfile:
     tarPit:
       enabled: true
       multiplier: 0.75
-
 nodes:
-
-  # ══════════════════════════════════════════════════════════════
-  # TRACK A — Founding Team (35% of composite)
-  # ══════════════════════════════════════════════════════════════
-  - nodeId: trackA
-    kind: track
-    name: Founding Team
-    description: Is this the right group of people to build this specific company?
-    category: must_have
-    weight: 35
-    enabled: true
-    order: 1
-
-  # ── Layer A1 — Lived Insight (40% of Track A) ─────────────────
-  - nodeId: trackA.L1
-    kind: layer
-    parentId: trackA
-    name: Lived Insight
-    description: Deep non-obvious understanding rooted in personal experience
-    category: must_have
-    weight: 40
-    enabled: true
-    order: 1
-
-  - nodeId: trackA.L1.insider_status
-    kind: signal
-    parentId: trackA.L1
-    name: Insider status
-    description: Was founder a customer, operator, or neither before starting
-    category: required
-    weight: 25
-    enabled: true
-    order: 1
-    sourceType: closed_q
-    sourceRef: closedQ1
-    signalKey: closedQ1_role_before
-    scoringRule:
-      type: closed_mapping
-      mapping:
-        customer: 100
-        operator: 100
-        neither: 30
-
-  - nodeId: trackA.L1.domain_immersion_years
-    kind: signal
-    parentId: trackA.L1
-    name: Domain immersion duration
-    description: How long exposed to the problem before starting
-    category: must_have
-    weight: 20
-    enabled: true
-    order: 2
-    sourceType: closed_q
-    sourceRef: closedQ2
-    signalKey: closedQ2_exposure_months
-    scoringRule:
-      type: numeric_curve
-      curve:
-        "0": 0
-        "6": 30
-        "12": 50
-        "36": 80
-        "60": 100
-
-  - nodeId: trackA.L1.causality_chain_coherence
-    kind: signal
-    parentId: trackA.L1
-    name: Causality chain coherence
-    description: Does narrative trace lived context → friction/opportunity → insight → startup?
-    category: must_have
-    weight: 25
-    enabled: true
-    order: 3
-    sourceType: open_q
-    sourceRef: openQ1
-    signalKey: openQ1_causality_coherence_score
-    scoringRule:
-      type: llm_rubric
-      rubric: rubric.causality.v1
-    flags:
-      - inarticulate_genius_check
-
-  - nodeId: trackA.L1.non_obvious_insight
-    kind: signal
-    parentId: trackA.L1
-    name: Non-obvious insight
-    description: Insight specific, surprising, and traceable to lived experience; not a tarpit
-    category: must_have
-    weight: 25
-    enabled: true
-    order: 4
-    sourceType: open_q
-    sourceRef: openQ2
-    signalKey: openQ2_non_obvious_insight_score
-    scoringRule:
-      type: llm_rubric
-      rubric: rubric.non_obvious_insight.v1
-    flags:
-      - tar_pit_check
-
-  - nodeId: trackA.L1.prefounding_engagement
-    kind: signal
-    parentId: trackA.L1
-    name: Pre-founding public engagement
-    description: Evidence of engaging with the problem before founding (posts, talks, writing)
-    category: good_to_have
-    weight: 5
-    enabled: true
-    order: 5
-    sourceType: scraped
-    sourceRef: scrape.press_mentions
-    signalKey: scrape_prefounding_engagement
-    scoringRule:
-      type: scrape_threshold
-      thresholds:
-        none: 0
-        weak: 40
-        moderate: 70
-        strong: 100
-
-  # ── Layer A2 — Team Chemistry (20% of Track A) ────────────────
-  - nodeId: trackA.L2
-    kind: layer
-    parentId: trackA
-    name: Team Chemistry
-    description: Depth of co-founder relationship — resilience, trust, shared context
-    category: must_have
-    weight: 20
-    enabled: true
-    order: 2
-
-  - nodeId: trackA.L2.cofounder_known_duration
-    kind: signal
-    parentId: trackA.L2
-    name: Co-founder known duration
-    description: How long the founders have known each other
-    category: required
-    weight: 30
-    enabled: true
-    order: 1
-    sourceType: closed_q
-    sourceRef: closedQ3
-    signalKey: closedQ3_cofounder_known_months
-    scoringRule:
-      type: numeric_curve
-      curve:
-        "0": 0
-        "6": 20
-        "12": 50
-        "24": 75
-        "60": 100
-
-  - nodeId: trackA.L2.relationship_type_strength
-    kind: signal
-    parentId: trackA.L2
-    name: Relationship type strength
-    description: Nature of prior relationship — worked, studied, personal, built together
-    category: must_have
-    weight: 30
-    enabled: true
-    order: 2
-    sourceType: closed_q
-    sourceRef: closedQ4
-    signalKey: closedQ4_relationship_type
-    scoringRule:
-      type: closed_mapping
-      mapping:
-        built_startup_together: 100
-        personal_relationship: 90
-        worked_together: 80
-        studied_together: 70
-        met_through_network: 40
-        no_prior_relationship: 10
-
-  - nodeId: trackA.L2.shared_history_verified
-    kind: signal
-    parentId: trackA.L2
-    name: Shared history verified
-    description: LinkedIn shows overlapping employment, education, or prior ventures
-    category: must_have
-    weight: 25
-    enabled: true
-    order: 3
-    sourceType: scraped
-    sourceRef: scrape.linkedin
-    signalKey: scrape_cofounder_overlap_linkedin
-    scoringRule:
-      type: scrape_threshold
-      thresholds:
-        none: 0
-        weak: 30
-        moderate: 65
-        strong: 100
-
-  - nodeId: trackA.L2.prior_venture_together
-    kind: signal
-    parentId: trackA.L2
-    name: Prior venture together
-    description: MCA / Zauba shows co-directors on a prior company
-    category: good_to_have
-    weight: 15
-    enabled: true
-    order: 4
-    sourceType: scraped
-    sourceRef: scrape.zauba
-    signalKey: scrape_prior_venture_together
-    scoringRule:
-      type: scrape_threshold
-      thresholds:
-        none: 0
-        found: 100
-
-  # ── Layer A3 — Founder Leverage (25% of Track A) ──────────────
-  - nodeId: trackA.L3
-    kind: layer
-    parentId: trackA
-    name: Founder Leverage
-    description: Asymmetric unfair advantage — network, brand, trust, distribution, skill
-    category: must_have
-    weight: 25
-    enabled: true
-    order: 3
-
-  - nodeId: trackA.L3.first10_source
-    kind: signal
-    parentId: trackA.L3
-    name: Source of first 10 customers
-    description: How first customers were acquired reveals leverage quality
-    category: must_have
-    weight: 30
-    enabled: true
-    order: 1
-    sourceType: closed_q
-    sourceRef: closedQ5
-    signalKey: closedQ5_first10_source
-    scoringRule:
-      type: closed_mapping
-      mapping:
-        personal_relationship: 100
-        professional_network: 90
-        community: 80
-        inbound: 70
-        cold_outreach: 40
-        partnerships: 60
-        other: 30
-
-  - nodeId: trackA.L3.cac_first10
-    kind: signal
-    parentId: trackA.L3
-    name: CAC for first 10 customers
-    description: Lower or zero CAC = stronger leverage
-    category: must_have
-    weight: 20
-    enabled: true
-    order: 2
-    sourceType: closed_q
-    sourceRef: closedQ6
-    signalKey: closedQ6_cac_first10
-    scoringRule:
-      type: numeric_curve
-      # Inverse scored: 0 CAC = 100, higher CAC = lower score
-      # Values represent CAC in USD; adjusted at scoring time if INR provided
-      curve:
-        "0": 100
-        "100": 80
-        "500": 60
-        "2000": 40
-        "10000": 20
-
-  - nodeId: trackA.L3.leverage_specificity
-    kind: signal
-    parentId: trackA.L3
-    name: Leverage specificity
-    description: Founder names a specific, concrete, activatable advantage
-    category: must_have
-    weight: 30
-    enabled: true
-    order: 3
-    sourceType: open_q
-    sourceRef: openQ3
-    signalKey: openQ3_leverage_specificity_score
-    scoringRule:
-      type: vector_similarity
-      # Upgraded from llm_rubric to local vector similarity (Phase 2)
-      # Signal: does founder have a SPECIFIC non-obvious insight vs vague claim?
-
-  - nodeId: trackA.L3.network_density
-    kind: signal
-    parentId: trackA.L3
-    name: Network density in AI sector
-    description: LinkedIn connections concentrated in the target AI industry
-    category: good_to_have
-    weight: 20
-    enabled: true
-    order: 4
-    sourceType: scraped
-    sourceRef: scrape.linkedin
-    signalKey: scrape_network_density_ai
-    scoringRule:
-      type: scrape_threshold
-      thresholds:
-        none: 0
-        weak: 30
-        moderate: 65
-        strong: 100
-
-  # ── Layer A4 — Execution Velocity (15% of Track A) ────────────
-  - nodeId: trackA.L4
-    kind: layer
-    parentId: trackA
-    name: Execution Velocity
-    description: Build-sell-iterate coverage; speed of movement; pivot evidence
-    category: must_have
-    weight: 15
-    enabled: true
-    order: 4
-
-  - nodeId: trackA.L4.pivot_history
-    kind: signal
-    parentId: trackA.L4
-    name: Pivot history
-    description: Whether the startup has pivoted since founding
-    category: required
-    weight: 20
-    enabled: true
-    order: 1
-    sourceType: closed_q
-    sourceRef: closedQ7
-    signalKey: closedQ7_pivot_count
-    scoringRule:
-      type: closed_mapping
-      # At least one thoughtful pivot is a positive signal; zero can be naivety
-      mapping:
-        "0": 50
-        "1": 100
-        "2": 85
-        "3": 60
-        "4+": 40
-
-  - nodeId: trackA.L4.pivot_quality
-    kind: signal
-    parentId: trackA.L4
-    name: Pivot quality
-    description: Speed and clarity of response to negative market feedback
-    category: must_have
-    weight: 30
-    enabled: true
-    order: 2
-    sourceType: open_q
-    sourceRef: openQ9
-    signalKey: openQ9_pivot_quality_score
-    scoringRule:
-      type: llm_rubric
-      rubric: rubric.pivot_quality.v1
-
-  - nodeId: trackA.L4.github_velocity
-    kind: signal
-    parentId: trackA.L4
-    name: GitHub build velocity
-    description: Commit frequency and recency over last 6 months
-    category: must_have
-    weight: 25
-    enabled: true
-    order: 3
-    sourceType: scraped
-    sourceRef: scrape.github_velocity
-    signalKey: scrape_github_commits_per_week
-    scoringRule:
-      type: scrape_threshold
-      thresholds:
-        none: 0
-        low: 30        # < 1 commit/week
-        medium: 65     # 1–5 commits/week
-        high: 90       # 5–15 commits/week
-        very_high: 100 # 15+ commits/week
-
-  - nodeId: trackA.L4.incorporation_to_traction_days
-    kind: signal
-    parentId: trackA.L4
-    name: Days from incorporation to first traction
-    description: Speed from founding to first customer conversation or product
-    category: good_to_have
-    weight: 15
-    enabled: true
-    order: 4
-    sourceType: derived
-    sourceRef: derived.incorp_to_traction
-    signalKey: derived_incorp_to_traction_days
-    scoringRule:
-      type: derived_formula
-      formula: "incorp_to_traction_days_score(zauba_incorp_date, closedQ17_traction_stage)"
-
-  - nodeId: trackA.L4.press_velocity
-    kind: signal
-    parentId: trackA.L4
-    name: Press velocity
-    description: Volume and recency of press mentions; recorded for context only
-    category: not_required
-    weight: 10
-    enabled: true
-    order: 5
-    sourceType: scraped
-    sourceRef: scrape.press
-    signalKey: scrape_press_mention_count
-    scoringRule:
-      type: scrape_threshold
-      thresholds:
-        none: 0
-        low: 40
-        moderate: 70
-        high: 100
-
-  # ══════════════════════════════════════════════════════════════
-  # TRACK B — Problem and Market (25% of composite)
-  # ══════════════════════════════════════════════════════════════
-  - nodeId: trackB
-    kind: track
-    name: Problem and Market
-    description: Is the opportunity real and deeply understood?
-    category: must_have
-    weight: 25
-    enabled: true
-    order: 2
-
-  # ── Layer B1 — Problem Definition (30% of Track B) ────────────
-  - nodeId: trackB.L1
-    kind: layer
-    parentId: trackB
-    name: Problem Definition and Severity
-    description: Clear, specific, quantifiable problem in customer language
-    category: must_have
-    weight: 30
-    enabled: true
-    order: 1
-
-  - nodeId: trackB.L1.problem_in_customer_words
-    kind: signal
-    parentId: trackB.L1
-    name: Problem in customer words
-    description: Founder describes the problem in customer language, not pitch language
-    category: must_have
-    weight: 40
-    enabled: true
-    order: 1
-    sourceType: open_q
-    sourceRef: openQ4
-    signalKey: openQ4_problem_customer_language_score
-    scoringRule:
-      type: vector_similarity
-      # Upgraded from llm_rubric to local vector similarity (Phase 2)
-      # Signal: founder uses customer words vs pitch/marketing language?
-
-  - nodeId: trackB.L1.problem_severity_quant
-    kind: signal
-    parentId: trackB.L1
-    name: Problem severity quantification
-    description: Founder puts a number or concrete consequence on the pain
-    category: must_have
-    weight: 30
-    enabled: true
-    order: 2
-    sourceType: derived
-    sourceRef: derived.problem_severity
-    signalKey: derived_problem_severity_score
-    scoringRule:
-      type: vector_similarity
-      # Upgraded from derived_formula to local vector similarity (Phase 2)
-      # Signal: does founder QUANTIFY pain with real numbers vs vague description?
-
-  - nodeId: trackB.L1.persona_spend_on_workarounds
-    kind: signal
-    parentId: trackB.L1
-    name: Persona spend on workarounds
-    description: Does target persona currently spend on solving this problem
-    category: required
-    weight: 30
-    enabled: true
-    order: 3
-    sourceType: closed_q
-    sourceRef: closedQ11
-    signalKey: closedQ11_persona_workaround_spend
-    scoringRule:
-      type: closed_mapping
-      mapping:
-        "yes_high": 100
-        "yes_medium": 75
-        "yes_low": 50
-        "no": 10
-
-  # ── Layer B2 — Stakeholder Mapping (20% of Track B) ───────────
-  - nodeId: trackB.L2
-    kind: layer
-    parentId: trackB
-    name: Stakeholder Mapping and Customer Discovery
-    description: Breadth and depth of conversations across the value chain
-    category: must_have
-    weight: 20
-    enabled: true
-    order: 2
-
-  - nodeId: trackB.L2.discovery_breadth
-    kind: signal
-    parentId: trackB.L2
-    name: Discovery breadth
-    description: Total conversations across 8 stakeholder types
-    category: must_have
-    weight: 50
-    enabled: true
-    order: 1
-    sourceType: closed_q
-    sourceRef: closedQ8
-    signalKey: closedQ8_discovery_total
-    scoringRule:
-      type: numeric_curve
-      curve:
-        "0": 0
-        "5": 20
-        "10": 45
-        "20": 65
-        "30": 80
-        "50": 100
-
-  - nodeId: trackB.L2.discovery_quality
-    kind: signal
-    parentId: trackB.L2
-    name: Discovery quality
-    description: Surprising insights, unexpected stakeholders, changed thinking
-    category: must_have
-    weight: 50
-    enabled: true
-    order: 2
-    sourceType: open_q
-    sourceRef: openQ5
-    signalKey: openQ5_discovery_quality_score
-    scoringRule:
-      type: llm_rubric
-      rubric: rubric.discovery_quality.v1
-
-  # ── Layer B3 — Persona Definition (20% of Track B) ────────────
-  - nodeId: trackB.L3
-    kind: layer
-    parentId: trackB
-    name: Persona Definition
-    description: Precise vivid profile of the specific person most affected
-    category: must_have
-    weight: 20
-    enabled: true
-    order: 3
-
-  - nodeId: trackB.L3.persona_role_specificity
-    kind: signal
-    parentId: trackB.L3
-    name: Persona role specificity
-    description: Primary job title or role — specific, not a category
-    category: required
-    weight: 30
-    enabled: true
-    order: 1
-    sourceType: closed_q
-    sourceRef: closedQ9
-    signalKey: closedQ9_persona_role
-    scoringRule:
-      type: closed_mapping
-      mapping:
-        specific_role: 100
-        category_only: 40
-
-  - nodeId: trackB.L3.persona_segment_type
-    kind: signal
-    parentId: trackB.L3
-    name: Persona segment type
-    description: SME, Enterprise, Micro, or Govt — affects market sizing
-    category: must_have
-    weight: 20
-    enabled: true
-    order: 2
-    sourceType: closed_q
-    sourceRef: closedQ10
-    signalKey: closedQ10_persona_segment
-    scoringRule:
-      type: closed_mapping
-      mapping:
-        Enterprise: 100
-        SME: 90
-        Govt: 80
-        Micro: 70
-
-  - nodeId: trackB.L3.persona_vividity
-    kind: signal
-    parentId: trackB.L3
-    name: Persona vividity
-    description: Describes a specific human being, not a demographic segment
-    category: must_have
-    weight: 50
-    enabled: true
-    order: 3
-    sourceType: open_q
-    sourceRef: openQ4
-    signalKey: openQ4_persona_vividity_score
-    scoringRule:
-      type: vector_similarity
-      # Upgraded from llm_rubric to local vector similarity (Phase 2)
-      # Signal: specific real human (Priya, 34, ICU nurse) vs demographic (millennial professionals)?
-
-  # ── Layer B4 — Need Gap (20% of Track B) ──────────────────────
-  - nodeId: trackB.L4
-    kind: layer
-    parentId: trackB
-    name: Need Gap
-    description: Precise gap between current state and desired state; why existing solutions fail
-    category: must_have
-    weight: 20
-    enabled: true
-    order: 4
-
-  - nodeId: trackB.L4.need_gap_precision
-    kind: signal
-    parentId: trackB.L4
-    name: Need gap precision
-    description: Specific articulation of what is missing and why solutions have failed
-    category: must_have
-    weight: 60
-    enabled: true
-    order: 1
-    sourceType: open_q
-    sourceRef: openQ6
-    signalKey: openQ6_need_gap_precision_score
-    scoringRule:
-      type: llm_rubric
-      rubric: rubric.need_gap_precision.v1
-
-  - nodeId: trackB.L4.failed_alternatives_mapped
-    kind: signal
-    parentId: trackB.L4
-    name: Failed alternatives mapped
-    description: Evidence of mapping why existing solutions fail for target persona
-    category: good_to_have
-    weight: 40
-    enabled: true
-    order: 2
-    sourceType: scraped
-    sourceRef: scrape.press
-    signalKey: scrape_competitor_reviews_found
-    scoringRule:
-      type: scrape_threshold
-      thresholds:
-        none: 0
-        partial: 50
-        found: 100
-
-  # ── Layer B5 — Market Sizing (10% of Track B) ─────────────────
-  - nodeId: trackB.L5
-    kind: layer
-    parentId: trackB
-    name: Market Sizing
-    description: Bottoms-up SAM from persona count × willingness to pay
-    category: must_have
-    weight: 10
-    enabled: true
-    order: 5
-
-  - nodeId: trackB.L5.persona_count_with_source
-    kind: signal
-    parentId: trackB.L5
-    name: Persona count with source
-    description: Number of target personas with a cited source
-    category: required
-    weight: 60
-    enabled: true
-    order: 1
-    sourceType: closed_q
-    sourceRef: closedQ12
-    signalKey: closedQ12_persona_count
-    scoringRule:
-      type: closed_mapping
-      mapping:
-        provided_with_source: 100
-        provided_no_source: 50
-        not_provided: 0
-
-  - nodeId: trackB.L5.sam_calculation_derived
-    kind: signal
-    parentId: trackB.L5
-    name: SAM calculation derived
-    description: Derived bottoms-up SAM from persona count × estimated ARPC
-    category: must_have
-    weight: 40
-    enabled: true
-    order: 2
-    sourceType: derived
-    sourceRef: derived.sam
-    signalKey: derived_sam_score
-    scoringRule:
-      type: derived_formula
-      formula: "sam_score(closedQ12_persona_count, closedQ11_persona_workaround_spend)"
-
-  # ══════════════════════════════════════════════════════════════
-  # TRACK C — Solution (20% of composite)
-  # ══════════════════════════════════════════════════════════════
-  - nodeId: trackC
-    kind: track
-    name: Solution
-    description: Has something been built that addresses the need gap?
-    category: must_have
-    weight: 20
-    enabled: true
-    order: 3
-
-  # ── Layer C1 — Solution Definition (20% of Track C) ───────────
-  - nodeId: trackC.L1
-    kind: layer
-    parentId: trackC
-    name: Solution Definition
-    description: Solution maps directly to the need gap; described in persona language
-    category: must_have
-    weight: 20
-    enabled: true
-    order: 1
-
-  - nodeId: trackC.L1.solution_in_persona_words
-    kind: signal
-    parentId: trackC.L1
-    name: Solution in persona words
-    description: Persona could read this and say "yes, this was built for me"
-    category: must_have
-    weight: 50
-    enabled: true
-    order: 1
-    sourceType: open_q
-    sourceRef: openQ7
-    signalKey: openQ7_solution_persona_fit_score
-    scoringRule:
-      type: vector_similarity
-      # Upgraded from llm_rubric to local vector similarity (Phase 2)
-      # Signal: persona would say "built for me" vs generic enterprise platform?
-
-  - nodeId: trackC.L1.trl_level
-    kind: signal
-    parentId: trackC.L1
-    name: Technology Readiness Level
-    description: TRL 1–9 indicating product maturity
-    category: required
-    weight: 50
-    enabled: true
-    order: 2
-    sourceType: closed_q
-    sourceRef: closedQ13
-    signalKey: closedQ13_trl
-    scoringRule:
-      type: numeric_curve
-      curve:
-        "1": 10
-        "2": 20
-        "3": 30
-        "4": 45
-        "5": 60
-        "6": 75
-        "7": 85
-        "8": 95
-        "9": 100
-
-  # ── Layer C2 — Differentiation (25% of Track C) ───────────────
-  - nodeId: trackC.L2
-    kind: layer
-    parentId: trackC
-    name: Differentiation
-    description: Why would a customer switch from existing solutions
-    category: must_have
-    weight: 25
-    enabled: true
-    order: 2
-
-  - nodeId: trackC.L2.differentiation_dimension
-    kind: signal
-    parentId: trackC.L2
-    name: Differentiation dimension
-    description: Primary dimension of competitive advantage (2 picks)
-    category: required
-    weight: 40
-    enabled: true
-    order: 1
-    sourceType: closed_q
-    sourceRef: closedQ14
-    signalKey: closedQ14_differentiation_dimensions
-    scoringRule:
-      type: closed_mapping
-      mapping:
-        has_two_picks: 100
-        has_one_pick: 60
-        none: 0
-
-  - nodeId: trackC.L2.improvement_multiple
-    kind: signal
-    parentId: trackC.L2
-    name: Improvement multiple
-    description: How much better than current best alternative
-    category: must_have
-    weight: 30
-    enabled: true
-    order: 2
-    sourceType: closed_q
-    sourceRef: closedQ15
-    signalKey: closedQ15_improvement_multiple
-    scoringRule:
-      type: closed_mapping
-      mapping:
-        less_than_2x: 10
-        2x_to_5x: 40
-        5x_to_10x: 70
-        10x_to_50x: 90
-        more_than_50x: 100
-
-  - nodeId: trackC.L2.switching_reason_specificity
-    kind: signal
-    parentId: trackC.L2
-    name: Switching reason specificity
-    description: Specific, provable reason a current user would switch
-    category: must_have
-    weight: 30
-    enabled: true
-    order: 3
-    sourceType: open_q
-    sourceRef: openQ7
-    signalKey: openQ7_switching_reason_score
-    scoringRule:
-      type: llm_rubric
-      rubric: rubric.switching_reason.v1
-
-  # ── Layer C3 — Impact and Value (20% of Track C) ──────────────
-  - nodeId: trackC.L3
-    kind: layer
-    parentId: trackC
-    name: Impact and Value
-    description: Quantified improvement multiple; vitamin vs painkiller
-    category: must_have
-    weight: 20
-    enabled: true
-    order: 3
-
-  - nodeId: trackC.L3.impact_multiple_evidence
-    kind: signal
-    parentId: trackC.L3
-    name: Impact multiple evidence
-    description: Evidence for claimed improvement multiple
-    category: must_have
-    weight: 100
-    enabled: true
-    order: 1
-    sourceType: derived
-    sourceRef: derived.impact_evidence
-    signalKey: derived_impact_evidence_score
-    scoringRule:
-      type: derived_formula
-      formula: "impact_evidence_score(closedQ15_improvement_multiple, openQ10_market_proof_score)"
-
-  # ── Layer C4 — Technical Credibility (20% of Track C) ─────────
-  - nodeId: trackC.L4
-    kind: layer
-    parentId: trackC
-    name: Technical Credibility
-    description: Product actually works; can scale; built by credible people
-    category: must_have
-    weight: 20
-    enabled: true
-    order: 4
-
-  - nodeId: trackC.L4.github_signals
-    kind: signal
-    parentId: trackC.L4
-    name: GitHub signals
-    description: Repo exists, active development, quality indicators
-    category: must_have
-    weight: 40
-    enabled: true
-    order: 1
-    sourceType: scraped
-    sourceRef: scrape.github_signals
-    signalKey: scrape_github_repo_quality
-    scoringRule:
-      type: scrape_threshold
-      thresholds:
-        none: 0
-        exists_inactive: 20
-        exists_low_activity: 45
-        exists_active: 75
-        exists_high_activity: 100
-
-  - nodeId: trackC.L4.hard_problem_articulation
-    kind: signal
-    parentId: trackC.L4
-    name: Hard problem articulation
-    description: Founder names a specific hard technical/operational problem solved
-    category: must_have
-    weight: 40
-    enabled: true
-    order: 2
-    sourceType: open_q
-    sourceRef: openQ8
-    signalKey: openQ8_hard_problem_score
-    scoringRule:
-      type: llm_rubric
-      rubric: rubric.hard_problem.v1
-
-  - nodeId: trackC.L4.pitch_deck_tech_coherence
-    kind: signal
-    parentId: trackC.L4
-    name: Pitch deck technical coherence
-    description: Architecture described in pitch deck is internally consistent
-    category: good_to_have
-    weight: 20
-    enabled: true
-    order: 3
-    sourceType: upload_parse
-    sourceRef: upload.pitch_deck
-    signalKey: upload_pitch_tech_coherence_score
-    scoringRule:
-      type: llm_rubric
-      rubric: rubric.pitch_tech_coherence.v1
-
-  # ── Layer C5 — Moat (15% of Track C) ──────────────────────────
-  - nodeId: trackC.L5
-    kind: layer
-    parentId: trackC
-    name: Moat
-    description: Compounding defensive advantage; replication resistance
-    category: must_have
-    weight: 15
-    enabled: true
-    order: 5
-
-  - nodeId: trackC.L5.moat_category
-    kind: signal
-    parentId: trackC.L5
-    name: Moat category
-    description: Primary source of defensibility (ranked by strength)
-    category: required
-    weight: 30
-    enabled: true
-    order: 1
-    sourceType: closed_q
-    sourceRef: closedQ16
-    signalKey: closedQ16_moat_categories
-    scoringRule:
-      type: closed_mapping
-      mapping:
-        proprietary_data: 100
-        deep_tech: 95
-        network_effects: 90
-        regulatory_advantage: 85
-        workflow_integration: 80
-        switching_costs: 75
-        exclusive_partnerships: 65
-        brand_trust: 55
-        community: 50
-
-  - nodeId: trackC.L5.moat_compounding_evidence
-    kind: signal
-    parentId: trackC.L5
-    name: Moat compounding evidence
-    description: Moat gets stronger over time; replication resistance clear
-    category: must_have
-    weight: 40
-    enabled: true
-    order: 2
-    sourceType: open_q
-    sourceRef: openQ8
-    signalKey: openQ8_moat_articulation_score
-    scoringRule:
-      type: llm_rubric
-      rubric: rubric.moat_articulation.v1
-
-  - nodeId: trackC.L5.patent_filings
-    kind: signal
-    parentId: trackC.L5
-    name: Patent filings
-    description: Indian Patent Office or Google Patents filings related to core technology
-    category: good_to_have
-    weight: 30
-    enabled: true
-    order: 3
-    sourceType: scraped
-    sourceRef: scrape.patents
-    signalKey: scrape_patent_count
-    scoringRule:
-      type: scrape_threshold
-      thresholds:
-        none: 0
-        filed: 60
-        granted: 100
-
-  # ══════════════════════════════════════════════════════════════
-  # TRACK D — Traction and Validation (20% of composite)
-  # ══════════════════════════════════════════════════════════════
-  - nodeId: trackD
-    kind: track
-    name: Traction and Validation
-    description: Has the market responded? Is there concrete demand evidence?
-    category: must_have
-    weight: 20
-    enabled: true
-    order: 4
-
-  # ── Layer D1 — Traction (50% of Track D) ──────────────────────
-  - nodeId: trackD.L1
-    kind: layer
-    parentId: trackD
-    name: Traction
-    description: Position on the traction quality stack; velocity of movement
-    category: must_have
-    weight: 50
-    enabled: true
-    order: 1
-
-  - nodeId: trackD.L1.traction_stack_position
-    kind: signal
-    parentId: trackD.L1
-    name: Traction stack position
-    description: Current stage — L1 conversations to L5 scaled revenue
-    category: required
-    weight: 60
-    enabled: true
-    order: 1
-    sourceType: closed_q
-    sourceRef: closedQ17
-    signalKey: closedQ17_traction_stage
-    scoringRule:
-      type: closed_mapping
-      mapping:
-        early_conversations: 20
-        pilots_lois: 40
-        paying_customers: 60
-        recurring_revenue: 80
-        scaled_revenue: 100
-
-  - nodeId: trackD.L1.branching_traction_metric
-    kind: signal
-    parentId: trackD.L1
-    name: Sector-specific traction metric
-    description: Enterprise — ACV pipeline; B2C — MRR and growth; Deeptech — LOIs and pilots
-    category: must_have
-    weight: 30
-    enabled: true
-    order: 2
-    sourceType: closed_q
-    sourceRef: closedQ18
-    signalKey: closedQ18_sector_traction_metric
-    scoringRule:
-      type: closed_mapping
-      mapping:
-        strong: 100
-        moderate: 60
-        weak: 30
-        none: 0
-
-  - nodeId: trackD.L1.market_proof
-    kind: signal
-    parentId: trackD.L1
-    name: Market proof
-    description: Actual evidence — not interpreted signals — that market needs the solution
-    category: must_have
-    weight: 10
-    enabled: true
-    order: 3
-    sourceType: open_q
-    sourceRef: openQ10
-    signalKey: openQ10_market_proof_score
-    scoringRule:
-      type: llm_rubric
-      rubric: rubric.market_proof.v1
-
-  # ── Layer D2 — Validation (50% of Track D) ────────────────────
-  - nodeId: trackD.L2
-    kind: layer
-    parentId: trackD
-    name: Validation
-    description: Organic demand signals; evidence artifacts; intensity of customer commitment
-    category: must_have
-    weight: 50
-    enabled: true
-    order: 2
-
-  - nodeId: trackD.L2.organic_demand_signal
-    kind: signal
-    parentId: trackD.L2
-    name: Organic demand signal
-    description: Google Trends, LinkedIn growth, press — unprompted market awareness
-    category: must_have
-    weight: 40
-    enabled: true
-    order: 1
-    sourceType: scraped
-    sourceRef: scrape.press
-    signalKey: scrape_organic_demand_score
-    scoringRule:
-      type: scrape_threshold
-      thresholds:
-        none: 0
-        weak: 30
-        moderate: 65
-        strong: 100
-
-  - nodeId: trackD.L2.pitch_deck_traction_claims
-    kind: signal
-    parentId: trackD.L2
-    name: Pitch deck traction claims
-    description: Traction data visible in pitch deck; cross-referenced for consistency
-    category: good_to_have
-    weight: 30
-    enabled: true
-    order: 2
-    sourceType: upload_parse
-    sourceRef: upload.pitch_deck
-    signalKey: upload_pitch_traction_score
-    scoringRule:
-      type: llm_rubric
-      rubric: rubric.pitch_traction.v1
-
-  - nodeId: trackD.L2.customer_initiated_evidence
-    kind: signal
-    parentId: trackD.L2
-    name: Customer-initiated evidence
-    description: Customers came to founder unprompted — strongest early validation signal
-    category: must_have
-    weight: 30
-    enabled: true
-    order: 3
-    sourceType: open_q
-    sourceRef: openQ10
-    signalKey: openQ10_customer_initiated_score
-    scoringRule:
-      type: vector_similarity
-      # Upgraded from llm_rubric to local vector similarity (Phase 2)
-      # Signal: customers came unprompted vs engineered via cold outreach?
+- nodeId: trackA
+  kind: track
+  name: Founding Team
+  description: Is this the right group of people to build this specific company?
+  category: must_have
+  weight: 35
+  enabled: true
+  order: 1
+- nodeId: trackA.L1
+  kind: layer
+  parentId: trackA
+  name: Lived Insight
+  description: Deep non-obvious understanding rooted in personal experience
+  category: must_have
+  weight: 40
+  enabled: true
+  order: 1
+- nodeId: trackA.L1.insider_status
+  kind: signal
+  parentId: trackA.L1
+  name: Insider status
+  description: Was founder a customer, operator, or neither before starting
+  category: required
+  weight: 25
+  enabled: true
+  order: 1
+  sourceType: closed_q
+  sourceRef: closedQ1
+  signalKey: closedQ1_role_before
+  scoringRule:
+    type: closed_mapping
+    mapping:
+      customer: 100
+      operator: 100
+      neither: 30
+- nodeId: trackA.L1.domain_immersion_years
+  kind: signal
+  parentId: trackA.L1
+  name: Domain immersion duration
+  description: How long exposed to the problem before starting
+  category: must_have
+  weight: 20
+  enabled: true
+  order: 2
+  sourceType: closed_q
+  sourceRef: closedQ2
+  signalKey: closedQ2_exposure_months
+  scoringRule:
+    type: numeric_curve
+    curve:
+      '0': 0
+      '6': 30
+      '12': 50
+      '36': 80
+      '60': 100
+- nodeId: trackA.L1.causality_chain_coherence
+  kind: signal
+  parentId: trackA.L1
+  name: Causality chain coherence
+  description: "Does narrative trace lived context \u2192 friction/opportunity \u2192\
+    \ insight \u2192 startup?"
+  category: must_have
+  weight: 25
+  enabled: true
+  order: 3
+  sourceType: open_q
+  sourceRef: openQ1
+  signalKey: openQ1_causality_coherence_score
+  scoringRule:
+    type: llm_rubric
+    rubric: rubric.causality.v1
+  flags:
+  - inarticulate_genius_check
+- nodeId: trackA.L1.non_obvious_insight
+  kind: signal
+  parentId: trackA.L1
+  name: Non-obvious insight
+  description: Insight specific, surprising, and traceable to lived experience; not
+    a tarpit
+  category: must_have
+  weight: 25
+  enabled: true
+  order: 4
+  sourceType: open_q
+  sourceRef: openQ2
+  signalKey: openQ2_non_obvious_insight_score
+  scoringRule:
+    type: llm_rubric
+    rubric: rubric.non_obvious_insight.v1
+  flags:
+  - tar_pit_check
+- nodeId: trackA.L1.prefounding_engagement
+  kind: signal
+  parentId: trackA.L1
+  name: Pre-founding public engagement
+  description: Evidence of engaging with the problem before founding (posts, talks,
+    writing)
+  category: good_to_have
+  weight: 5
+  enabled: false
+  order: 5
+  sourceType: scraped
+  sourceRef: scrape.press_mentions
+  signalKey: scrape_prefounding_engagement
+  scoringRule:
+    type: scrape_threshold
+    thresholds:
+      none: 0
+      weak: 40
+      moderate: 70
+      strong: 100
+- nodeId: trackA.L2
+  kind: layer
+  parentId: trackA
+  name: Team Chemistry
+  description: "Depth of co-founder relationship \u2014 resilience, trust, shared\
+    \ context"
+  category: must_have
+  weight: 20
+  enabled: true
+  order: 2
+- nodeId: trackA.L2.cofounder_known_duration
+  kind: signal
+  parentId: trackA.L2
+  name: Co-founder known duration
+  description: How long the founders have known each other
+  category: required
+  weight: 30
+  enabled: true
+  order: 1
+  sourceType: closed_q
+  sourceRef: closedQ3
+  signalKey: closedQ3_cofounder_known_months
+  scoringRule:
+    type: numeric_curve
+    curve:
+      '0': 0
+      '6': 20
+      '12': 50
+      '24': 75
+      '60': 100
+- nodeId: trackA.L2.relationship_type_strength
+  kind: signal
+  parentId: trackA.L2
+  name: Relationship type strength
+  description: "Nature of prior relationship \u2014 worked, studied, personal, built\
+    \ together"
+  category: must_have
+  weight: 30
+  enabled: true
+  order: 2
+  sourceType: closed_q
+  sourceRef: closedQ4
+  signalKey: closedQ4_relationship_type
+  scoringRule:
+    type: closed_mapping
+    mapping:
+      built_startup_together: 100
+      personal_relationship: 90
+      worked_together: 80
+      studied_together: 70
+      met_through_network: 40
+      no_prior_relationship: 10
+- nodeId: trackA.L2.shared_history_verified
+  kind: signal
+  parentId: trackA.L2
+  name: Shared history verified
+  description: LinkedIn shows overlapping employment, education, or prior ventures
+  category: must_have
+  weight: 25
+  enabled: false
+  order: 3
+  sourceType: scraped
+  sourceRef: scrape.linkedin
+  signalKey: scrape_cofounder_overlap_linkedin
+  scoringRule:
+    type: scrape_threshold
+    thresholds:
+      none: 0
+      weak: 30
+      moderate: 65
+      strong: 100
+- nodeId: trackA.L2.prior_venture_together
+  kind: signal
+  parentId: trackA.L2
+  name: Prior venture together
+  description: MCA / Zauba shows co-directors on a prior company
+  category: good_to_have
+  weight: 15
+  enabled: false
+  order: 4
+  sourceType: scraped
+  sourceRef: scrape.zauba
+  signalKey: scrape_prior_venture_together
+  scoringRule:
+    type: scrape_threshold
+    thresholds:
+      none: 0
+      found: 100
+- nodeId: trackA.L3
+  kind: layer
+  parentId: trackA
+  name: Founder Leverage
+  description: "Asymmetric unfair advantage \u2014 network, brand, trust, distribution,\
+    \ skill"
+  category: must_have
+  weight: 25
+  enabled: true
+  order: 3
+- nodeId: trackA.L3.first10_source
+  kind: signal
+  parentId: trackA.L3
+  name: Source of first 10 customers
+  description: How first customers were acquired reveals leverage quality
+  category: must_have
+  weight: 30
+  enabled: true
+  order: 1
+  sourceType: closed_q
+  sourceRef: closedQ5
+  signalKey: closedQ5_first10_source
+  scoringRule:
+    type: closed_mapping
+    mapping:
+      personal_relationship: 100
+      professional_network: 90
+      community: 80
+      inbound: 70
+      cold_outreach: 40
+      partnerships: 60
+      other: 30
+- nodeId: trackA.L3.cac_first10
+  kind: signal
+  parentId: trackA.L3
+  name: CAC for first 10 customers
+  description: Lower or zero CAC = stronger leverage
+  category: must_have
+  weight: 20
+  enabled: true
+  order: 2
+  sourceType: closed_q
+  sourceRef: closedQ6
+  signalKey: closedQ6_cac_first10
+  scoringRule:
+    type: numeric_curve
+    curve:
+      '0': 100
+      '100': 80
+      '500': 60
+      '2000': 40
+      '10000': 20
+- nodeId: trackA.L3.leverage_specificity
+  kind: signal
+  parentId: trackA.L3
+  name: Leverage specificity
+  description: Founder names a specific, concrete, activatable advantage
+  category: must_have
+  weight: 30
+  enabled: true
+  order: 3
+  sourceType: open_q
+  sourceRef: openQ3
+  signalKey: openQ3_leverage_specificity_score
+  scoringRule:
+    type: vector_similarity
+- nodeId: trackA.L3.network_density
+  kind: signal
+  parentId: trackA.L3
+  name: Network density in AI sector
+  description: LinkedIn connections concentrated in the target AI industry
+  category: good_to_have
+  weight: 20
+  enabled: false
+  order: 4
+  sourceType: scraped
+  sourceRef: scrape.linkedin
+  signalKey: scrape_network_density_ai
+  scoringRule:
+    type: scrape_threshold
+    thresholds:
+      none: 0
+      weak: 30
+      moderate: 65
+      strong: 100
+- nodeId: trackA.L4
+  kind: layer
+  parentId: trackA
+  name: Execution Velocity
+  description: Build-sell-iterate coverage; speed of movement; pivot evidence
+  category: must_have
+  weight: 15
+  enabled: true
+  order: 4
+- nodeId: trackA.L4.pivot_history
+  kind: signal
+  parentId: trackA.L4
+  name: Pivot history
+  description: Whether the startup has pivoted since founding
+  category: required
+  weight: 20
+  enabled: true
+  order: 1
+  sourceType: closed_q
+  sourceRef: closedQ7
+  signalKey: closedQ7_pivot_count
+  scoringRule:
+    type: closed_mapping
+    mapping:
+      '0': 50
+      '1': 100
+      '2': 85
+      '3': 60
+      4+: 40
+- nodeId: trackA.L4.pivot_quality
+  kind: signal
+  parentId: trackA.L4
+  name: Pivot quality
+  description: Speed and clarity of response to negative market feedback
+  category: must_have
+  weight: 30
+  enabled: true
+  order: 2
+  sourceType: open_q
+  sourceRef: openQ9
+  signalKey: openQ9_pivot_quality_score
+  scoringRule:
+    type: llm_rubric
+    rubric: rubric.pivot_quality.v1
+- nodeId: trackA.L4.github_velocity
+  kind: signal
+  parentId: trackA.L4
+  name: GitHub build velocity
+  description: Commit frequency and recency over last 6 months
+  category: must_have
+  weight: 25
+  enabled: false
+  order: 3
+  sourceType: scraped
+  sourceRef: scrape.github_velocity
+  signalKey: scrape_github_commits_per_week
+  scoringRule:
+    type: scrape_threshold
+    thresholds:
+      none: 0
+      low: 30
+      medium: 65
+      high: 90
+      very_high: 100
+- nodeId: trackA.L4.incorporation_to_traction_days
+  kind: signal
+  parentId: trackA.L4
+  name: Days from incorporation to first traction
+  description: Speed from founding to first customer conversation or product
+  category: good_to_have
+  weight: 15
+  enabled: true
+  order: 4
+  sourceType: derived
+  sourceRef: derived.incorp_to_traction
+  signalKey: derived_incorp_to_traction_days
+  scoringRule:
+    type: derived_formula
+    formula: incorp_to_traction_days_score(zauba_incorp_date, closedQ17_traction_stage)
+- nodeId: trackA.L4.press_velocity
+  kind: signal
+  parentId: trackA.L4
+  name: Press velocity
+  description: Volume and recency of press mentions; recorded for context only
+  category: not_required
+  weight: 10
+  enabled: false
+  order: 5
+  sourceType: scraped
+  sourceRef: scrape.press
+  signalKey: scrape_press_mention_count
+  scoringRule:
+    type: scrape_threshold
+    thresholds:
+      none: 0
+      low: 40
+      moderate: 70
+      high: 100
+- nodeId: trackB
+  kind: track
+  name: Problem and Market
+  description: Is the opportunity real and deeply understood?
+  category: must_have
+  weight: 25
+  enabled: true
+  order: 2
+- nodeId: trackB.L1
+  kind: layer
+  parentId: trackB
+  name: Problem Definition and Severity
+  description: Clear, specific, quantifiable problem in customer language
+  category: must_have
+  weight: 30
+  enabled: true
+  order: 1
+- nodeId: trackB.L1.problem_in_customer_words
+  kind: signal
+  parentId: trackB.L1
+  name: Problem in customer words
+  description: Founder describes the problem in customer language, not pitch language
+  category: must_have
+  weight: 40
+  enabled: true
+  order: 1
+  sourceType: open_q
+  sourceRef: openQ4
+  signalKey: openQ4_problem_customer_language_score
+  scoringRule:
+    type: vector_similarity
+- nodeId: trackB.L1.problem_severity_quant
+  kind: signal
+  parentId: trackB.L1
+  name: Problem severity quantification
+  description: Founder puts a number or concrete consequence on the pain
+  category: must_have
+  weight: 30
+  enabled: true
+  order: 2
+  sourceType: derived
+  sourceRef: derived.problem_severity
+  signalKey: derived_problem_severity_score
+  scoringRule:
+    type: vector_similarity
+- nodeId: trackB.L1.persona_spend_on_workarounds
+  kind: signal
+  parentId: trackB.L1
+  name: Persona spend on workarounds
+  description: Does target persona currently spend on solving this problem
+  category: required
+  weight: 30
+  enabled: true
+  order: 3
+  sourceType: closed_q
+  sourceRef: closedQ11
+  signalKey: closedQ11_persona_workaround_spend
+  scoringRule:
+    type: closed_mapping
+    mapping:
+      yes_high: 100
+      yes_medium: 75
+      yes_low: 50
+      'no': 10
+- nodeId: trackB.L2
+  kind: layer
+  parentId: trackB
+  name: Stakeholder Mapping and Customer Discovery
+  description: Breadth and depth of conversations across the value chain
+  category: must_have
+  weight: 20
+  enabled: true
+  order: 2
+- nodeId: trackB.L2.discovery_breadth
+  kind: signal
+  parentId: trackB.L2
+  name: Discovery breadth
+  description: Total conversations across 8 stakeholder types
+  category: must_have
+  weight: 50
+  enabled: true
+  order: 1
+  sourceType: closed_q
+  sourceRef: closedQ8
+  signalKey: closedQ8_discovery_total
+  scoringRule:
+    type: numeric_curve
+    curve:
+      '0': 0
+      '5': 20
+      '10': 45
+      '20': 65
+      '30': 80
+      '50': 100
+- nodeId: trackB.L2.discovery_quality
+  kind: signal
+  parentId: trackB.L2
+  name: Discovery quality
+  description: Surprising insights, unexpected stakeholders, changed thinking
+  category: must_have
+  weight: 50
+  enabled: true
+  order: 2
+  sourceType: open_q
+  sourceRef: openQ5
+  signalKey: openQ5_discovery_quality_score
+  scoringRule:
+    type: llm_rubric
+    rubric: rubric.discovery_quality.v1
+- nodeId: trackB.L3
+  kind: layer
+  parentId: trackB
+  name: Persona Definition
+  description: Precise vivid profile of the specific person most affected
+  category: must_have
+  weight: 20
+  enabled: true
+  order: 3
+- nodeId: trackB.L3.persona_role_specificity
+  kind: signal
+  parentId: trackB.L3
+  name: Persona role specificity
+  description: "Primary job title or role \u2014 specific, not a category"
+  category: required
+  weight: 30
+  enabled: true
+  order: 1
+  sourceType: closed_q
+  sourceRef: closedQ9
+  signalKey: closedQ9_persona_role
+  scoringRule:
+    type: closed_mapping
+    mapping:
+      specific_role: 100
+      category_only: 40
+- nodeId: trackB.L3.persona_segment_type
+  kind: signal
+  parentId: trackB.L3
+  name: Persona segment type
+  description: "SME, Enterprise, Micro, or Govt \u2014 affects market sizing"
+  category: must_have
+  weight: 20
+  enabled: true
+  order: 2
+  sourceType: closed_q
+  sourceRef: closedQ10
+  signalKey: closedQ10_persona_segment
+  scoringRule:
+    type: closed_mapping
+    mapping:
+      Enterprise: 100
+      SME: 90
+      Govt: 80
+      Micro: 70
+- nodeId: trackB.L3.persona_vividity
+  kind: signal
+  parentId: trackB.L3
+  name: Persona vividity
+  description: Describes a specific human being, not a demographic segment
+  category: must_have
+  weight: 50
+  enabled: true
+  order: 3
+  sourceType: open_q
+  sourceRef: openQ4
+  signalKey: openQ4_persona_vividity_score
+  scoringRule:
+    type: vector_similarity
+- nodeId: trackB.L4
+  kind: layer
+  parentId: trackB
+  name: Need Gap
+  description: Precise gap between current state and desired state; why existing solutions
+    fail
+  category: must_have
+  weight: 20
+  enabled: true
+  order: 4
+- nodeId: trackB.L4.need_gap_precision
+  kind: signal
+  parentId: trackB.L4
+  name: Need gap precision
+  description: Specific articulation of what is missing and why solutions have failed
+  category: must_have
+  weight: 60
+  enabled: true
+  order: 1
+  sourceType: open_q
+  sourceRef: openQ6
+  signalKey: openQ6_need_gap_precision_score
+  scoringRule:
+    type: llm_rubric
+    rubric: rubric.need_gap_precision.v1
+- nodeId: trackB.L4.failed_alternatives_mapped
+  kind: signal
+  parentId: trackB.L4
+  name: Failed alternatives mapped
+  description: Evidence of mapping why existing solutions fail for target persona
+  category: good_to_have
+  weight: 40
+  enabled: false
+  order: 2
+  sourceType: scraped
+  sourceRef: scrape.press
+  signalKey: scrape_competitor_reviews_found
+  scoringRule:
+    type: scrape_threshold
+    thresholds:
+      none: 0
+      partial: 50
+      found: 100
+- nodeId: trackB.L5
+  kind: layer
+  parentId: trackB
+  name: Market Sizing
+  description: "Bottoms-up SAM from persona count \xD7 willingness to pay"
+  category: must_have
+  weight: 10
+  enabled: true
+  order: 5
+- nodeId: trackB.L5.persona_count_with_source
+  kind: signal
+  parentId: trackB.L5
+  name: Persona count with source
+  description: Number of target personas with a cited source
+  category: required
+  weight: 60
+  enabled: true
+  order: 1
+  sourceType: closed_q
+  sourceRef: closedQ12
+  signalKey: closedQ12_persona_count
+  scoringRule:
+    type: closed_mapping
+    mapping:
+      provided_with_source: 100
+      provided_no_source: 50
+      not_provided: 0
+- nodeId: trackB.L5.sam_calculation_derived
+  kind: signal
+  parentId: trackB.L5
+  name: SAM calculation derived
+  description: "Derived bottoms-up SAM from persona count \xD7 estimated ARPC"
+  category: must_have
+  weight: 40
+  enabled: true
+  order: 2
+  sourceType: derived
+  sourceRef: derived.sam
+  signalKey: derived_sam_score
+  scoringRule:
+    type: derived_formula
+    formula: sam_score(closedQ12_persona_count, closedQ11_persona_workaround_spend)
+- nodeId: trackC
+  kind: track
+  name: Solution
+  description: Has something been built that addresses the need gap?
+  category: must_have
+  weight: 20
+  enabled: true
+  order: 3
+- nodeId: trackC.L1
+  kind: layer
+  parentId: trackC
+  name: Solution Definition
+  description: Solution maps directly to the need gap; described in persona language
+  category: must_have
+  weight: 20
+  enabled: true
+  order: 1
+- nodeId: trackC.L1.solution_in_persona_words
+  kind: signal
+  parentId: trackC.L1
+  name: Solution in persona words
+  description: Persona could read this and say "yes, this was built for me"
+  category: must_have
+  weight: 50
+  enabled: true
+  order: 1
+  sourceType: open_q
+  sourceRef: openQ7
+  signalKey: openQ7_solution_persona_fit_score
+  scoringRule:
+    type: vector_similarity
+- nodeId: trackC.L1.trl_level
+  kind: signal
+  parentId: trackC.L1
+  name: Technology Readiness Level
+  description: "TRL 1\u20139 indicating product maturity"
+  category: required
+  weight: 50
+  enabled: true
+  order: 2
+  sourceType: closed_q
+  sourceRef: closedQ13
+  signalKey: closedQ13_trl
+  scoringRule:
+    type: numeric_curve
+    curve:
+      '1': 10
+      '2': 20
+      '3': 30
+      '4': 45
+      '5': 60
+      '6': 75
+      '7': 85
+      '8': 95
+      '9': 100
+- nodeId: trackC.L2
+  kind: layer
+  parentId: trackC
+  name: Differentiation
+  description: Why would a customer switch from existing solutions
+  category: must_have
+  weight: 25
+  enabled: true
+  order: 2
+- nodeId: trackC.L2.differentiation_dimension
+  kind: signal
+  parentId: trackC.L2
+  name: Differentiation dimension
+  description: Primary dimension of competitive advantage (2 picks)
+  category: required
+  weight: 40
+  enabled: true
+  order: 1
+  sourceType: closed_q
+  sourceRef: closedQ14
+  signalKey: closedQ14_differentiation_dimensions
+  scoringRule:
+    type: closed_mapping
+    mapping:
+      has_two_picks: 100
+      has_one_pick: 60
+      none: 0
+- nodeId: trackC.L2.improvement_multiple
+  kind: signal
+  parentId: trackC.L2
+  name: Improvement multiple
+  description: How much better than current best alternative
+  category: must_have
+  weight: 30
+  enabled: true
+  order: 2
+  sourceType: closed_q
+  sourceRef: closedQ15
+  signalKey: closedQ15_improvement_multiple
+  scoringRule:
+    type: closed_mapping
+    mapping:
+      less_than_2x: 10
+      2x_to_5x: 40
+      5x_to_10x: 70
+      10x_to_50x: 90
+      more_than_50x: 100
+- nodeId: trackC.L2.switching_reason_specificity
+  kind: signal
+  parentId: trackC.L2
+  name: Switching reason specificity
+  description: Specific, provable reason a current user would switch
+  category: must_have
+  weight: 30
+  enabled: true
+  order: 3
+  sourceType: open_q
+  sourceRef: openQ7
+  signalKey: openQ7_switching_reason_score
+  scoringRule:
+    type: llm_rubric
+    rubric: rubric.switching_reason.v1
+- nodeId: trackC.L3
+  kind: layer
+  parentId: trackC
+  name: Impact and Value
+  description: Quantified improvement multiple; vitamin vs painkiller
+  category: must_have
+  weight: 20
+  enabled: true
+  order: 3
+- nodeId: trackC.L3.impact_multiple_evidence
+  kind: signal
+  parentId: trackC.L3
+  name: Impact multiple evidence
+  description: Evidence for claimed improvement multiple
+  category: must_have
+  weight: 100
+  enabled: true
+  order: 1
+  sourceType: derived
+  sourceRef: derived.impact_evidence
+  signalKey: derived_impact_evidence_score
+  scoringRule:
+    type: derived_formula
+    formula: impact_evidence_score(closedQ15_improvement_multiple, openQ10_market_proof_score)
+- nodeId: trackC.L4
+  kind: layer
+  parentId: trackC
+  name: Technical Credibility
+  description: Product actually works; can scale; built by credible people
+  category: must_have
+  weight: 20
+  enabled: true
+  order: 4
+- nodeId: trackC.L4.github_signals
+  kind: signal
+  parentId: trackC.L4
+  name: GitHub signals
+  description: Repo exists, active development, quality indicators
+  category: must_have
+  weight: 40
+  enabled: false
+  order: 1
+  sourceType: scraped
+  sourceRef: scrape.github_signals
+  signalKey: scrape_github_repo_quality
+  scoringRule:
+    type: scrape_threshold
+    thresholds:
+      none: 0
+      exists_inactive: 20
+      exists_low_activity: 45
+      exists_active: 75
+      exists_high_activity: 100
+- nodeId: trackC.L4.hard_problem_articulation
+  kind: signal
+  parentId: trackC.L4
+  name: Hard problem articulation
+  description: Founder names a specific hard technical/operational problem solved
+  category: must_have
+  weight: 40
+  enabled: true
+  order: 2
+  sourceType: open_q
+  sourceRef: openQ8
+  signalKey: openQ8_hard_problem_score
+  scoringRule:
+    type: llm_rubric
+    rubric: rubric.hard_problem.v1
+- nodeId: trackC.L4.pitch_deck_tech_coherence
+  kind: signal
+  parentId: trackC.L4
+  name: Pitch deck technical coherence
+  description: Architecture described in pitch deck is internally consistent
+  category: good_to_have
+  weight: 20
+  enabled: true
+  order: 3
+  sourceType: upload_parse
+  sourceRef: upload.pitch_deck
+  signalKey: upload_pitch_tech_coherence_score
+  scoringRule:
+    type: llm_rubric
+    rubric: rubric.pitch_tech_coherence.v1
+- nodeId: trackC.L5
+  kind: layer
+  parentId: trackC
+  name: Moat
+  description: Compounding defensive advantage; replication resistance
+  category: must_have
+  weight: 15
+  enabled: true
+  order: 5
+- nodeId: trackC.L5.moat_category
+  kind: signal
+  parentId: trackC.L5
+  name: Moat category
+  description: Primary source of defensibility (ranked by strength)
+  category: required
+  weight: 30
+  enabled: true
+  order: 1
+  sourceType: closed_q
+  sourceRef: closedQ16
+  signalKey: closedQ16_moat_categories
+  scoringRule:
+    type: closed_mapping
+    mapping:
+      proprietary_data: 100
+      deep_tech: 95
+      network_effects: 90
+      regulatory_advantage: 85
+      workflow_integration: 80
+      switching_costs: 75
+      exclusive_partnerships: 65
+      brand_trust: 55
+      community: 50
+- nodeId: trackC.L5.moat_compounding_evidence
+  kind: signal
+  parentId: trackC.L5
+  name: Moat compounding evidence
+  description: Moat gets stronger over time; replication resistance clear
+  category: must_have
+  weight: 40
+  enabled: true
+  order: 2
+  sourceType: open_q
+  sourceRef: openQ8
+  signalKey: openQ8_moat_articulation_score
+  scoringRule:
+    type: llm_rubric
+    rubric: rubric.moat_articulation.v1
+- nodeId: trackC.L5.patent_filings
+  kind: signal
+  parentId: trackC.L5
+  name: Patent filings
+  description: Indian Patent Office or Google Patents filings related to core technology
+  category: good_to_have
+  weight: 30
+  enabled: false
+  order: 3
+  sourceType: scraped
+  sourceRef: scrape.patents
+  signalKey: scrape_patent_count
+  scoringRule:
+    type: scrape_threshold
+    thresholds:
+      none: 0
+      filed: 60
+      granted: 100
+- nodeId: trackD
+  kind: track
+  name: Traction and Validation
+  description: Has the market responded? Is there concrete demand evidence?
+  category: must_have
+  weight: 20
+  enabled: true
+  order: 4
+- nodeId: trackD.L1
+  kind: layer
+  parentId: trackD
+  name: Traction
+  description: Position on the traction quality stack; velocity of movement
+  category: must_have
+  weight: 50
+  enabled: true
+  order: 1
+- nodeId: trackD.L1.traction_stack_position
+  kind: signal
+  parentId: trackD.L1
+  name: Traction stack position
+  description: "Current stage \u2014 L1 conversations to L5 scaled revenue"
+  category: required
+  weight: 60
+  enabled: true
+  order: 1
+  sourceType: closed_q
+  sourceRef: closedQ17
+  signalKey: closedQ17_traction_stage
+  scoringRule:
+    type: closed_mapping
+    mapping:
+      early_conversations: 20
+      pilots_lois: 40
+      paying_customers: 60
+      recurring_revenue: 80
+      scaled_revenue: 100
+- nodeId: trackD.L1.branching_traction_metric
+  kind: signal
+  parentId: trackD.L1
+  name: Sector-specific traction metric
+  description: "Enterprise \u2014 ACV pipeline; B2C \u2014 MRR and growth; Deeptech\
+    \ \u2014 LOIs and pilots"
+  category: must_have
+  weight: 30
+  enabled: true
+  order: 2
+  sourceType: closed_q
+  sourceRef: closedQ18
+  signalKey: closedQ18_sector_traction_metric
+  scoringRule:
+    type: closed_mapping
+    mapping:
+      strong: 100
+      moderate: 60
+      weak: 30
+      none: 0
+- nodeId: trackD.L1.market_proof
+  kind: signal
+  parentId: trackD.L1
+  name: Market proof
+  description: "Actual evidence \u2014 not interpreted signals \u2014 that market\
+    \ needs the solution"
+  category: must_have
+  weight: 10
+  enabled: true
+  order: 3
+  sourceType: open_q
+  sourceRef: openQ10
+  signalKey: openQ10_market_proof_score
+  scoringRule:
+    type: llm_rubric
+    rubric: rubric.market_proof.v1
+- nodeId: trackD.L2
+  kind: layer
+  parentId: trackD
+  name: Validation
+  description: Organic demand signals; evidence artifacts; intensity of customer commitment
+  category: must_have
+  weight: 50
+  enabled: true
+  order: 2
+- nodeId: trackD.L2.organic_demand_signal
+  kind: signal
+  parentId: trackD.L2
+  name: Organic demand signal
+  description: "Google Trends, LinkedIn growth, press \u2014 unprompted market awareness"
+  category: must_have
+  weight: 40
+  enabled: false
+  order: 1
+  sourceType: scraped
+  sourceRef: scrape.press
+  signalKey: scrape_organic_demand_score
+  scoringRule:
+    type: scrape_threshold
+    thresholds:
+      none: 0
+      weak: 30
+      moderate: 65
+      strong: 100
+- nodeId: trackD.L2.pitch_deck_traction_claims
+  kind: signal
+  parentId: trackD.L2
+  name: Pitch deck traction claims
+  description: Traction data visible in pitch deck; cross-referenced for consistency
+  category: good_to_have
+  weight: 30
+  enabled: true
+  order: 2
+  sourceType: upload_parse
+  sourceRef: upload.pitch_deck
+  signalKey: upload_pitch_traction_score
+  scoringRule:
+    type: llm_rubric
+    rubric: rubric.pitch_traction.v1
+- nodeId: trackD.L2.customer_initiated_evidence
+  kind: signal
+  parentId: trackD.L2
+  name: Customer-initiated evidence
+  description: "Customers came to founder unprompted \u2014 strongest early validation\
+    \ signal"
+  category: must_have
+  weight: 30
+  enabled: true
+  order: 3
+  sourceType: open_q
+  sourceRef: openQ10
+  signalKey: openQ10_customer_initiated_score
+  scoringRule:
+    type: vector_similarity

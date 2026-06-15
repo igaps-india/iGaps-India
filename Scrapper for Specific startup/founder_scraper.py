@@ -1007,6 +1007,53 @@ def _extract_intro_card(driver: webdriver.Chrome) -> str:
 # Individual LinkedIn Profile Scraper (targeted section-by-section)
 # ---------------------------------------------------------------------------
 
+def search_linkedin_for_profile(founder_name: str, company_name: str) -> Optional[str]:
+    """
+    Search LinkedIn natively using the authenticated browser session for the founder's profile.
+    This bypasses external search engine blocks and uses LinkedIn's own search functionality.
+    """
+    driver = _build_driver()
+    try:
+        _load_cookies(driver)
+
+        query = urllib.parse.quote_plus(f"{founder_name} {company_name}")
+        search_url = f"{_LINKEDIN_BASE}/search/results/people/?keywords={query}"
+        
+        logger.info("search_linkedin_for_profile: Navigating to %s", search_url)
+        driver.get(search_url)
+        time.sleep(random.uniform(3.5, 5.5))
+        
+        # Wait for search results
+        try:
+            WebDriverWait(driver, 10).until(
+                EC.presence_of_element_located((By.XPATH, "//a[contains(@href, '/in/')]"))
+            )
+        except TimeoutException:
+            logger.warning("search_linkedin_for_profile: Timeout waiting for search results.")
+            
+        # Find all profile links in the search results
+        anchors = driver.find_elements(By.XPATH, "//a[contains(@href, '/in/')]")
+        
+        for anchor in anchors:
+            try:
+                href = anchor.get_attribute("href")
+                if href and "/in/" in href:
+                    clean_url = href.split("?")[0].rstrip("/")
+                    if "linkedin.com/in/" in clean_url:
+                        logger.info("search_linkedin_for_profile: Found profile URL: %s", clean_url)
+                        return clean_url
+            except Exception:
+                pass
+                    
+        logger.warning("search_linkedin_for_profile: No valid /in/ profile found in search results.")
+        return None
+    except Exception as exc:  # noqa: BLE001
+        logger.error("search_linkedin_for_profile failed: %s", exc)
+        return None
+    finally:
+        driver.quit()
+
+
 def scrape_linkedin_profile(profile_url: str) -> Optional[str]:
     """
     Scrape an individual LinkedIn /in/ profile page using an authenticated

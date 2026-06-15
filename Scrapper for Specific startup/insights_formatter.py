@@ -37,7 +37,7 @@ logger = logging.getLogger(__name__)
 # ---------------------------------------------------------------------------
 # Gemini configuration
 # ---------------------------------------------------------------------------
-_GEMINI_MODEL: str = os.environ.get("GEMINI_MODEL", "gemini-3.1-pro")
+_GEMINI_MODEL: str = os.environ.get("GEMINI_MODEL", "gemini-3.1-pro-preview")
 _GOOGLE_API_KEY: str = os.environ.get("GOOGLE_API_KEY", "")
 
 if not _GOOGLE_API_KEY:

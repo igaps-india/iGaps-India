@@ -35,7 +35,7 @@ logger = logging.getLogger(__name__)
 # ---------------------------------------------------------------------------
 # Gemini configuration
 # ---------------------------------------------------------------------------
-_GEMINI_MODEL: str = os.environ.get("GEMINI_MODEL", "gemini-3.1-pro")
+_GEMINI_MODEL: str = os.environ.get("GEMINI_MODEL", "gemini-2.5-pro")
 # Accept both GOOGLE_API_KEY (explicit Google AI Studio name) and
 # GEMINI_API_KEY (the name used in the backend .env that main.py loads).
 _GOOGLE_API_KEY: str = (

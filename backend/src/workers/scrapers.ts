@@ -141,9 +141,10 @@ export const linkedinHandler: JobHandler<{ applicationId: string; url: string }>
     const res = await axios.post('http://127.0.0.1:8000/scrape/linkedin', {
       company_name: app.startupName,
       founder_name: app.founderName,
+      cofounder_names: app.coFounders && app.coFounders.length > 0 ? app.coFounders : undefined,
       linkedin_url: url,
       website_url: app.websiteUrl
-    }, { timeout: 300_000 }); // 5 minutes timeout for scraping
+    }, { timeout: 900_000 }); // 15 minutes timeout for scraping
     
     // Always save whatever the Python service returned (even partial data)
     const freshSub = await getSubmission(applicationId);

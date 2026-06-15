@@ -35,6 +35,109 @@ import logging
 
 logger = logging.getLogger(__name__)
 
+# ── Informal / Hinglish language normalizer ───────────────────────────────────
+# Indian founders frequently write in informal English or Hinglish.
+# The sentence-transformer model was trained on formal English, so it silently
+# penalizes regional phrases even when the underlying SUBSTANCE is strong.
+# This normalizer converts known informal patterns to their formal equivalents
+# BEFORE embedding — the score then reflects content, not polish.
+#
+# This is NOT a grammar corrector. It only maps business-context phrases that
+# systematically appear in Indian founder writing and would otherwise reduce
+# cosine similarity to formal anchor texts.
+
+INFORMAL_PATTERNS: list[tuple[str, str]] = [
+    # Hinglish filler words and emphasis markers
+    (r'\bhi\b',          ''),          # "customers hi" → "customers"
+    (r'\bna\b',          ''),          # "right na" → "right"
+    (r'\bnahi\b',        'not'),
+    (r'\bnah\b',         'not'),
+    (r'\bhai\b',         'is'),
+    (r'\btha\b',         'was'),
+    (r'\bkar\b',         'do'),
+    (r'\bbas\b',         'only'),
+    (r'\bse\b',          'from'),
+    (r'\bke liye\b',     'for'),
+    (r'\bonly\b',        'specifically'),   # Indian English "only" used for emphasis
+    (r'\bitself\b',      'specifically'),   # "the product itself" in Indian English
+    # Common informal contractions / shortcuts
+    (r'\bwrt\b',         'with respect to'),
+    (r'\bw\/r\/t\b',     'with respect to'),
+    (r'\btbh\b',         'honestly'),
+    (r'\bfyi\b',         'for reference'),
+    (r'\bbtw\b',         'additionally'),
+    (r'\bv\b',           'we'),            # "v decided" → "we decided"
+    (r'\bu\b',           'you'),
+    (r'\br\b',           'are'),
+    (r'\bppl\b',         'people'),
+    (r'\bcoz\b',         'because'),
+    (r'\bcause\b',       'because'),
+    (r'\bcus\b',         'because'),
+    (r'\bcos\b',         'because'),
+    (r'\bgonna\b',       'going to'),
+    (r'\bwanna\b',       'want to'),
+    (r'\bgotta\b',       'have to'),
+    (r'\bkinda\b',       'somewhat'),
+    (r'\bsorta\b',       'somewhat'),
+    (r'\blotta\b',       'a lot of'),
+    (r'\bdunno\b',       'do not know'),
+    (r'\byeah\b',        'yes'),
+    (r'\bnope\b',        'no'),
+    (r'\byup\b',         'yes'),
+    # Informal punctuation / spacing patterns
+    (r'\.{3,}',          '. '),           # "so..." → "so."
+    (r'!{2,}',           '!'),
+    (r'\?{2,}',          '?'),
+]
+
+import re
+
+def normalize_informal_language(text: str) -> str:
+    """
+    Apply lightweight normalization to map informal/Hinglish patterns to
+    formal English equivalents before embedding.
+    Returns the normalized text and a flag if bias markers were detected.
+    """
+    normalized = text
+    for pattern, replacement in INFORMAL_PATTERNS:
+        normalized = re.sub(pattern, replacement, normalized, flags=re.IGNORECASE)
+    # Collapse multiple spaces produced by deletions
+    normalized = re.sub(r'  +', ' ', normalized).strip()
+    return normalized
+
+
+def detect_linguistic_bias(text: str) -> dict:
+    """
+    Detect whether this answer shows markers of informal or regional writing
+    that could unfairly reduce similarity scores.
+    Returns a dict with bias_detected (bool) and individual signal flags.
+    """
+    words = text.split()
+    sentences = [s.strip() for s in re.split(r'[.!?]', text) if s.strip()]
+
+    avg_sentence_length = len(words) / max(len(sentences), 1)
+    unique_words = len(set(w.lower() for w in words))
+    type_token_ratio = unique_words / max(len(words), 1)
+
+    # Regional/Hinglish marker presence
+    hinglish_markers = ['only', 'itself', 'na', 'nahi', 'hai', 'kar',
+                        'se', 'ke liye', 'bas', 'wrt', 'coz', 'dunno']
+    hinglish_count = sum(1 for m in hinglish_markers if m.lower() in text.lower())
+    hinglish_score = hinglish_count / len(hinglish_markers)
+
+    bias_signals = {
+        'short_sentences':     avg_sentence_length < 8,
+        'low_vocab_diversity': type_token_ratio < 0.45,
+        'regional_markers':    hinglish_score > 0.10,
+    }
+    bias_count = sum(bias_signals.values())
+    return {
+        'bias_detected': bias_count >= 2,
+        'bias_level':    'HIGH' if bias_count >= 3 else 'MEDIUM' if bias_count == 2 else 'LOW',
+        'signals':       bias_signals,
+    }
+
+
 # ── Model (loaded once at startup, not per-request) ───────────────────────────
 # all-MiniLM-L6-v2: 22MB, 80ms on CPU, 384-dim embeddings.
 # Perfect balance of speed and quality for semantic sentence comparison.
@@ -297,8 +400,15 @@ def score_with_vector_similarity(signal_key: str, answer_text: str) -> dict:
     model = get_model()
     cache = get_anchor_cache()
 
-    # Embed the actual founder answer
-    answer_embedding = model.encode([answer_text.strip()], convert_to_numpy=True)  # shape: (1, 384)
+    # ── Informal language normalization ──────────────────────────────────────
+    # Detect if the founder writes informally / in Hinglish BEFORE normalizing.
+    # We store the raw bias detection result and return it with the score so
+    # the evaluation engine can apply the inarticulate genius flag if needed.
+    bias_info   = detect_linguistic_bias(answer_text)
+    clean_text  = normalize_informal_language(answer_text.strip())
+
+    # Embed the normalized text (formal equivalent) — NOT the raw answer
+    answer_embedding = model.encode([clean_text], convert_to_numpy=True)  # shape: (1, 384)
 
     # Compute max cosine similarity to perfect anchors
     sim_to_perfect_matrix = cosine_similarity(answer_embedding, cache[signal_key]["perfect"])
@@ -325,10 +435,12 @@ def score_with_vector_similarity(signal_key: str, answer_text: str) -> dict:
         confidence = "low"
 
     return {
-        "score": score,
-        "confidence": confidence,
-        "sim_to_perfect": round(sim_to_perfect, 4),
+        "score":           score,
+        "confidence":      confidence,
+        "sim_to_perfect":  round(sim_to_perfect, 4),
         "sim_to_terrible": round(sim_to_terrible, 4),
-        "scoring_method": "vector_similarity",
-        "signal_key": signal_key,
+        "scoring_method":  "vector_similarity",
+        "signal_key":      signal_key,
+        "bias_detected":   bias_info['bias_detected'],
+        "bias_level":      bias_info['bias_level'],
     }

@@ -528,3 +528,46 @@ export function getRAGExamples(rubricId: string): string {
 
   return lines.join('\n');
 }
+
+// ── Hybrid Dense + BM25 Reranking ──────────────────────────────────────────
+
+export interface Chunk {
+  text: string;
+  denseScore: number;
+  metadata?: any;
+  hybridScore?: number;
+}
+
+const SIGNAL_KEYWORDS: Record<string, string[]> = {
+  "stated_traction":    ["MRR", "ARR", "revenue", "customers", "paying", "%", "growth"],
+  "market_context":     ["billion", "million", "TAM", "SAM", "CAGR", "market", "segment"],
+  "customer_urgency":   ["pain", "losing", "cost", "hours", "manual", "broken", "fail"],
+  "technical_coherence":["API", "architecture", "stack", "model", "algorithm", "built"],
+  "competitive_advantage": ["moat", "patent", "exclusive", "first", "proprietary", "defensible"]
+};
+
+/**
+ * Calculates keyword match density for BM25 reranking
+ */
+export function bm25Score(text: string, keywords: string[]): number {
+  if (!text) return 0;
+  const textLower = text.toLowerCase();
+  const matches = keywords.filter(kw => textLower.includes(kw.toLowerCase()));
+  return matches.length / keywords.length;
+}
+
+/**
+ * Reranks chunks combining vector dense score and keyword BM25 score
+ */
+export function hybridRerank(chunks: Chunk[], signal: string): Chunk[] {
+  const keywords = SIGNAL_KEYWORDS[signal] ?? [];
+  if (keywords.length === 0) return chunks;
+
+  return chunks
+    .map(c => ({
+      ...c,
+      hybridScore: 0.70 * c.denseScore + 0.30 * bm25Score(c.text, keywords)
+    }))
+    .sort((a, b) => (b.hybridScore ?? 0) - (a.hybridScore ?? 0))
+    .slice(0, 3);
+}

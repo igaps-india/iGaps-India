@@ -234,8 +234,38 @@ export async function evaluate(applicationId: string): Promise<void> {
   const openAnswers = getOpenAnswersPlain(submission);
   const scrapedData = submission.scrapedData as Record<string, unknown>;
 
+  // ── Extract pitch deck text for hybrid RAG retrieval ──────────────────────
+  // The parsed text is stored on the Upload sub-document when the PDF was
+  // first uploaded. We grab the first successfully parsed pitch_deck upload.
+  const pitchDeckUpload = (submission.uploads ?? []).find(
+    (u) => u.type === 'pitch_deck' && u.parseStatus === 'success' && u.parsedText,
+  );
+  const pitchDeckText   = pitchDeckUpload?.parsedText ?? '';
+  const submissionIdStr = String(submission._id ?? '');
+
   const signalsMap: SignalsMap = {};
   const traceEntries: AlgorithmTraceEntry[] = [];
+
+  // ── Solo-founder detection ─────────────────────────────────────────────────
+  // closedQ3 = "How long have you known your co-founder? (0 = solo founder)"
+  // If the answer is 0 or missing, the founder is solo.
+  // Team Chemistry signals (trackA.L2) are NOT applicable and must be skipped
+  // so they don't score 0/100 and unfairly drag down the composite.
+  const cofounderKnownMonths = Number(closedAnswers['closedQ3'] ?? 0);
+  const isSoloFounder = cofounderKnownMonths === 0;
+  if (isSoloFounder) {
+    signalsMap['flag_solo_founder'] = true;
+    console.info(`[Engine] Solo founder detected for ${applicationId} — trackA.L2 signals will be skipped.`);
+  }
+
+  // Signals that belong to the Team Chemistry layer (trackA.L2).
+  // These are irrelevant for solo founders and will receive a neutral pass-through.
+  const COFOUNDER_SIGNAL_KEYS = new Set([
+    'closedQ3_cofounder_known_months',
+    'closedQ4_relationship_type',
+    'scrape_cofounder_overlap_linkedin',
+    'scrape_prior_venture_together',
+  ]);
 
   // ── Score each signal node ─────────────────────────────────────────────────
   const signalNodes = allNodes.filter((n) => n.kind === 'signal');
@@ -253,6 +283,37 @@ export async function evaluate(applicationId: string): Promise<void> {
     let scoringMethod = 'unknown';
 
     try {
+      // ── Solo-founder guard ───────────────────────────────────────────────
+      // Skip Team Chemistry signals entirely when there is no co-founder.
+      // Assign a neutral mid-point score (50) so the layer doesn't collapse
+      // the composite. A clear audit note is recorded in the trace.
+      if (isSoloFounder && node.signalKey && COFOUNDER_SIGNAL_KEYS.has(node.signalKey)) {
+        const neutralScore = 50;
+        signalsMap[node.signalKey] = neutralScore;
+        traceEntries.push({
+          nodeId: node.nodeId,
+          signalKey: node.signalKey,
+          nodeName: node.name,
+          category: node.category,
+          rawScore: neutralScore,
+          normalizedScore: neutralScore,
+          categoryMultiplier: categoryMultiplier(node.category, profile),
+          siblingWeight: node.weight,
+          weightedContribution: (neutralScore / 100) * (node.weight / 100) * categoryMultiplier(node.category, profile),
+          llmEvidence: 'N/A — solo founder, no co-founder relationship to evaluate',
+          llmWeaknesses: [],
+          rawTextEvidence: null,
+          weakness: null,
+          confidence: 'low',
+          zodValidated: true,
+          scoringMethod: 'solo_founder_skip',
+          flags: ['solo_founder_not_applicable'],
+          sourceType: node.sourceType ?? '',
+          sourceRef: node.sourceRef ?? '',
+        });
+        continue;
+      }
+
       const rule = node.scoringRule as Record<string, unknown>;
 
       if (rule.type === 'closed_mapping' && rule.mapping) {
@@ -274,7 +335,13 @@ export async function evaluate(applicationId: string): Promise<void> {
           submission.openQPlan,
         );
 
-        const result = await scoreWithRubric(String(rule.rubric), answerText);
+        const result = await scoreWithRubric(
+          String(rule.rubric),
+          answerText,
+          undefined,
+          pitchDeckText,
+          submissionIdStr,
+        );
         rawScore = result.score;
         // Legacy fields
         llmEvidence = result.evidence;
@@ -738,11 +805,14 @@ function buildGapReport(
   }
 
   // Identify gaps: required/must_have signals with score < 50
+  // Exclude signals that were skipped due to solo-founder guard — these are
+  // not real gaps, they are simply not applicable to this founder's situation.
   const gaps: GapReport['gaps'] = trace
     .filter(
       (t) =>
         (t.category === 'required' || t.category === 'must_have') &&
-        t.normalizedScore < 50,
+        t.normalizedScore < 50 &&
+        t.scoringMethod !== 'solo_founder_skip',
     )
     .map((t) => ({
       nodeId: t.nodeId,

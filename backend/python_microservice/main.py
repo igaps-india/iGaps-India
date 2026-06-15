@@ -53,6 +53,7 @@ class GoogleScrapeRequest(BaseModel):
 class LinkedinScrapeRequest(BaseModel):
     company_name: str
     founder_name: str
+    cofounder_names: Optional[list[str]] = None
     linkedin_url: Optional[str] = None
     founder_linkedin_url: Optional[str] = None
     website_url: Optional[str] = None
@@ -83,6 +84,7 @@ async def scrape_linkedin(request: LinkedinScrapeRequest):
             company_name=request.company_name,
             website_url=request.website_url,
             founder_name=request.founder_name,
+            cofounder_names=request.cofounder_names,
             founder_email=None,
             linkedin_url=request.linkedin_url,
             founder_linkedin_url=request.founder_linkedin_url,
