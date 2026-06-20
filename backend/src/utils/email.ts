@@ -28,7 +28,7 @@ export async function sendMagicLink(opts: {
     return;
   }
 
-  await getResend().emails.send({
+  const result = await getResend().emails.send({
     from: config.email.from,
     to: opts.to,
     subject: `${config.appName} — Continue your application`,
@@ -47,4 +47,16 @@ export async function sendMagicLink(opts: {
       </div>
     `,
   });
+
+  if (result.error) {
+    const msg =
+      typeof result.error === 'object' && result.error !== null && 'message' in result.error
+        ? String((result.error as { message: string }).message)
+        : JSON.stringify(result.error);
+    throw new Error(`[Email] Resend rejected send: ${msg}`);
+  }
+
+  console.info(
+    `[Email] Magic link sent to ${opts.to} (id: ${result.data?.id ?? 'unknown'})`,
+  );
 }

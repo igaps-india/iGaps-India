@@ -3,199 +3,95 @@
 Home
 My Network
 Jobs
-1
 Messaging
-9
+16
 Notifications
 Me
 For Business
 Try Premium for ₹0
-Indranil Datta
-Early-Stage AI | Capital Raising | CBO, PadUp Ventures | Strategic Advisor, AI Healthtech | PGP AIML - Texas McCombs
-Gurugram, Haryana, India
+Rahul Pathri
+CEO / Founder at docturnal
+Austin, Texas, United States
 ·
 Contact info
-iGaps
-4,583 followers
-·
+docturnal
+Indian Institute of Management, Calcutta
 500+
 connections
-Follow
+Connect
 Message
-People who follow Indranil also follow
-Jeetendra Lalwani 
-Building India’s fastest emergency network. Constantly learning, improving, and pushing limits.
-8,288 followers
-Follow
-Dr. Ati Priye 
-Emerging Venture Capital & Investment Strategist | Startup Valuation & Deal Flow Specialist | CEO – VentureNest | Mentor @ Startup India & NITI Aayog
-9,618 followers
-Follow
 About
-I help early-stage AI founders raise capital and structure deals. I combine operator experience in AI (Strategic Advisor, Dectrocel) with portfolio-level investing and fundraising as CBO at PadUp Ventures, where I have supported Rs. 18 Cr+ in funding across 30+ startups. My work sits at the intersection of AI, finance, and strategy: translating technical depth into investor-ready narratives, robust financial models, and clean deal structures. I am currently pursuing a PGP in AI/ML from Texas McCombs, strengthening my ability to evaluate AI products, data moats, and long-term value creation for both founders and investors.
+Founder at Docturnal (Hyderabad/Austin)
+OrcID : https://orcid.org/0000-0001-7719-5078?lang=en
+https://www.researchgate.net/profile/Rahul_Pathri?ev=hdr_xprf 
+Specialties: C-Level, Sales, Product Management, Data Science (AI/ML), Software Engineering & Project Management, Business Analytics, Business Intelligence, Data Warehousing, Pre-Sales & QA
 … more
-Top skills
-Business Development • Strategic Partnerships • Negotiation • Team Building • P&L Management
 Activity
-4,583 followers
+1,124 followers
 Follow
 Posts
 Comments
-Images
-Indranil Datta
- • 3rd+
-Early-Stage AI | Capital Raising | CBO, PadUp Ventures | Strategic Advisor, AI Healthtech | PGP AIML - Texas McCombs
-3w • 
-“50,000 GPUs for 1.4 billion people.
-One guy in the US reportedly has 2 million".
-
-India is capped at importing just 50,000 high-performance GPUs a year under the US AI Diffusion Framework. Tier-2 status. Meanwhile, unverified numbers suggest one American founder aka Elon Musk alone has access to 2 million. The US as a whole? 35–40 million.
-
-Welcome to the real geopolitics of AI in 2026. 🙄 
-2 reactions
-2
-1 comment
-1 comment
-Like
-Comment
-Repost
-Send
-Indranil Datta
- • 3rd+
-Early-Stage AI | Capital Raising | CBO, PadUp Ventures | Strategic Advisor, AI Healthtech | PGP AIML - Texas McCombs
-1mo • 
-“The winners won’t hate wrappers. They’ll master them.”
-“It’s just a wrapper” — The most misused phrase in AI right now. Just when I thought the “it’s just a wrapper” noise couldn’t get louder, a16z drops the take I’ve been quietly chewing on for months.
-
-If a lawyer tells you they’ve built a legal AI product, don’t roll your eyes and call it a wrapper.
-Ask the real questions instead:
-- Does it actually work at scale? 
-- What’s the engineering? 
-- How have they cracked the compute economics? 
-- Is the workflow genuinely better than the old ways? 
-
-Because the difference between a toy and a defensible product almost always sits in that “wrapper.”
-
-Shoutout toand thefor not dismissing the wrapper conversation
-… more
-Andrew Chen
+Documents
+Rahul Pathri
   • 3rd+
-a16z speedrun / andrewchen.substack.com
-View my newsletter
-1mo • 
-the "AI wrapper" critique assumes the wrapper is the easy part
+CEO / Founder at docturnal
+2w • 
+Honored to present "TimBre -  multimodal AI respiratory health screening platform" during the awardee showcase.
+Indo U.S. Science and Technology Forum
+3w • 
+The Indo U.S. Science and Technology Forum (IUSSTF), in partnership with the U.S. Embassy India, New Delhi, and the Department of Science & Technology (DST) (), Government of India, hosted the(USISTEF) Award Ceremony for Transformative Technologies in Advanced Materials & Critical Minerals on 15 May 2026. The event celebrated innovation, recognized pioneering projects, and reaffirmed the shared commitment of India and the United States to advancing science and technology collaboration.
+ 
+The programme began with welcome remarks by, Executive Director (Interim), who highlighted USISTEF’s significant role in advancing Indo–US joint innovations. This was followed by inaugural remarks from Ms. Amy Schedlbauer, U.S. Co-Chair and Minister Counselor for Economic Affairs at the U.S. Embassy in New Delhi, who emphasized the importance of the Fund, its broader impact, and its accomplishments over the past 17 years. She also highlighted that strategic cooperation in critical minerals is essential for strengthening trusted and resilient technology supply chains, which remains a key objective of the Pax Silica initiative. Dr. Praveenkumar Somasundaram (Indian Co-Chair), Head of International Cooperation at the Department of Science and Technology (DST), Government of India, highlighted that collaborative deep-tech investments under theinitiative are driving innovations that are critical for both economic progress and national security. The ceremony also featured presentations on the awarded projects, the distribution of certificates, and the unveiling of the new Call Theme. The event concluded with closing remarks and a vote of thanks delivered by Mr., First Secretary, Economic Affairs, U.S. Embassy New Delhi, who appreciated the unwavering commitment and collaborative efforts that continue to strengthen and advance the USISTEF initiative.
 
-But being the wrapper also includes figuring out:
-- getting distribution without paying infinite CAC
-- creating an amazing UX that's AI native, not derivative
-- building a brand, trust in a very noisy landscape
-- creating an ecosystem/community
-- generating network effects
-- making customer service great
-- ... plus pricing, hiring, raising money, and everything else
+Bringing together leaders from the innovation ecosystem, the event also featured an exhibition where past and present awardees showcased prototypes and research posters, highlighting the impact of Indo-U.S. collaborative innovation. A short film on innovation demonstrated how research partnerships are driving scalable technologies with meaningful societal and commercial outcomes. USISTEF also officially launched its new call theme through a dedicated film, inviting collaborative solutions to emerging scientific and technological challenges with strong translational, entrepreneurial, and societal impact.
+ 
+Through initiatives such as USISTEF, India and the United States continue to strengthen their innovation ecosystems by fostering collaborative research, technology development, and commercialization-oriented partnerships that contribute to global progress.
 
-these are not easy!
+
+
+
+
+
+
+
+
+
 … more
-2 reactions
-2
+1/12
+12 reactions
+12
 Like
 Comment
 Repost
 Send
-I spent 3 hours fighting withto build one presentation… and thendid it in 5 minutes.
-
-Yesterday was painful.
-
-I had a clean project setup, a high-quality concept note, and extremely detailed prompts. Everything was structured exactly how I wanted.
-
-#ChatGPTfollowed instructions perfectly. But that’s all it did.
-
-No spark. No improvisation. No “let me push this one level higher for you.” It felt like working with a uninspired junior who only executes — never thinks ahead. Prompt after prompt, edit after edit, until I slammed my laptop at midnight in frustration.
-
-This morning, fresh Claude quota in hand, I recreated the same project. Same concept note. Similar instructions.
-Five minutes later — voilà.
-Not just done. Done beautifully. With the exact ingenuity and taste I was craving. The difference was night and day.
-
-Here’s what I’m observing as someone who lives deep in the AI trenches — 
-The hype cycle has quietly shifted.
-
-ChatGPT, once the undisputed king, is slowly slipping into the sea of average copilots. Mediocre.
-Claude (Anthropic) is eating everyone’s lunch when it comes to deep reasoning, creative improvisation, and actually understanding intent.
-
-My current rough ranking for serious work:
-Claude — clear leader # 1
-Gemini — surprisingly capable in many cases at # 6
-# 7-10. ChatGPT, Grok, Copilot
-
-The bigger point isn’t just which model wins today.
-It’s that the gap between “following instructions” and “showing real intelligence” is becoming the real differentiator — especially for AI-native founders building products that actually feel intelligent.
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+Rahul Pathri reposted this
+Stop TB Partnership
+2mo • 
+🚀 Pushing boundaries. Advancing access. Innovating for impact.
+
+Starting bright and early today, our own Jacob Creswell, STBP’s Innovations & Grants Lead, joined an extraordinary mission descending 4,000 meters underground as part of a 🌍 world record attempt.
+
+Equipped with a portable X-ray and South African-developed AI CAD technology, the team aims to screen two miners deep below the surface, showcasing innovation where it’s needed most ⛏️🩺
+
+This groundbreaking effort brings together key partners including Dr Pakishe Aaron Motsoaledi, Minister of Health; Dr. Norbert Ndjeka, NTP; Dr. Barry Kistnasamy, Occupational Health Director, from the;;and
+
+Pictured here 📸: Jacob at 6am (Johannesburg time), ready for the first shift and the journey deep underground.
+
+… more
+118 reactions
+118
+4 comments
+4 comments
+•
+11 reposts
+11 reposts
+Like
+Comment
+Repost
+Send
+Great way to end the year gone by and start off 2026.has been granted 15 claims by the🙏 on 31-dec-25 despite challenges in the realm of Cough-AI. With much gratitude to all those who supported us in this endeavor:()(posthumously)& others
+cough acoustic screening - 576949
+1 page
 
 
 
@@ -246,43 +142,43 @@ It’s that the gap between “following instructions” and “showing real int
 
 Show all posts
 More profiles for you
-Avinish Jain 
+Balakrishna Bagadi 
 · 3rd+
-Founder & MD - Evora Greens / Co-Founder - Bevry India
-Connect
-kanwal preet kaur 
-· 3rd+
-Founder at The Rainbow Company
-Connect
-Satish Ramakrishna 
-· 3rd+
-Hustling To Raise Funds 
-Connect
-Sanjay Mehta 
-· 3rd+
-Creating Visionary Brand, 100X.VC Investor. Early Stage Investor, Mehta Ventures Family Office, Agnikul Investor. Box8, WoW Momo, CoinDCX and many more investments 
+Solution Architect | UI Architect | Product Management | Micro services| Kafka | Mobile application Architecture | Project management | Data science |  Ex-Oracle | Ex-TechM
 Follow
-Jitender Gandhi
+Gulnaz Tabassum
 · 3rd+
-Founder at ESTATE BRIDGE
+Backend Developer | Python, Django, Flask | SQL & MongoDB | Machine Learning Integration | Cloud Deployment | Scalable Systems | Self-Taught & Startup-Hardened | Results-Driven
+Follow
+Sasidhar Reddy
+· 3rd+
+Data Scientist at Docturnal Private Limited
 Connect
+Nitika Goyal 
+· 3rd+
+Partner at Onefifty6 Capital
+Follow
+Angelos Angelou 
+· 3rd+
+Founder & Principal Executive Officer at Angelou Economics | CEO of International Accelerator | Expert in Economic Development, Startup Acceleration, and Corporate Site Selection | Angel Investing
+Follow
 Show all
 Explore Premium profiles
-Urgen Moktan 
+Tushar Gautam 
 · 3rd+
-Student at Siliguri Institute of Technology
+Founder | CTO | Healthcare and Technology Enthusiast
+Follow
+Sahil singh 
+· 3rd+
+Student at  Indira Gandhi National tribal University Amarkantak
 Connect
-ikshit singhal 
+Sriyansh Srivastava 
 · 3rd+
-Student at nc jindal public school 
+CSE Student | B.tech’26
 Connect
-Rahul undefined 
+siddhika tandel 
 · 3rd+
-Student at Harvard University
-Connect
-Hostelova Hostelova 
-· 3rd+
-Find, Compare & Book Verified Hostels Across India
+--
 Connect
 About
 Accessibility
@@ -347,126 +243,73 @@ Tiếng Việt (Vietnamese)
 Home
 My Network
 Jobs
-1
 Messaging
-9
+16
 Notifications
 Me
 For Business
 Try Premium for ₹0
-Indranil Datta
-Early-Stage AI | Capital Raising | CBO, PadUp Ventures | Strategic Advisor, AI Healthtech | PGP AIML - Texas McCombs
+Rahul Pathri
+CEO / Founder at docturnal
 Message
-Follow
+Connect
 Experience
-Founder
-iGaps
-Apr 2026 - Present · 3 mos
-Gurgaon, Haryana, India · On-site
-I am building igaps.ai — an AI-native investment layer designed to curate high impact AI start-ups to build high conviction deal flows to investors. 
+docturnal
+Full-time · 10 yrs 3 mos
+Greater Hyderabad Area
+Founder/CEO
+Apr 2016 - Present · 10 yrs 3 mos
+Non-Invasive Screening via Point of Care Diagnostics (Lung Health - Pneumonia/Covid19/TB/COPD-Asthma)
 
-Goal: To ensure high impact AI start- ups get access to funds, fast
-Strategic Advisor
-Dectrocel Healthcare and Research
-Mar 2025 - Feb 2026 · 1 yr
-Remote
-Supporting the company in their GTM post a massively successful fundraise from IAN, Vinners and PadUp Ventures.
- Capital Raising, Valuation and +4 skills
-CBO
-PadUp Ventures · Full-time
-May 2023 - Feb 2026 · 2 yrs 10 mos
-Gurugram, Haryana, India · Hybrid
-Summary
-- Double hatting as CIO & CBO for the company
-- Managed investor relations, portfolio management, fundraising, and partnerships
-
-Achievement
-Successfully closed AY25 with Rs. 18 Cr funding for portfolio companies via private and govt investments. Some successful fund raises are:
-- Dectrocel Healthcare
-- Flixdrop
-- Innovodigm
-- Olbrain
-
-Actively engaged in management of 32 portfolio companies; mentoring of and fundraising for top startups through onsite visits, monthly MIS, quarterly calls, milestone monitoring & on-demand support
- Capital Raising, Financial Modeling and +12 skills
-Entrepreneur
-Antler
-Jan 2020 - May 2020 · 5 mos
-Singapore · On-site
-Investor relations, venture opportunities, pitch deck, financial models, business plan, lean start-up 
-Selected as one of 90 entrepreneurs from over 2000 applicants across Asia Pacific
- Capital Raising, Start-up Ventures and +3 skills
-Founder
-DreamKats · Full-time
-Nov 2015 - Jun 2019 · 3 yrs 8 mos
-Hong Kong , Shenzhen, CN · Hybrid
-Built dreamkats.com, a cross border B2B group buying platform for factory to market model 
-Connecting manufacturers from China and other parts of the world to Indian market
-Executed deals with ecommerce partner (Flipkart/ Amazon) worth > USD 1 million
-Exited the venture by selling shares to partners in HK
-Flipkart early member and Texas Instruments executive launch factory to consumer platform - IssueWire
- Negotiation, Business Development and +8 skills
-National Manager
-Samsung Electronics
-Aug 2012 - Oct 2015 · 3 yrs 3 mos
-Key Account Manager for Snapdeal, PayTM, and Shopclues, managing direct ownership of $50 million and supporting a business that clocked $140 million
-Head of Samsungindiaestore.com, achieving $12 million in FY 2013-14 with 400k monthly traffic.
-Program Manager for Online Channel, achieving a YoY growth from $53 million to $161 million in 2012-2013
-Achieved a market share of 48% in online market for the company
-GM
-Olacabs.com
-Mar 2012 - Jul 2012 · 5 mos
-Delhi/ NCR · On-site
-Launching Ola in the region and leading a team of 20+ people for Delhi/ NCR
-Onboarded 4500 cabs to go live in the region within a quarter
- Team Building, Hiring and +1 skill
-Category Head
-Flipkart.com · Full-time
-Dec 2009 - Feb 2012 · 2 yrs 3 mos
-Bangalore, India · On-site
-Summary: Two stints for the company
-Category Head for Mobiles, scaling monthly turnover from $150k to $4 million in one year, leading a pan-India team of managers
-
-Head of Operations for West India, setting up and scaling Mumbai operations to a turnover of almost $300k per month
-
-Achievement
-Launched and scaled mobiles category, West India ops, other key initiatives
- Negotiation, Category Management and +9 skills
-Berger Paints India
-1 yr 7 mos
-Area Sales Manager
-Full-time
-Jun 2008 - Dec 2009 · 1 yr 7 mos
-Mumbai, Maharashtra, India  · On-site
-ASM, Channel Sales, South Mumbai
-Territory Channel Marketing- Greater Mumbai Region
-Achievement: Mumbai region was #1 in trade marketing
-Branch Sales Manager
-Jun 2008 - Nov 2009 · 1 yr 6 mos
-Managing a network of over 50 dealers and leading trade marketing initiatives
-ASM- Upcountry markets
-Mumbai region was #1 in trade marketing
+- SAS (Machine Learning), Signal Processing (Image and Sound)
+- Data Harvesting & Data Science
+- Business Development with Hospitals, Clinics, Diagnostic Labs, RNTCP & NGOs
+- Fund Raising
+Chief Information Officer & CEO
+Dec 2019 - Present · 6 yrs 7 mos
+Data Science-Machine/Deep Learning and Data Prep/Analysis – SAS E-Miner, SAS Enterprise Guide, Matlab Classification Learner, Python, Keras, Theano, CNN, Ensemble Methods (RUS, Bagged, Boosted), Supervised and Unsupervised Learning, Input Data Analysis & Harvesting, Explainable AI
+Application Services Lead - Business Intelligence
+Prime KI Software Solutions Pvt Ltd
+May 2011 - Mar 2016 · 4 yrs 11 mos
+Delivery Manager
+Director- Practices
+Alliance Global Services
+Apr 2010 - Mar 2011 · 1 yr
+Independent Contributor, Sr.Solutions Manager, Sr.Test Manager
+Microsoft
+Oct 2006 - Apr 2010 · 3 yrs 7 mos
+Associate Technical Services Manager
+Applabs
+2005 - 2006 · 1 yr
+Staff Test Engineer-II
+Illumina · Full-time
+May 2001 - Mar 2003 · 1 yr 11 mos
+San Diego, California, United States
+Staff Test Engineer
+Affymetrix · Full-time
+Nov 1998 - Mar 2001 · 2 yrs 5 mos
+Santa Clara County, California, United States · On-site
 More profiles for you
-Avinish Jain 
+Balakrishna Bagadi 
 · 3rd+
-Founder & MD - Evora Greens / Co-Founder - Bevry India
-Connect
-kanwal preet kaur 
-· 3rd+
-Founder at The Rainbow Company
-Connect
-Satish Ramakrishna 
-· 3rd+
-Hustling To Raise Funds 
-Connect
-Sanjay Mehta 
-· 3rd+
-Creating Visionary Brand, 100X.VC Investor. Early Stage Investor, Mehta Ventures Family Office, Agnikul Investor. Box8, WoW Momo, CoinDCX and many more investments 
+Solution Architect | UI Architect | Product Management | Micro services| Kafka | Mobile application Architecture | Project management | Data science |  Ex-Oracle | Ex-TechM
 Follow
-Jitender Gandhi
+Gulnaz Tabassum
 · 3rd+
-Founder at ESTATE BRIDGE
+Backend Developer | Python, Django, Flask | SQL & MongoDB | Machine Learning Integration | Cloud Deployment | Scalable Systems | Self-Taught & Startup-Hardened | Results-Driven
+Follow
+Sasidhar Reddy
+· 3rd+
+Data Scientist at Docturnal Private Limited
 Connect
+Nitika Goyal 
+· 3rd+
+Partner at Onefifty6 Capital
+Follow
+Angelos Angelou 
+· 3rd+
+Founder & Principal Executive Officer at Angelou Economics | CEO of International Accelerator | Expert in Economic Development, Startup Acceleration, and Corporate Site Selection | Angel Investing
+Follow
 Show more
 About
 Accessibility
@@ -525,66 +368,52 @@ Türkçe (Turkish)
 Tiếng Việt (Vietnamese)
 简体中文 (Chinese (Simplified))
 正體中文 (Chinese (Traditional))
-Messaging
-You are on the messaging overlay. Press enter to open the list of conversations.
-1
-Compose message
-You are on the messaging overlay. Press enter to open the list of conversations.
 
 === EDUCATION ===
 0 notifications
 Home
 My Network
 Jobs
-1
 Messaging
-9
+16
 Notifications
 Me
 For Business
 Try Premium for ₹0
-Indranil Datta
-Early-Stage AI | Capital Raising | CBO, PadUp Ventures | Strategic Advisor, AI Healthtech | PGP AIML - Texas McCombs
+Rahul Pathri
+CEO / Founder at docturnal
 Message
-Follow
+Connect
 Education
-Institute of Management Technology, Nagpur
-PGDM, Business Administration and Management, General
-Activities and societies: Founded entrepreneur forum, Headed Placement Cell- South India
-MBA in general management with minor in marketing and IT
-Texas McCombs School of Business
-Program in Artificial Intelligence and Machine Learning (PGP-AIML), Artificial Intelligence Machine Learning
-Jul 2025 – Aug 2026
-Al-Falah University
-Bachelor of Engineering (BE), Electronics and telecommunications
-Institute of Management Technology, Nagpur
-Post Graduate Diploma in Business Analytics
-2006 – 2010
-Publications
-Al Falah University
-Bachelor of Engineering, Telecommunications Engineering
-2000 – 2004
+Indian Institute of Management, Calcutta
+EPBM, Executive Management
+2006 – 2007
+Osmania University
+Biology, Botany/Zoology/Chemistry
+1989 – 1992
+st.marys college hyderabad
+Biology, Physics, Chemistry
 More profiles for you
-Avinish Jain 
+Balakrishna Bagadi 
 · 3rd+
-Founder & MD - Evora Greens / Co-Founder - Bevry India
-Connect
-kanwal preet kaur 
-· 3rd+
-Founder at The Rainbow Company
-Connect
-Satish Ramakrishna 
-· 3rd+
-Hustling To Raise Funds 
-Connect
-Sanjay Mehta 
-· 3rd+
-Creating Visionary Brand, 100X.VC Investor. Early Stage Investor, Mehta Ventures Family Office, Agnikul Investor. Box8, WoW Momo, CoinDCX and many more investments 
+Solution Architect | UI Architect | Product Management | Micro services| Kafka | Mobile application Architecture | Project management | Data science |  Ex-Oracle | Ex-TechM
 Follow
-Jitender Gandhi
+Gulnaz Tabassum
 · 3rd+
-Founder at ESTATE BRIDGE
+Backend Developer | Python, Django, Flask | SQL & MongoDB | Machine Learning Integration | Cloud Deployment | Scalable Systems | Self-Taught & Startup-Hardened | Results-Driven
+Follow
+Sasidhar Reddy
+· 3rd+
+Data Scientist at Docturnal Private Limited
 Connect
+Nitika Goyal 
+· 3rd+
+Partner at Onefifty6 Capital
+Follow
+Angelos Angelou 
+· 3rd+
+Founder & Principal Executive Officer at Angelou Economics | CEO of International Accelerator | Expert in Economic Development, Startup Acceleration, and Corporate Site Selection | Angel Investing
+Follow
 Show more
 About
 Accessibility
@@ -649,70 +478,73 @@ Tiếng Việt (Vietnamese)
 Home
 My Network
 Jobs
-1
 Messaging
-9
+16
 Notifications
 Me
 For Business
 Try Premium for ₹0
-Indranil Datta
-Early-Stage AI | Capital Raising | CBO, PadUp Ventures | Strategic Advisor, AI Healthtech | PGP AIML - Texas McCombs
+Rahul Pathri
+CEO / Founder at docturnal
 Message
-Follow
+Connect
 Skills
 All
 Industry Knowledge
 Tools & Technologies
 Interpersonal Skills
-Other Skills
-Capital Raising
-3 experiences at Dectrocel Healthcare and Research and 2 other companies
-Valuation
-2 experiences at Dectrocel Healthcare and Research and 1 other company
-Machine Learning
-Strategic Advisor at Dectrocel Healthcare and Research
-Artificial Intelligence (AI)
-Strategic Advisor at Dectrocel Healthcare and Research
-Financial Modeling
-CBO at PadUp Ventures
-Investment Banking
-CBO at PadUp Ventures
-Business Modeling
-Lean Startup
-Key Account Management
-Channel Program Management
-Long Term Relationship Building
-Corporate Partnership Development
-Mobile Campaigns
-Deal Execution
-Market Share
-Agri
-Iterable Cross-Channel Marketing
-Customer Acquisition
-Interpersonal Skills
-Problem Solving
+Business Intelligence
+Endorsed by 2 colleagues at docturnal
+28 endorsements
+Test Management
+Endorsed by 5 colleagues at Prime Technology Group
+17 endorsements
+Testing
+Endorsed by Venu Sunku and 3 others who are highly skilled at this
+Endorsed by 2 colleagues at docturnal
+33 endorsements
+Test Planning
+Endorsed by 5 colleagues at Prime Technology Group
+16 endorsements
+Product Management
+Endorsed by 2 colleagues at Prime Technology Group
+9 endorsements
+Test Automation
+Endorsed by Syed Basha and 1 other who is highly skilled at this
+Endorsed by 2 colleagues at Microsoft
+3 endorsements
+.NET
+Endorsed by 2 colleagues at Prime Technology Group
+11 endorsements
+Pre-sales
+Endorsed by 3 colleagues at Prime Technology Group
+17 endorsements
+Management
+Endorsed by 2 colleagues at Prime Technology Group
+6 endorsements
+Business Analysis
+3 endorsements
 More profiles for you
-Avinish Jain 
+Balakrishna Bagadi 
 · 3rd+
-Founder & MD - Evora Greens / Co-Founder - Bevry India
-Connect
-kanwal preet kaur 
-· 3rd+
-Founder at The Rainbow Company
-Connect
-Satish Ramakrishna 
-· 3rd+
-Hustling To Raise Funds 
-Connect
-Sanjay Mehta 
-· 3rd+
-Creating Visionary Brand, 100X.VC Investor. Early Stage Investor, Mehta Ventures Family Office, Agnikul Investor. Box8, WoW Momo, CoinDCX and many more investments 
+Solution Architect | UI Architect | Product Management | Micro services| Kafka | Mobile application Architecture | Project management | Data science |  Ex-Oracle | Ex-TechM
 Follow
-Jitender Gandhi
+Gulnaz Tabassum
 · 3rd+
-Founder at ESTATE BRIDGE
+Backend Developer | Python, Django, Flask | SQL & MongoDB | Machine Learning Integration | Cloud Deployment | Scalable Systems | Self-Taught & Startup-Hardened | Results-Driven
+Follow
+Sasidhar Reddy
+· 3rd+
+Data Scientist at Docturnal Private Limited
 Connect
+Nitika Goyal 
+· 3rd+
+Partner at Onefifty6 Capital
+Follow
+Angelos Angelou 
+· 3rd+
+Founder & Principal Executive Officer at Angelou Economics | CEO of International Accelerator | Expert in Economic Development, Startup Acceleration, and Corporate Site Selection | Angel Investing
+Follow
 Show more
 About
 Accessibility
@@ -771,7 +603,3 @@ Türkçe (Turkish)
 Tiếng Việt (Vietnamese)
 简体中文 (Chinese (Simplified))
 正體中文 (Chinese (Traditional))
-Messaging
-You are on the messaging overlay. Press enter to open the list of conversations.
-Compose message
-You are on the messaging overlay. Press enter to open the list of conversations.
