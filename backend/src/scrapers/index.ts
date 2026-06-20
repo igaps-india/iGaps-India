@@ -14,5 +14,5 @@ export type {
 export {
   PitchDeckParserStub,
   PITCH_DECK_SCRAPE_FILE,
-} from './uploads/PitchDeckParserClient';
-export type { PitchDeckParserClient, PitchDeckTractionData } from './uploads/PitchDeckParserClient';
+} from './pitchDeck/PitchDeckParserClient';
+export type { PitchDeckParserClient, PitchDeckTractionData } from './pitchDeck/PitchDeckParserClient';
