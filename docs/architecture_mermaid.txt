@@ -1,0 +1,419 @@
+flowchart TD
+
+    classDef fe fill:#0d47a1,stroke:#1565c0,color:#fff
+    classDef be fill:#1b5e20,stroke:#2e7d32,color:#fff
+    classDef queue fill:#4a148c,stroke:#6a1b9a,color:#fff
+    classDef py fill:#bf360c,stroke:#d84315,color:#fff
+    classDef ext fill:#37474f,stroke:#546e7a,color:#fff
+    classDef eng fill:#b71c1c,stroke:#c62828,color:#fff
+    classDef llm fill:#880e4f,stroke:#ad1457,color:#fff
+    classDef rag fill:#0d47a1,stroke:#1565c0,color:#e3f2fd
+    classDef pitch fill:#004d40,stroke:#00695c,color:#e0f2f1
+    classDef agg fill:#e65100,stroke:#ef6c00,color:#fff
+    classDef recon fill:#f57f17,stroke:#f9a825,color:#000
+    classDef mongo fill:#263238,stroke:#37474f,color:#fff
+    classDef admin fill:#006064,stroke:#00838f,color:#fff
+    classDef calib fill:#1a237e,stroke:#283593,color:#e8eaf6
+
+    FOUNDER(["Founder Submits Application"])
+
+    subgraph FRONTEND["Frontend — React + Vite — port 5173"]
+        FE["Application Form
+Questionnaire UI
+File Upload pitch deck PDF"]
+    end
+
+    subgraph BACKENDSG["Express Backend — Node.js + TypeScript — port 3001"]
+        ROUTE["/api/applications
+/api/questionnaire
+/api/admin"]
+        DBSAVE["Save Application + Submission
+closedAnswers + openAnswers
+uploaded file metadata"]
+    end
+
+    MONGO[("MongoDB — port 27017
+Applications / Submissions
+Evaluations / BiasProfile
+TreeNode / Knockout / AuditLog")]
+
+    subgraph QUEUESG["p-queue — Background Job Queue — concurrency 5 — retry: 5s / 30s / 2min"]
+        J1["scrape:linkedin"]
+        J2["scrape:google"]
+        J3["scrape:github"]
+        J4["scrape:press"]
+        J5["scrape:zauba"]
+        J6["evaluate:application"]
+    end
+
+    subgraph PYTHONSG["Python Microservice — FastAPI — port 8000 — pre-warms VectorSimilarityScorer at startup"]
+        PYLI["POST /scrape/linkedin
+LinkedIn Pipeline
+founder_scraper.py
+linkedin_cookies.pkl
+manage_cookies.py
+insights_formatter.py"]
+        PYGO["POST /scrape/google
+Google Pipeline
+google_pipeline.py
+Returns patents + licenses"]
+        PYVS["POST /score/vector
+VectorSimilarityScorer.py
+all-MiniLM-L6-v2 model 22MB
+less than 10ms after warmup
+fully local — no external API"]
+    end
+
+    subgraph EXTSG["External Sources"]
+        GHAPI["GitHub API
+/orgs + /repos + /commits
+90-day commit window
+Velocity + Quality scoring"]
+        SERPAPI["SerpAPI
+News + Organic search results
+Press mention scoring"]
+        ZAUBA["Zauba Corp
+Company Registry
+CIN lookup
+summaryText extraction"]
+    end
+
+    subgraph ENGINESG["Evaluation Engine — evaluationEngine.ts — THE BRAIN"]
+
+        ENGLOAD["Load from MongoDB
+Active BiasProfile + categoryMultipliers
+All enabled TreeNodes
+All enabled Knockout rules
+Submission: closedAnswers + openAnswers
+scrapedData + uploads.parsedText"]
+
+        SOLOCHECK{"Solo Founder?
+closedQ3 = 0"}
+        SOLOSKIP["Skip all co-founder signals
+Assign neutral score 50
+Record in audit trace
+flag: solo_founder_not_applicable"]
+
+        subgraph ROUTERSG["Signal Node Router — scores every enabled signal node in tree.yaml"]
+
+            subgraph CMSG["1 closed_mapping"]
+                CMNODE["Lookup Table
+answer string to fixed score
+e.g. operator=90, customer=70
+e.g. pivot yes=75, no=30
+Array answers: take max score"]
+            end
+
+            subgraph NCSG["2 numeric_curve"]
+                NCNODE["Math Curve — Linear Interpolation
+x,y breakpoints from tree.yaml
+e.g. CAC curve, co-founder months
+clamp to first and last point
+INR converted to USD at scoring"]
+            end
+
+            subgraph STSG["3 scrape_threshold"]
+                STNODE["Scrape Status Mapping
+scrapeData.key.status to score
+success=80 / found=60
+unavailable=0 / none=0
+reads scrapedData from Submission"]
+            end
+
+            subgraph VSSG["4 vector_similarity"]
+                VSNODE["Semantic Embedding Score
+POST /score/vector to Python
+all-MiniLM-L6-v2 model
+Returns 0-100 similarity score
+no external API — fully local"]
+            end
+
+            subgraph LLMSG["5 llm_rubric — 16 rubric .md files in /src/rubrics/"]
+
+                RUBFILE["Load rubric .md file
+rubric.causality.v1.md
+rubric.non_obvious_insight.v1.md
+rubric.discovery_quality.v1.md
+rubric.market_proof.v1.md
+rubric.persona_vividity.v1.md
+rubric.pivot_quality.v1.md
++ 10 more rubric files"]
+
+                subgraph RAGSG["RAGRetriever — Graded Example Injection — corrects Silicon Valley LLM bias"]
+                    EBANK["EXAMPLE_BANK
+rubricId to 3 graded examples
+high anchor — strong band
+mid anchor — adequate band
+low anchor — very_weak band
+India-context calibrated
+Why-this-score explanation per example"]
+                    EFMT["Format as markdown block
+Example 1 — Score 88 strong
+Answer text + Why this score
+Example 2 — Score 52 adequate
+Example 3 — Score 18 very_weak
+Injected via RAG_EXAMPLES slot"]
+                end
+
+                subgraph PITCHSG["PitchDeckVectorStore — Hybrid RAG from Pitch Deck PDF"]
+                    PD1["Chunk pitch deck parsedText
+Overlapping windows ~300 words
+from Submission.uploads where
+type=pitch_deck + parseStatus=success"]
+                    PD2["Classify each chunk by slide type
+problem / market / solution
+traction / team / financials
+competition / other
+via keyword matching on chunk text"]
+                    PD3["Embed each chunk
+POST /score/vector to Python
+receives dense similarity score
+for each chunk independently"]
+                    PD4["BM25 Hybrid Rerank
+70 percent dense vector score
+30 percent keyword match score
+Top 3 chunks selected per signal
+signal-specific keyword sets used"]
+                    PD5["Signal-to-slide type routing
+traction signal gets traction+financials
+problem signal gets problem only
+team signal gets team+problem
+competition signal gets competition+solution"]
+                end
+
+                PROMPTBUILD["Build Layered Prompt
+SYSTEM: rubric scoring criteria + bands
++ RAG 3 graded anchor examples
++ top 3 pitch deck relevant chunks
+USER: founder open answer text
+LLM compares answer to real graded examples"]
+
+                GEMINICALL["GeminiProvider.ts
+Google GenAI API
+model: gemini-2.5-pro
+temp=0, topP=0.1, jsonMode=true
+Response cache: 1hr TTL keyed by prompt hash
+3 retries: +4s +8s on 503 or 429"]
+
+                LLMPARSE["Structured JSON Response
+score: integer 0 to 100
+band: exceptional/strong/adequate/weak/very_weak
+evidence: exact quote from founder text
+weakness: specific weakness identified
+confidence: high / medium / low
+inarticulate_genius_flag: boolean
+tar_pit_flag: boolean"]
+
+            end
+        end
+
+        SIGMAP["Build signalsMap
+flat signalKey to normalizedScore
+for ALL signal nodes
+clamped 0 to 100"]
+
+        subgraph KOSG["Knockout Gate — Dealbreaker Rules"]
+            KOEVAL["Evaluate DSL rules against signalsMap
+Operators: any / all / not
+equals / not_equals / less_than
+greater_than / in / not_in
+contains / exists / missing"]
+            KOHARD["hard_stop triggered
+Force composite = 0
+Band = not_passed
+Overrides all other scores"]
+            KOHUM["route_to_human triggered
+Sets routeToHuman flag
+Does not force score to 0
+Flagged for manual review"]
+        end
+
+        subgraph CCSG["Contradiction Checker — 4 cross-verification rules"]
+            CC1["Rule 1: Execution vs GitHub
+pivot_quality score above 70
+but GitHub commits = 0
+Severity: HIGH"]
+            CC2["Rule 2: Claimed Traction vs Organic Signal
+claims paying_customers or recurring_revenue
+but press score = 0 AND organic demand = 0
+Severity: MEDIUM"]
+            CC3["Rule 3: Domain Experience vs Company Age
+claims 36+ months domain exposure
+but company incorporated less than 18 months ago
+AND LinkedIn shows no prior domain role
+Severity: HIGH"]
+            CC4["Rule 4: Co-founder Relationship vs LinkedIn
+claims built_startup_together or worked_together
+but LinkedIn shows zero overlapping history
+Severity: MEDIUM"]
+            CCHIGH["Any HIGH severity contradiction
+forces routeToHuman = true"]
+        end
+
+        subgraph AGGSG["Score Aggregator — Signal to Layer to Track to Composite"]
+            AGG1["Per-signal weighted contribution
+normalizedScore divided by 100
+times categoryMultiplier
+times siblingWeight divided by 100"]
+            AGG2["Layer score
+sum of all signal contributions in layer
+normalize if total sibling weights not equal 100
+apply layer categoryMultiplier x layer weight/100"]
+            AGG3["Track scores A / B / C / D
+weighted sum of layer scores
+normalize if total layer weights not equal 100
+clamp 0 to 100"]
+            AGG4["Composite Score
+sum of trackWeight/100 x trackScore
+for all 4 tracks
+clamp 0 to 100"]
+        end
+
+        subgraph RECONSG["Reconciliation Engine — Rule-based Final Adjustments"]
+            R1["Leverage x Market Amplifier
+Track A above threshold
+AND avg of Track B + C above threshold
+apply boost multiplier to composite"]
+            R2["Inarticulate Genius Flag
+inarticulate_genius_flag set by LLM rubric
+AND Track A below threshold
+AND Track B above threshold
+route to human — do not auto-reject"]
+            R3["Tar Pit Flag
+tar_pit_flag set by non_obvious_insight rubric
+apply penalty multiplier to composite"]
+        end
+
+        BANDNODE["Band Classification
+priority: score 80 and above
+passed: score 60 to 80
+passed_with_gaps: score 40 to 60
+not_passed: score below 40
+hard_stop knockout overrides to not_passed"]
+
+        GAPREP["Build Gap Report
+required/must_have signals with score below 50
+reconciliation log entries
+contradiction list with reviewer questions
+full algorithm trace per signal
+founderAnswers with question text
+consistency checks"]
+
+        EVALSAVE["Save Evaluation Document to MongoDB
+compositeScore + band + signalsMap
+trackScores A/B/C/D + algorithmTrace
+knockoutsResult + gapReport
+reconciliationAdjustments + contradictions
+Application.status updated: rejected or passed
+AuditLog entry written"]
+
+    end
+
+    ADMINDASH["Admin Dashboard
+Results + Band
+Per-signal scores + evidence
+Algorithm trace + Gap report
+Reviewer questions per gap"]
+
+    subgraph CALIBSG["Batch Calibration — batchEvaluate.ts — offline — no MongoDB required"]
+        CSV["companies.csv
+12 real Indian startups
+18 closed answers + 10 open answers
+per company — full questionnaire"]
+        PDFS["12 Pitch Deck PDFs in data/test_batch/pitch_decks/
+BHARAT Plus AI — Ayudyog
+Carewell 360 — Credore — Dectrocel
+Flixdrop — Intellewings — Starbase
+Tensor Dynamics — TruScholar
+Waypal — Wegomeds"]
+        BATCHRUN["batchEvaluate.ts
+Reads CSV + parses PDFs via pdf-parse
+Builds closed + open answers per company
+Runs closed_mapping + numeric_curve
+Runs llm_rubric via Gemini API
+Runs vector_similarity via Python microservice
+Aggregates Signal to Layer to Track to Composite
+No MongoDB connection needed"]
+        RJSON["data/test_batch/results.json
+Per-company: composite score + band
+Track A/B/C/D scores
+Per-signal trace: score + method + evidence
+Gap list per company"]
+        QUALCHECK["Ranking Quality Check
+Are Seed+ companies ranked in top half?
+Target: 70 percent or more
+Validates rubric + weight calibration"]
+        RAGREFINE["Refine RAGRetriever EXAMPLE_BANK
+Add or update graded anchor examples
+Based on real evaluated company answers
+Calibrates LLM scoring against ground truth"]
+    end
+
+    FOUNDER --> FE
+    FE -->|"POST /api/applications"| ROUTE
+    ROUTE --> DBSAVE --> MONGO
+    ROUTE -->|"Enqueues 6 background jobs"| QUEUESG
+
+    J1 -->|"POST /scrape/linkedin"| PYLI
+    J2 -->|"POST /scrape/google"| PYGO
+    J3 --> GHAPI
+    J4 --> SERPAPI
+    J5 --> ZAUBA
+
+    PYLI -->|"scraped linkedin data"| MONGO
+    PYGO -->|"patents + licenses"| MONGO
+    GHAPI -->|"velocity + quality"| MONGO
+    SERPAPI -->|"press + organic"| MONGO
+    ZAUBA -->|"company summary"| MONGO
+
+    J6 --> ENGLOAD
+    ENGLOAD -->|"reads"| MONGO
+    ENGLOAD --> SOLOCHECK
+    SOLOCHECK -->|"yes solo founder"| SOLOSKIP --> SIGMAP
+    SOLOCHECK -->|"no has co-founder"| ROUTERSG
+    ROUTERSG --> SIGMAP
+
+    RUBFILE --> PROMPTBUILD
+    EBANK --> EFMT --> PROMPTBUILD
+    PD1 --> PD2 --> PD3
+    PD3 -->|"POST /score/vector"| PYVS
+    PYVS -->|"dense score per chunk"| PD4
+    PD4 --> PD5 --> PROMPTBUILD
+    PROMPTBUILD --> GEMINICALL --> LLMPARSE
+    VSNODE -->|"POST /score/vector"| PYVS
+
+    SIGMAP --> KOSG
+    SIGMAP --> CCSG
+    KOEVAL --> KOHARD
+    KOEVAL --> KOHUM
+    CC1 --> CCHIGH
+    CC3 --> CCHIGH
+    CCHIGH -->|"sets routeToHuman"| KOHUM
+    KOSG --> AGGSG
+    CCSG --> AGGSG
+    AGG1 --> AGG2 --> AGG3 --> AGG4
+    KOHARD -->|"force score = 0"| BANDNODE
+    AGGSG --> RECONSG --> BANDNODE --> GAPREP --> EVALSAVE
+    EVALSAVE --> MONGO
+    EVALSAVE --> ADMINDASH
+
+    CSV --> BATCHRUN
+    PDFS --> BATCHRUN
+    BATCHRUN -->|"same full scoring pipeline"| RJSON
+    RJSON --> QUALCHECK --> RAGREFINE
+    RAGREFINE -.->|"calibrates example bank"| EBANK
+
+    class FE fe
+    class ROUTE,DBSAVE be
+    class J1,J2,J3,J4,J5,J6 queue
+    class PYLI,PYGO,PYVS py
+    class GHAPI,SERPAPI,ZAUBA ext
+    class ENGLOAD,SOLOCHECK,SOLOSKIP,SIGMAP,BANDNODE,GAPREP,EVALSAVE eng
+    class RUBFILE,GEMINICALL,LLMPARSE,PROMPTBUILD llm
+    class EBANK,EFMT rag
+    class PD1,PD2,PD3,PD4,PD5 pitch
+    class AGG1,AGG2,AGG3,AGG4 agg
+    class R1,R2,R3 recon
+    class MONGO mongo
+    class ADMINDASH admin
+    class CSV,PDFS,BATCHRUN,RJSON,QUALCHECK,RAGREFINE calib

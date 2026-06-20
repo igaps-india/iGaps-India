@@ -95,6 +95,14 @@ const EXAMPLE_BANK: Record<string, RagExample[]> = {
         'The founder clearly knows something the market does not.',
     },
     {
+      score: 85,
+      band: 'strong',
+      answer:
+        'The non-obvious insight I\'ve gained is that for most financial institutions, the biggest enemy isn\'t just the money launderer; it\'s the "false positive" noise. Standard systems flag so many innocent transactions that the real threats often slip through undetected... You need to see the shape of a transaction relationship, not just a single data point, to truly catch fraud before it happens.',
+      why:
+        'In the AML/Compliance industry, "false positive noise" is the absolute biggest pain point that costs banks millions in manual review hours. Recognizing that the shape of the transaction matters more than rules is a brilliant, highly-fundable insight. The AI initially penalized this for buzzwords, but the human evaluator overrode it because the specific domain pain point is highly accurate.',
+    },
+    {
       score: 56,
       band: 'adequate',
       answer:
