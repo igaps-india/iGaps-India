@@ -83,6 +83,7 @@ from founder_scraper import (
     scrape_company_people,
     discover_cofounders,
     scrape_linkedin_profile,
+    search_linkedin_for_profile,
 )
 from website_scraper import scrape_specific_url, extract_domain_from_url
 from llm_parser import parse_company_overview
@@ -133,9 +134,13 @@ def _search_linkedin_profile_url(full_name: str, company_name: str) -> Optional[
     }
     LI_PATTERN = re.compile(r"https?://(?:www\.)?linkedin\.com/in/[\w\-]+", re.I)
 
+    # ── Clean up names for better search results ──────────────────────────────
+    clean_name = re.sub(r'^(Dr\.|Mr\.|Ms\.|Mrs\.|Prof\.)\s+', '', full_name, flags=re.IGNORECASE).strip()
+    clean_company = re.sub(r'\s+(Pvt\.?\s*Ltd\.?|Inc\.?|LLC|Ltd\.?|Private\s+Limited|Corporation|Corp\.?)$', '', company_name, flags=re.IGNORECASE).strip()
+
     # ── Strategy 1: DuckDuckGo HTML (requests, no browser) ──────────────────
     try:
-        query = f'site:linkedin.com/in/ "{full_name}" "{company_name}"'
+        query = f'site:linkedin.com/in/ "{clean_name}" {clean_company}'
         ddg_url = (
             f"https://html.duckduckgo.com/html/?q={urllib.parse.quote_plus(query)}"
         )
@@ -166,7 +171,7 @@ def _search_linkedin_profile_url(full_name: str, company_name: str) -> Optional[
 
     # ── Strategy 2: Bing search via requests ────────────────────────────────
     try:
-        query2 = f'site:linkedin.com/in "{full_name}" "{company_name}"'
+        query2 = f'site:linkedin.com/in "{clean_name}" {clean_company}'
         bing_url = (
             f"https://www.bing.com/search?q={urllib.parse.quote_plus(query2)}"
         )
@@ -194,7 +199,8 @@ def run_pipeline(
     company_name: str,
     website_url:  Optional[str],
     founder_name: str,
-    founder_email: Optional[str],
+    cofounder_names: Optional[list[str]] = None,
+    founder_email: Optional[str] = None,
     linkedin_url: Optional[str]          = None,
     founder_linkedin_url: Optional[str]  = None,
     dry_run: bool                        = False,
@@ -322,7 +328,12 @@ def run_pipeline(
     logger.info("\n── STEP 2 ─ Co-Founder Discovery ─────────────────────────────────")
 
     cofounders: list[dict[str, Any]] = []
-    if people_page_text:
+    
+    if cofounder_names:
+        logger.info("  [2] Using explicitly provided co-founder names: %s", cofounder_names)
+        for cf_name in cofounder_names:
+            cofounders.append({"name": cf_name, "linkedin_url": None})
+    elif people_page_text:
         logger.info("  [2] Scanning People page for co-founder titles …")
         cofounders = discover_cofounders(
             people_page_text=people_page_text,
@@ -330,7 +341,7 @@ def run_pipeline(
         )
         if cofounders:
             logger.info(
-                "  ↳ Discovered %d co-founder(s): %s",
+                "  ↳ Found %d co-founder(s): %s",
                 len(cofounders), [cf["name"] for cf in cofounders],
             )
         else:
@@ -338,13 +349,14 @@ def run_pipeline(
     else:
         logger.info("  [2] No People page text — skipping co-founder discovery.")
 
-    # For co-founders without a URL, try DuckDuckGo
+    # For co-founders without a URL, try DuckDuckGo/Native fallback
     for cf in cofounders:
         if not cf.get("linkedin_url"):
-            logger.info(
-                "  ↳ '%s' has no LinkedIn URL — trying DuckDuckGo …", cf["name"]
-            )
-            cf["linkedin_url"] = _search_linkedin_profile_url(cf["name"], company_name)
+            logger.info("  ↳ '%s' has no LinkedIn URL — trying native search …", cf["name"])
+            cf["linkedin_url"] = search_linkedin_for_profile(cf["name"], company_name)
+            if not cf["linkedin_url"]:
+                logger.info("  ↳ native search failed — trying web search …")
+                cf["linkedin_url"] = _search_linkedin_profile_url(cf["name"], company_name)
             if cf["linkedin_url"]:
                 logger.info("  ↳ DDG found URL for '%s': %s", cf["name"], cf["linkedin_url"])
             else:
@@ -557,10 +569,18 @@ def _find_founder_profile_url(
                         )
                         return url
 
-    # ── Strategy 3: web search fallback ──────────────────────────────────────
+    # ── Strategy 3: Native LinkedIn search via authenticated browser ─────────
     logger.info(
-        "_find_founder_profile_url: '%s' not found in People page — trying web search …",
+        "_find_founder_profile_url: '%s' not found in People page — trying native LinkedIn search …",
         founder_name,
+    )
+    native_url = search_linkedin_for_profile(founder_name, company_name)
+    if native_url:
+        return native_url
+
+    # ── Strategy 4: web search fallback ──────────────────────────────────────
+    logger.info(
+        "_find_founder_profile_url: native search failed — trying web search fallback …"
     )
     return _search_linkedin_profile_url(founder_name, company_name)
 

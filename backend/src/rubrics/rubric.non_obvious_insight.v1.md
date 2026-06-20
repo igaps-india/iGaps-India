@@ -22,11 +22,18 @@ Score 30–49 (Weak):
 Score 0–29 (Tar pit flag):
 - The insight points to a problem that many smart people have tried and failed to solve before, and the founder is not aware of prior attempts. OR the answer is vague, circular, or too short to evaluate (<20 words).
 
-## Output format (strict JSON)
+## Calibration examples
+{{RAG_EXAMPLES}}
+
+## Output format
+
+Return ONLY valid JSON. Do not include markdown codeblocks or any other text.
+The JSON must strictly follow this exact structure:
+
 {
-  "score": <integer 0–100>,
-  "band": "<exceptional|strong|adequate|weak|very_weak>",
-  "evidence": "<1–2 sentences>",
-  "weaknesses": ["<specific weakness>"],
-  "tar_pit_flag": <true if this sounds like a well-known graveyard problem with no new angle>
+  "score": 0, // integer 0-100
+  "band": "weak", // MUST be EXACTLY ONE OF: "exceptional", "strong", "adequate", "weak", "very_weak"
+  "raw_text_evidence": "...", // exact quote from text
+  "weakness": "...", // weakness identified
+  "confidence": "high" // "high", "medium", or "low"
 }

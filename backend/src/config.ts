@@ -43,9 +43,9 @@ export const config = {
   llm: {
     provider: optional('LLM_PROVIDER', 'gemini') as 'gemini' | 'openai',
     geminiApiKey: optional('GEMINI_API_KEY', ''),
-    geminiModel: optional('GEMINI_MODEL', 'gemini-2.5-flash'),
-    geminiModelRubric: optional('GEMINI_MODEL_RUBRIC', 'gemini-2.5-flash'),
-    geminiModelAgent: optional('GEMINI_MODEL_AGENT', 'gemini-2.5-flash'),
+    geminiModel: optional('GEMINI_MODEL', 'gemini-2.5-pro'),
+    geminiModelRubric: optional('GEMINI_MODEL_RUBRIC', 'gemini-2.5-pro'),
+    geminiModelAgent: optional('GEMINI_MODEL_AGENT', 'gemini-2.5-pro'),
   },
 
   scraping: {

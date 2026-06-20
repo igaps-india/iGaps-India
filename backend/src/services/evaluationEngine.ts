@@ -6,9 +6,10 @@
  *  2. Score each signal node (closed_mapping / numeric_curve / llm_rubric / scrape_threshold / derived)
  *  3. Build signalsMap (flat key→rawScore)
  *  4. Run knockout gate
- *  5. Aggregate: per-node → layer → track → composite
- *  6. Apply reconciliation rules
- *  7. Write Evaluation document + update Application status
+ *  5. Run contradiction checks (cross-verify claims vs scraped data)
+ *  6. Aggregate: per-node → layer → track → composite
+ *  7. Apply reconciliation rules
+ *  8. Write Evaluation document + update Application status
  */
 
 import { Application } from '../models/Application';
@@ -21,12 +22,50 @@ import { AuditLog } from '../models/AuditLog';
 import { scoreWithRubric } from './rubricScorer';
 import { getOpenAnswersPlain, resolveOpenAnswerText } from '../utils/openAnswers';
 import { CLOSED_QUESTIONS } from '../utils/closedQuestions';
+import axios from 'axios';
 import type {
   AlgorithmTraceEntry,
+  Contradiction,
   KnockoutsResult,
   ReconciliationLogEntry,
   GapReport,
 } from '../models/Evaluation';
+
+// ── Vector Similarity Scorer (calls Python microservice, no external API) ──────
+// Falls back to score=0 gracefully if the Python service is not running.
+async function scoreWithVectorSimilarity(
+  signalKey: string,
+  answerText: string,
+): Promise<{ score: number; confidence: 'high' | 'medium' | 'low'; simToPerfect: number; simToTerrible: number }> {
+  if (!answerText?.trim() || answerText.trim().length < 20) {
+    return { score: 0, confidence: 'low', simToPerfect: 0, simToTerrible: 0 };
+  }
+  try {
+    const response = await axios.post<{
+      score: number;
+      confidence: string;
+      sim_to_perfect: number;
+      sim_to_terrible: number;
+    }>(
+      'http://127.0.0.1:8000/score/vector',
+      { signal_key: signalKey, answer_text: answerText },
+      { timeout: 5_000 },
+    );
+    const data = response.data;
+    return {
+      score: Math.min(100, Math.max(0, data.score)),
+      confidence: (['high', 'medium', 'low'].includes(data.confidence)
+        ? data.confidence
+        : 'low') as 'high' | 'medium' | 'low',
+      simToPerfect: data.sim_to_perfect ?? 0,
+      simToTerrible: data.sim_to_terrible ?? 0,
+    };
+  } catch (err) {
+    const msg = err instanceof Error ? err.message : String(err);
+    console.warn(`[Engine] Vector similarity scorer unavailable for ${signalKey}: ${msg}. Falling back to score=0.`);
+    return { score: 0, confidence: 'low', simToPerfect: 0, simToTerrible: 0 };
+  }
+}
 
 // Lean plain-object types (avoid Mongoose document type complexity)
 interface LeanTreeNode {
@@ -49,6 +88,13 @@ function scoredClosedMapping(
   mapping: Record<string, number>,
 ): number {
   if (value === undefined || value === null) return 0;
+  
+  if (Array.isArray(value)) {
+    if (value.length === 0) return 0;
+    const scores = value.map((v) => mapping[String(v)] ?? 0);
+    return Math.max(...scores);
+  }
+  
   const key = String(value);
   return mapping[key] ?? 0;
 }
@@ -188,8 +234,38 @@ export async function evaluate(applicationId: string): Promise<void> {
   const openAnswers = getOpenAnswersPlain(submission);
   const scrapedData = submission.scrapedData as Record<string, unknown>;
 
+  // ── Extract pitch deck text for hybrid RAG retrieval ──────────────────────
+  // The parsed text is stored on the Upload sub-document when the PDF was
+  // first uploaded. We grab the first successfully parsed pitch_deck upload.
+  const pitchDeckUpload = (submission.uploads ?? []).find(
+    (u) => u.type === 'pitch_deck' && u.parseStatus === 'success' && u.parsedText,
+  );
+  const pitchDeckText   = pitchDeckUpload?.parsedText ?? '';
+  const submissionIdStr = String(submission._id ?? '');
+
   const signalsMap: SignalsMap = {};
   const traceEntries: AlgorithmTraceEntry[] = [];
+
+  // ── Solo-founder detection ─────────────────────────────────────────────────
+  // closedQ3 = "How long have you known your co-founder? (0 = solo founder)"
+  // If the answer is 0 or missing, the founder is solo.
+  // Team Chemistry signals (trackA.L2) are NOT applicable and must be skipped
+  // so they don't score 0/100 and unfairly drag down the composite.
+  const cofounderKnownMonths = Number(closedAnswers['closedQ3'] ?? 0);
+  const isSoloFounder = cofounderKnownMonths === 0;
+  if (isSoloFounder) {
+    signalsMap['flag_solo_founder'] = true;
+    console.info(`[Engine] Solo founder detected for ${applicationId} — trackA.L2 signals will be skipped.`);
+  }
+
+  // Signals that belong to the Team Chemistry layer (trackA.L2).
+  // These are irrelevant for solo founders and will receive a neutral pass-through.
+  const COFOUNDER_SIGNAL_KEYS = new Set([
+    'closedQ3_cofounder_known_months',
+    'closedQ4_relationship_type',
+    'scrape_cofounder_overlap_linkedin',
+    'scrape_prior_venture_together',
+  ]);
 
   // ── Score each signal node ─────────────────────────────────────────────────
   const signalNodes = allNodes.filter((n) => n.kind === 'signal');
@@ -200,8 +276,44 @@ export async function evaluate(applicationId: string): Promise<void> {
     let rawScore = 0;
     let llmEvidence: string | undefined;
     let llmWeaknesses: string[] | undefined;
+    let rawTextEvidence: string | null | undefined;
+    let weakness: string | null | undefined;
+    let confidence: 'high' | 'medium' | 'low' | undefined;
+    let zodValidated: boolean | undefined;
+    let scoringMethod = 'unknown';
 
     try {
+      // ── Solo-founder guard ───────────────────────────────────────────────
+      // Skip Team Chemistry signals entirely when there is no co-founder.
+      // Assign a neutral mid-point score (50) so the layer doesn't collapse
+      // the composite. A clear audit note is recorded in the trace.
+      if (isSoloFounder && node.signalKey && COFOUNDER_SIGNAL_KEYS.has(node.signalKey)) {
+        const neutralScore = 50;
+        signalsMap[node.signalKey] = neutralScore;
+        traceEntries.push({
+          nodeId: node.nodeId,
+          signalKey: node.signalKey,
+          nodeName: node.name,
+          category: node.category,
+          rawScore: neutralScore,
+          normalizedScore: neutralScore,
+          categoryMultiplier: categoryMultiplier(node.category, profile),
+          siblingWeight: node.weight,
+          weightedContribution: (neutralScore / 100) * (node.weight / 100) * categoryMultiplier(node.category, profile),
+          llmEvidence: 'N/A — solo founder, no co-founder relationship to evaluate',
+          llmWeaknesses: [],
+          rawTextEvidence: null,
+          weakness: null,
+          confidence: 'low',
+          zodValidated: true,
+          scoringMethod: 'solo_founder_skip',
+          flags: ['solo_founder_not_applicable'],
+          sourceType: node.sourceType ?? '',
+          sourceRef: node.sourceRef ?? '',
+        });
+        continue;
+      }
+
       const rule = node.scoringRule as Record<string, unknown>;
 
       if (rule.type === 'closed_mapping' && rule.mapping) {
@@ -209,10 +321,12 @@ export async function evaluate(applicationId: string): Promise<void> {
         const qId = sourceRef.replace('closedQ', 'closedQ');
         const answer = closedAnswers[qId];
         rawScore = scoredClosedMapping(answer, rule.mapping as Record<string, number>);
+        scoringMethod = 'closed_mapping';
       } else if (rule.type === 'numeric_curve' && rule.curve) {
         const sourceRef = node.sourceRef ?? '';
         const answer = closedAnswers[sourceRef];
         rawScore = scoredNumericCurve(answer, rule.curve as Record<string, number>);
+        scoringMethod = 'numeric_curve';
       } else if (rule.type === 'llm_rubric' && rule.rubric) {
         const sourceRef = node.sourceRef ?? '';
         const answerText = resolveOpenAnswerText(
@@ -221,10 +335,23 @@ export async function evaluate(applicationId: string): Promise<void> {
           submission.openQPlan,
         );
 
-        const result = await scoreWithRubric(String(rule.rubric), answerText);
+        const result = await scoreWithRubric(
+          String(rule.rubric),
+          answerText,
+          undefined,
+          pitchDeckText,
+          submissionIdStr,
+        );
         rawScore = result.score;
+        // Legacy fields
         llmEvidence = result.evidence;
         llmWeaknesses = result.weaknesses;
+        // New Zod-validated audit fields
+        rawTextEvidence = result.rawTextEvidence;
+        weakness = result.weakness;
+        confidence = result.confidence;
+        zodValidated = result.zodValidated;
+        scoringMethod = 'llm_rubric';
 
         // Propagate inarticulate genius flag
         if (result.inarticulateGeniusFlag) {
@@ -233,15 +360,32 @@ export async function evaluate(applicationId: string): Promise<void> {
         if (result.tarPitFlag) {
           signalsMap['flag_tar_pit'] = true;
         }
+      } else if (rule.type === 'vector_similarity') {
+        // Score using local sentence-transformer embeddings (no external API)
+        const sourceRef = node.sourceRef ?? '';
+        const answerText = resolveOpenAnswerText(
+          sourceRef,
+          openAnswers,
+          submission.openQPlan,
+        );
+        const vsResult = await scoreWithVectorSimilarity(node.signalKey, answerText);
+        rawScore = vsResult.score;
+        confidence = vsResult.confidence;
+        // Store sim scores as evidence in the audit trail
+        rawTextEvidence = `sim_to_perfect=${vsResult.simToPerfect.toFixed(3)}, sim_to_terrible=${vsResult.simToTerrible.toFixed(3)}`;
+        scoringMethod = 'vector_similarity';
+        zodValidated = true; // Vector scorer always returns a clean structured result
       } else if (rule.type === 'scrape_threshold' && rule.thresholds) {
         const sourceRef = node.sourceRef ?? '';
         // Map scrape reference to nested scrapedData
         const scrapeKey = sourceRef.replace('scrape.', '');
         const scrapeValue = (scrapedData[scrapeKey] as Record<string, unknown>)?.status ?? (scrapedData[scrapeKey] ? 'found' : 'none');
         rawScore = scoredScrapeThreshold(scrapeValue, rule.thresholds as Record<string, number>);
+        scoringMethod = 'scrape_threshold';
       } else if (rule.type === 'derived_formula') {
         // Derived signals computed after all others — placeholder score
         rawScore = 50; // Will be refined in a follow-up iteration
+        scoringMethod = 'derived_formula';
       }
     } catch (err) {
       const msg = err instanceof Error ? err.message : String(err);
@@ -265,8 +409,15 @@ export async function evaluate(applicationId: string): Promise<void> {
       categoryMultiplier: cm,
       siblingWeight: node.weight,
       weightedContribution,
+      // Legacy fields
       llmEvidence,
       llmWeaknesses,
+      // New Zod-validated audit fields
+      rawTextEvidence,
+      weakness,
+      confidence,
+      zodValidated,
+      scoringMethod,
       flags: node.flags ?? [],
       sourceType: node.sourceType ?? '',
       sourceRef: node.sourceRef ?? '',
@@ -275,6 +426,17 @@ export async function evaluate(applicationId: string): Promise<void> {
 
   // ── Knockout gate ──────────────────────────────────────────────────────────
   const knockoutsResult = runKnockouts(knockouts, signalsMap);
+
+  // ── Contradiction checks (cross-verify founder claims vs scraped data) ────
+  const contradictions = runContradictionChecks(signalsMap, closedAnswers, scrapedData, traceEntries);
+  if (contradictions.some((c) => c.severity === 'high')) {
+    // At least one high-severity contradiction — ensure route_to_human is set
+    knockoutsResult.routeToHuman = true;
+    console.warn(
+      `[Engine] High-severity contradiction detected for ${applicationId}: ` +
+      contradictions.filter((c) => c.severity === 'high').map((c) => c.description).join(' | '),
+    );
+  }
 
   // ── Aggregate track scores ─────────────────────────────────────────────────
   const trackScores = aggregateTracks(allNodes, signalNodes, signalsMap, traceEntries, profile);
@@ -312,6 +474,7 @@ export async function evaluate(applicationId: string): Promise<void> {
     traceEntries,
     knockoutsResult,
     reconciliationLog,
+    contradictions,
     submission.openQPlan?.skillVersion ?? 'unknown',
     submission.openQPlan,
   );
@@ -489,6 +652,124 @@ function applyReconciliation(
   return { finalComposite: Math.min(100, Math.max(0, adjusted)), reconciliationLog: log };
 }
 
+// ── Contradiction detection ───────────────────────────────────────────────────
+// Cross-checks founder claims against scraper data and internal consistency.
+// Each rule compares two or more signals that SHOULD be consistent.
+// If they contradict, it means the founder may be exaggerating or the data is incomplete.
+
+function runContradictionChecks(
+  signalsMap: SignalsMap,
+  closedAnswers: Record<string, unknown>,
+  scrapedData: Record<string, unknown>,
+  trace: AlgorithmTraceEntry[],
+): Contradiction[] {
+  const contradictions: Contradiction[] = [];
+
+  // ── Rule 1: Execution Claims vs GitHub Reality ─────────────────────────────
+  // If LLM says the founder pivots fast / executes well (pivot_quality > 70)
+  // but GitHub shows zero activity, something doesn't add up.
+  const pivotQualityScore = Number(signalsMap['openQ9_pivot_quality_score'] ?? 0);
+  const githubScore = Number(signalsMap['scrape_github_commits_per_week'] ?? 0);
+
+  if (pivotQualityScore > 70 && githubScore === 0) {
+    contradictions.push({
+      signal: 'execution_vs_github',
+      claimedValue: `Pivot quality LLM score: ${pivotQualityScore}`,
+      scrapedValue: `GitHub velocity score: ${githubScore}`,
+      severity: 'high',
+      description:
+        'Founder claims fast execution/pivots, but GitHub shows zero commits. ' +
+        'Possible reasons: private repo, non-technical founder, or exaggerated claims. ' +
+        'Reviewer should ask: "Can you show us your codebase or deployment history?"',
+    });
+  }
+
+  // ── Rule 2: Traction Stage vs Scraper Evidence ─────────────────────────────
+  // If founder claims paying_customers or higher, but there is zero organic
+  // demand (no press, no search traffic), it is suspicious.
+  const tractionStage = String(closedAnswers['closedQ17'] ?? '');
+  const organicDemandScore = Number(signalsMap['scrape_organic_demand_score'] ?? 0);
+  const pressMentionScore = Number(signalsMap['scrape_press_mention_count'] ?? 0);
+
+  const claimsSignificantTraction = ['paying_customers', 'recurring_revenue', 'scaled_revenue'].includes(tractionStage);
+
+  if (claimsSignificantTraction && organicDemandScore === 0 && pressMentionScore === 0) {
+    contradictions.push({
+      signal: 'traction_vs_organic_signal',
+      claimedValue: `Traction stage: ${tractionStage}`,
+      scrapedValue: `Organic demand score: ${organicDemandScore}, Press mentions: ${pressMentionScore}`,
+      severity: 'medium',
+      description:
+        'Founder claims paying customers or revenue, but no organic demand signal ' +
+        'was found online (no press, no Google Trends signal, no social mentions). ' +
+        'Could be a stealth-mode startup, but reviewer should verify: ' +
+        '"Can you share a customer reference or invoice?"',
+    });
+  }
+
+  // ── Rule 3: Domain Experience vs Company Age ───────────────────────────────
+  // If founder claims 36+ months of domain exposure, but the company
+  // was incorporated very recently AND LinkedIn doesn't show relevant history,
+  // the timeline may be inconsistent.
+  const domainExposureMonths = Number(closedAnswers['closedQ2'] ?? 0);
+  const linkedinData = scrapedData['linkedin'] as Record<string, unknown> | undefined;
+  const linkedinStatus = String(linkedinData?.status ?? 'none');
+  const zaubaData = scrapedData['zauba'] as Record<string, unknown> | undefined;
+  const incorpDateStr = String(zaubaData?.incorporationDate ?? '');
+
+  if (domainExposureMonths >= 36 && incorpDateStr) {
+    const incorpDate = new Date(incorpDateStr);
+    const monthsSinceIncorp = !isNaN(incorpDate.getTime())
+      ? (Date.now() - incorpDate.getTime()) / (1000 * 60 * 60 * 24 * 30)
+      : null;
+
+    if (monthsSinceIncorp !== null && monthsSinceIncorp < 18 && linkedinStatus !== 'strong') {
+      contradictions.push({
+        signal: 'domain_experience_vs_company_age',
+        claimedValue: `Domain exposure: ${domainExposureMonths} months`,
+        scrapedValue: `Company age: ~${Math.round(monthsSinceIncorp)} months (Zauba), LinkedIn overlap: ${linkedinStatus}`,
+        severity: 'high',
+        description:
+          `Founder claims ${domainExposureMonths} months of domain experience, ` +
+          `but the company was incorporated only ~${Math.round(monthsSinceIncorp)} months ago ` +
+          'and LinkedIn does not show a strong prior role in the same domain. ' +
+          'Reviewer should ask: "What were you doing in this domain before incorporation?"',
+      });
+    }
+  }
+
+  // ── Rule 4: Co-founder Relationship Claims vs LinkedIn Overlap ─────────────
+  // If founder says they "built a startup together" or "worked together",
+  // but LinkedIn shows no overlapping employment history, it is suspicious.
+  const relationshipType = String(closedAnswers['closedQ4'] ?? '');
+  const linkedinOverlapScore = Number(signalsMap['scrape_cofounder_overlap_linkedin'] ?? 0);
+
+  const claimsStrongRelationship = ['built_startup_together', 'worked_together'].includes(relationshipType);
+
+  if (claimsStrongRelationship && linkedinOverlapScore === 0) {
+    contradictions.push({
+      signal: 'cofounder_relationship_vs_linkedin',
+      claimedValue: `Relationship type: ${relationshipType}`,
+      scrapedValue: `LinkedIn co-founder overlap score: ${linkedinOverlapScore}`,
+      severity: 'medium',
+      description:
+        `Founder claims they "${relationshipType.replace(/_/g, ' ')}" with co-founder, ` +
+        'but LinkedIn shows no overlapping employment or education history. ' +
+        'Could be a LinkedIn data gap, but reviewer should verify: ' +
+        '"Where exactly did you work together, and for how long?"',
+    });
+  }
+
+  if (contradictions.length > 0) {
+    console.info(
+      `[Engine] Contradiction check found ${contradictions.length} issue(s): ` +
+      contradictions.map((c) => `${c.signal} (${c.severity})`).join(', '),
+    );
+  }
+
+  return contradictions;
+}
+
 // ── Gap report builder ────────────────────────────────────────────────────────
 
 function buildGapReport(
@@ -499,6 +780,7 @@ function buildGapReport(
   trace: AlgorithmTraceEntry[],
   knockoutsResult: KnockoutsResult,
   reconciliationLog: ReconciliationLogEntry[],
+  contradictions: Contradiction[],
   skillVersion: string,
   openQPlan?: import('../models/Submission').OpenQPlan | null,
 ): GapReport {
@@ -523,11 +805,14 @@ function buildGapReport(
   }
 
   // Identify gaps: required/must_have signals with score < 50
+  // Exclude signals that were skipped due to solo-founder guard — these are
+  // not real gaps, they are simply not applicable to this founder's situation.
   const gaps: GapReport['gaps'] = trace
     .filter(
       (t) =>
         (t.category === 'required' || t.category === 'must_have') &&
-        t.normalizedScore < 50,
+        t.normalizedScore < 50 &&
+        t.scoringMethod !== 'solo_founder_skip',
     )
     .map((t) => ({
       nodeId: t.nodeId,
@@ -543,12 +828,19 @@ function buildGapReport(
     overallBand: band,
     founderAnswers,
     nodeEvaluations: trace,
-    contradictions: [],
+    contradictions,
     consistencyChecks: [
       {
         checkName: 'skill_version',
         passed: skillVersion !== 'unknown',
         description: `Question agent skill: ${skillVersion}`,
+      },
+      {
+        checkName: 'contradiction_check',
+        passed: contradictions.length === 0,
+        description: contradictions.length === 0
+          ? 'No contradictions detected between founder claims and scraped data'
+          : `${contradictions.length} contradiction(s) detected — review recommended`,
       },
     ],
     gaps,

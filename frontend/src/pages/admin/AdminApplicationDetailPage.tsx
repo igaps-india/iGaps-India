@@ -15,6 +15,9 @@ interface LinkedSignalScore {
   weightedContribution: number;
   llmEvidence?: string;
   llmWeaknesses?: string[];
+  rawTextEvidence?: string | null;
+  weakness?: string | null;
+  scoringMethod?: string;
 }
 
 interface ClosedAnswerReview {
@@ -57,6 +60,11 @@ interface EnrichedTraceEntry {
   isGap: boolean;
   gapReason?: string;
   suggestedReviewerQuestion?: string;
+  rawTextEvidence?: string | null;
+  weakness?: string | null;
+  confidence?: 'high' | 'medium' | 'low';
+  scoringMethod?: string;
+  zodValidated?: boolean;
 }
 
 interface ReviewPayload {
@@ -64,7 +72,13 @@ interface ReviewPayload {
   openAnswers: OpenAnswerReview[];
   enrichedTrace: EnrichedTraceEntry[];
   consistencyChecks: Array<{ checkName: string; passed: boolean; description: string }>;
-  contradictions: Array<{ signal: string; description: string; severity: string }>;
+  contradictions: Array<{
+    signal: string;
+    description: string;
+    severity: string;
+    claimedValue?: unknown;
+    scrapedValue?: unknown;
+  }>;
 }
 
 interface EvaluationData {
@@ -119,7 +133,7 @@ export default function AdminApplicationDetailPage() {
   const [review, setReview] = useState<ReviewPayload | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
-  const [activeTab, setActiveTab] = useState<'overview' | 'answers' | 'trace' | 'gaps' | 'knockouts'>('overview');
+  const [activeTab, setActiveTab] = useState<'overview' | 'answers' | 'trace' | 'gaps' | 'contradictions' | 'knockouts'>('overview');
 
   const token = localStorage.getItem('igaps_admin_token') ?? '';
 
@@ -184,7 +198,7 @@ export default function AdminApplicationDetailPage() {
       )}
 
       <div className="flex gap-1 border-b border-gray-100">
-        {(['overview', 'answers', 'trace', 'gaps', 'knockouts'] as const).map((tab) => (
+        {(['overview', 'answers', 'trace', 'gaps', 'contradictions', 'knockouts'] as const).map((tab) => (
           <button
             key={tab}
             onClick={() => setActiveTab(tab)}
@@ -327,7 +341,10 @@ export default function AdminApplicationDetailPage() {
               >
                 <div className="flex items-start justify-between gap-3">
                   <div>
-                    <span className="font-medium text-gray-900">{t.nodeName}</span>
+                    <div className="flex items-center gap-2 flex-wrap">
+                      <span className="font-medium text-gray-900">{t.nodeName}</span>
+                      <ScoringMethodBadge method={t.scoringMethod} />
+                    </div>
                     <p className="text-xs text-gray-400 mt-0.5">{t.signalKey}</p>
                   </div>
                   <ScoreBadge score={t.normalizedScore} max={100} />
@@ -339,6 +356,20 @@ export default function AdminApplicationDetailPage() {
                   <span>×{t.categoryMultiplier} category</span>
                   <span>{t.sourceType}</span>
                   {t.sourceRef && <span className="text-indigo-600">ref: {t.sourceRef}</span>}
+                  {t.confidence && (
+                    <span className={`px-2 py-0.5 rounded text-xs font-medium ${
+                      t.confidence === 'high' ? 'bg-green-100 text-green-700' :
+                      t.confidence === 'medium' ? 'bg-yellow-100 text-yellow-700' :
+                      'bg-red-100 text-red-600'
+                    }`}>
+                      {t.confidence} confidence
+                    </span>
+                  )}
+                  {t.zodValidated === false && t.scoringMethod === 'llm_rubric' && (
+                    <span className="px-2 py-0.5 rounded text-xs font-medium bg-red-100 text-red-700">
+                      ⚠ Schema failed
+                    </span>
+                  )}
                 </div>
 
                 {t.sourceQuestionText && (
@@ -366,14 +397,31 @@ export default function AdminApplicationDetailPage() {
                   )}
                 </div>
 
-                {t.llmEvidence && (
+                {/* Raw Text Evidence (Zod-validated exact quote) */}
+                {t.rawTextEvidence && t.rawTextEvidence !== 'N/A' && (
+                  <div className="mt-2 bg-indigo-50 border border-indigo-100 rounded-lg p-3">
+                    <p className="text-xs font-semibold text-indigo-700 mb-1">📌 Evidence quote (exact text used)</p>
+                    <p className="text-xs text-indigo-900 italic">&ldquo;{t.rawTextEvidence}&rdquo;</p>
+                  </div>
+                )}
+
+                {/* Weakness */}
+                {t.weakness && (
                   <div className="mt-2">
-                    <p className="text-xs font-medium text-gray-600">LLM evidence / relevance</p>
+                    <p className="text-xs font-medium text-gray-600">Weakness identified</p>
+                    <p className="text-xs text-red-700 mt-0.5">{t.weakness}</p>
+                  </div>
+                )}
+
+                {/* Legacy LLM evidence fallback */}
+                {!t.rawTextEvidence && t.llmEvidence && (
+                  <div className="mt-2">
+                    <p className="text-xs font-medium text-gray-600">LLM evidence</p>
                     <p className="text-xs text-gray-700 italic mt-0.5">{t.llmEvidence}</p>
                   </div>
                 )}
 
-                {t.llmWeaknesses && t.llmWeaknesses.length > 0 && (
+                {t.llmWeaknesses && t.llmWeaknesses.length > 0 && !t.weakness && (
                   <ul className="mt-1 list-disc list-inside text-xs text-red-600">
                     {t.llmWeaknesses.map((w, i) => <li key={i}>{w}</li>)}
                   </ul>
@@ -403,6 +451,47 @@ export default function AdminApplicationDetailPage() {
                 </div>
                 <p className="text-xs text-red-700">{g.reason}</p>
                 <p className="text-xs text-indigo-700 font-medium">→ {g.suggestedReviewerQuestion}</p>
+              </div>
+            ))}
+          </div>
+        )}
+
+        {activeTab === 'contradictions' && (
+          <div className="space-y-3">
+            {(!review?.contradictions || review.contradictions.length === 0) && (
+              <div className="text-center py-8">
+                <p className="text-2xl mb-2">✅</p>
+                <p className="text-gray-500 text-sm font-medium">No contradictions detected</p>
+                <p className="text-gray-400 text-xs mt-1">Founder claims are consistent with scraped data</p>
+              </div>
+            )}
+            {review?.contradictions.map((c, i) => (
+              <div key={i} className={`border rounded-xl p-4 space-y-2 ${
+                c.severity === 'high' ? 'border-red-300 bg-red-50' :
+                c.severity === 'medium' ? 'border-amber-200 bg-amber-50' :
+                'border-yellow-100 bg-yellow-50'
+              }`}>
+                <div className="flex items-center gap-2">
+                  <span className={`text-xs px-2 py-0.5 rounded-full font-bold uppercase ${
+                    c.severity === 'high' ? 'bg-red-100 text-red-700' :
+                    c.severity === 'medium' ? 'bg-amber-100 text-amber-700' :
+                    'bg-yellow-100 text-yellow-700'
+                  }`}>{c.severity}</span>
+                  <span className="text-sm font-medium text-gray-800">{c.signal}</span>
+                </div>
+                <p className="text-xs text-gray-700">{c.description}</p>
+                {'claimedValue' in c && (
+                  <div className="grid grid-cols-2 gap-2 text-xs">
+                    <div className="bg-white rounded p-2">
+                      <p className="font-medium text-gray-500 mb-0.5">Claimed</p>
+                      <p className="text-gray-800">{String(c.claimedValue)}</p>
+                    </div>
+                    <div className="bg-white rounded p-2">
+                      <p className="font-medium text-gray-500 mb-0.5">Scraped</p>
+                      <p className="text-gray-800">{String(c.scrapedValue)}</p>
+                    </div>
+                  </div>
+                )}
               </div>
             ))}
           </div>
@@ -496,9 +585,14 @@ function AnswerCard({
           {linkedScores.map((s) => (
             <div key={s.signalKey} className="flex items-start justify-between gap-2 text-xs border-t border-gray-50 pt-2">
               <div className="min-w-0">
-                <p className="font-medium text-gray-800">{s.nodeName}</p>
+                <div className="flex items-center gap-1.5 flex-wrap">
+                  <p className="font-medium text-gray-800">{s.nodeName}</p>
+                  <ScoringMethodBadge method={s.scoringMethod} />
+                </div>
                 <p className="text-gray-400">{s.signalKey} · {s.category} · weight {s.siblingWeight}%</p>
-                {s.llmEvidence && <p className="text-gray-600 italic mt-0.5 line-clamp-2">{s.llmEvidence}</p>}
+                {s.rawTextEvidence && <p className="text-indigo-700 italic mt-0.5 line-clamp-2">📌 &ldquo;{s.rawTextEvidence}&rdquo;</p>}
+                {!s.rawTextEvidence && s.llmEvidence && <p className="text-gray-600 italic mt-0.5 line-clamp-2">{s.llmEvidence}</p>}
+                {s.weakness && <p className="text-red-600 mt-0.5 line-clamp-1">⚠ {s.weakness}</p>}
               </div>
               <ScoreBadge score={s.score} max={s.maxScore} />
             </div>
@@ -517,5 +611,23 @@ function Row({ label, value }: { label: string; value: string }) {
       <span className="text-sm text-gray-500">{label}</span>
       <span className="text-sm font-medium text-gray-900">{value}</span>
     </div>
+  );
+}
+
+function ScoringMethodBadge({ method }: { method?: string }) {
+  if (!method || method === 'unknown') return null;
+  const config: Record<string, { label: string; color: string }> = {
+    llm_rubric: { label: 'LLM', color: 'bg-purple-100 text-purple-700' },
+    vector_similarity: { label: 'Vector AI', color: 'bg-blue-100 text-blue-700' },
+    closed_mapping: { label: 'Math', color: 'bg-gray-100 text-gray-600' },
+    numeric_curve: { label: 'Math', color: 'bg-gray-100 text-gray-600' },
+    scrape_threshold: { label: 'Scraper', color: 'bg-orange-100 text-orange-700' },
+    derived_formula: { label: 'Formula', color: 'bg-teal-100 text-teal-700' },
+  };
+  const c = config[method] ?? { label: method, color: 'bg-gray-100 text-gray-500' };
+  return (
+    <span className={`text-xs px-2 py-0.5 rounded-full font-medium ${c.color}`}>
+      {c.label}
+    </span>
   );
 }
