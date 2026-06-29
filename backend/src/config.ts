@@ -65,6 +65,25 @@ export const config = {
   scoring: {
     defaultPassThreshold: parseInt(optional('DEFAULT_PASS_THRESHOLD', '40'), 10),
   },
+
+  features: {
+    /**
+     * KNN-grounded signal scoring.
+     * When true, llm_rubric signals embed the founder's answer and retrieve the
+     * K nearest labeled examples from SignalExample as grounding context.
+     * When false (default), falls back to the static RAGRetriever EXAMPLE_BANK.
+     *
+     * Rollout: enable in staging first, review 5–10 evaluations manually,
+     * then enable in production. Never enable before running backfillSignalExamples.ts.
+     */
+    knnGroundingEnabled: optional('KNN_GROUNDING_ENABLED', 'false') === 'true',
+
+    /**
+     * Base URL of the Python scoring/scraping microservice.
+     * The /embed, /score/vector, /scrape/* endpoints all live here.
+     */
+    pythonMicroserviceUrl: optional('PYTHON_MICROSERVICE_URL', 'http://127.0.0.1:8000'),
+  },
 } as const;
 
 // Validate required envs for production

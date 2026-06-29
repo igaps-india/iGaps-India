@@ -23,6 +23,7 @@ import { z } from 'zod';
 import { getLLMProvider } from '../llm';
 import { getRAGExamples } from './RAGRetriever';
 import { PitchDeckVectorStore } from './PitchDeckVectorStore';
+import type { KNNNeighbor } from './KNNRetriever';
 
 const RUBRICS_DIR = join(__dirname, '..', 'rubrics');
 
@@ -105,8 +106,9 @@ export async function scoreWithRubric(
   rubricId: string,
   answerText: string,
   contextHint?: string,
-  pitchDeckText?: string,   // NEW: raw parsedText from the Submission upload
-  submissionId?: string,    // NEW: used to tag retrieved chunks in audit trail
+  pitchDeckText?: string,   // raw parsedText from the Submission upload
+  submissionId?: string,    // used to tag retrieved chunks in audit trail
+  knnNeighbors?: KNNNeighbor[], // pre-fetched KNN grounding examples (from evaluationEngine)
 ): Promise<RubricScoreResult> {
   if (!answerText?.trim() || answerText.trim().length < 10) {
     return emptyScore(rubricId, 'Answer is empty or too short to evaluate.');
@@ -130,11 +132,22 @@ export async function scoreWithRubric(
 
   let rubricContent = loadRubric(rubricId);
 
-  // ── RAG Grounding: inject real startup examples into the prompt ──────────────
-  // This is the Phase 3 upgrade. Instead of the LLM scoring in a vacuum,
-  // it now compares the founder's answer against 3 graded real-world examples.
-  // This dramatically reduces hallucination and calibration drift.
-  const ragExamples = getRAGExamples(rubricId);
+  // ── Grounding: inject real startup examples into the prompt ─────────────────
+  // Priority order:
+  //   1. KNN neighbors (dynamic, pre-fetched by evaluationEngine) — when corpus exists
+  //   2. Static EXAMPLE_BANK (RAGRetriever) — permanent cold-start fallback
+  //   3. Nothing — slot placeholder is removed, rubric scores on description alone
+  //
+  // The KNN path is ONLY taken when the caller passes a non-empty neighbors array.
+  // An empty array [] means "no qualifying neighbors found" — fall through to static bank.
+  // Never remove getRAGExamples; it is the permanent fallback, not legacy code.
+  let ragExamples: string;
+  if (knnNeighbors && knnNeighbors.length > 0) {
+    ragExamples = formatKNNNeighbors(knnNeighbors);
+  } else {
+    ragExamples = getRAGExamples(rubricId);
+  }
+
   if (ragExamples) {
     if (rubricContent.includes('{{RAG_EXAMPLES}}')) {
       // New-format rubric: has an explicit injection slot
@@ -334,4 +347,40 @@ function normalizeBand(raw: string): ScoreBand {
     return normalized as ScoreBand;
   }
   return 'weak';
+}
+
+/**
+ * Formats KNN neighbors into the same markdown shape as getRAGExamples()
+ * so rubric templates need zero changes when switching grounding source.
+ *
+ * Includes similarity score in the header for LLM awareness and audit trail.
+ * KNN neighbors already have a ground-truth score and LLM reasoning from their
+ * original evaluation — both are included to maximize grounding quality.
+ */
+function formatKNNNeighbors(neighbors: KNNNeighbor[]): string {
+  const lines: string[] = [
+    '> **Note:** The following examples are the closest real founder answers from the',
+    '> confirmed evaluation corpus (retrieved by embedding similarity). Use them as',
+    '> concrete anchors — the current answer should be scored relative to these.',
+    '',
+  ];
+
+  neighbors.forEach((n, i) => {
+    // Infer a band label from the score for readability
+    let band = 'adequate';
+    if (n.score >= 80) band = 'strong';
+    else if (n.score >= 65) band = 'adequate';
+    else if (n.score >= 40) band = 'weak';
+    else band = 'very_weak';
+    if (n.score >= 90) band = 'exceptional';
+
+    lines.push(`### Example ${i + 1} — Score ${n.score} (${band}) [similarity: ${(n.similarity * 100).toFixed(1)}%]`);
+    lines.push(`**Answer:** "${n.answerText}"`);
+    if (n.reasoning) {
+      lines.push(`**Why this score:** ${n.reasoning}`);
+    }
+    lines.push('');
+  });
+
+  return lines.join('\n');
 }

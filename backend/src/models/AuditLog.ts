@@ -6,7 +6,8 @@ export type AuditAction =
   | 'bias_profile_update'
   | 'application_status_change'
   | 'admin_login'
-  | 'evaluation_created';
+  | 'evaluation_created'
+  | 'signal_scored'; // KNN grounding telemetry — logged on every llm_rubric signal
 
 export interface IAuditLog extends Document {
   actor: string;         // user email or 'system'
@@ -31,6 +32,7 @@ const AuditLogSchema = new Schema<IAuditLog>(
         'application_status_change',
         'admin_login',
         'evaluation_created',
+        'signal_scored',
       ],
       required: true,
       index: true,

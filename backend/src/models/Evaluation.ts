@@ -105,6 +105,12 @@ export interface IEvaluation extends Document {
   gapReport: GapReport;
   algorithmTrace: AlgorithmTraceEntry[];
   reconciliationAdjustments: ReconciliationLogEntry[];
+  /**
+   * Set to true by an admin after reviewing this evaluation.
+   * Only admin-confirmed evaluations are eligible for backfill into SignalExample.
+   * This gate ensures the KNN corpus is never seeded from raw LLM-only scores.
+   */
+  adminConfirmed: boolean;
   createdAt: Date;
   updatedAt: Date;
 }
@@ -132,6 +138,9 @@ const EvaluationSchema = new Schema<IEvaluation>(
     gapReport: { type: Schema.Types.Mixed, required: true },
     algorithmTrace: { type: Schema.Types.Mixed, default: [] },
     reconciliationAdjustments: { type: Schema.Types.Mixed, default: [] },
+    // KNN corpus gate: only admin-confirmed evaluations are eligible for backfill.
+    // Defaults to false for all existing records — no migration needed.
+    adminConfirmed: { type: Boolean, default: false, index: true },
   },
   { timestamps: true },
 );

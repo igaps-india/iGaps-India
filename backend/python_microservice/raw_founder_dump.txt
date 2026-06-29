@@ -4,7 +4,7 @@ Home
 My Network
 Jobs
 Messaging
-21
+24
 Notifications
 Me
 For Business
@@ -15,28 +15,19 @@ Gurugram, Haryana, India
 ·
 Contact info
 iGaps
-4,607 followers
+4,630 followers
 ·
 500+
 connections
 Follow
-Message
-People who follow Indranil also follow
-Acharya Prashant 
-Author | Vedanta | Buddhism | Absurdism | Religion-Culture | Climate Change | Love | Profile run by Foundation
-132,768 followers
-Follow
-Dharmendra Jha 
-Founder, Kalyankari Softnet Pvt. Ltd. | DevOps & Cloud Consultant | 12.8+ Years Experience | AWS, Kubernetes, Terraform | Helping Startups Scale Securely & Reduce Cloud Costs
-5,166 followers
-Follow
+Message Indranil
 About
 I help early-stage AI founders raise capital and structure deals. I combine operator experience in AI (Strategic Advisor, Dectrocel) with portfolio-level investing and fundraising as CBO at PadUp Ventures, where I have supported Rs. 18 Cr+ in funding across 30+ startups. My work sits at the intersection of AI, finance, and strategy: translating technical depth into investor-ready narratives, robust financial models, and clean deal structures. I am currently pursuing a PGP in AI/ML from Texas McCombs, strengthening my ability to evaluate AI products, data moats, and long-term value creation for both founders and investors.
 … more
 Top skills
 Business Development • Strategic Partnerships • Negotiation • Team Building • P&L Management
 Activity
-4,607 followers
+4,630 followers
 Follow
 Posts
 Comments
@@ -44,128 +35,49 @@ Images
 Indranil Datta
  • 3rd+
 Early-Stage AI | Capital Raising | CBO, PadUp Ventures | Strategic Advisor, AI Healthtech | PGP AIML - Texas McCombs
+1w • 
+The dirty secret holding back AI in real industries?
+LLMs are probabilistic.
+
+One prompt, slightly different context, and suddenly your output shifts. Great for brainstorming. Catastrophic when you’re in finance, healthcare, legal, tax, or public systems where errors must be traceable.
+
+Not surprised to see serious teams now solving auditability — tracing decisions all the way down to the code and data level. This isn’t hype. It’s table stakes for crossing from prototype to production in high-stakes sectors.
+
+… more
+Ranjan Rajagopalan
+  • 3rd+
+Founder | Dreamer
 1w • Edited • 
+Today, I'm thrilled to announce Pramaana's $27M seed, led by Khosla Ventures.
+The foundational domains that hold the world together: tax, law, finance, healthcare; all run on certainty. Probabilistic AI can't give them that. We’ve been asked to accept wrong answers with AI as ‘hallucinations’, while in traditional software terms, it’s just a bug. And a wrong answer in such mission-critical domains is more than just a bug, it's a liability that could have catastrophic impact.
+ 
+We built Pramaana to deliver a 100% trustable experience to the domains that run on certainty: AI that is provably correct, not probabilistically correct. We turn statute and regulation into machine-verifiable code, so every output ships with mathematical proof of correctness. Our mission is to make AI take ownership of it’s work. 
+Pramaana in Sanskrit stands for “means of valid knowledge”, and we’re going to achieve that by formalizing the world’s knowledge.
+
+Grateful to our partners who backed this conviction early:(lead),,,,and. And to our angels Pushmeet Kohli andfor lending depth to the mission.
+Climbing with this team has been the best part of the journey.
+
+It's been great building Pramaana alongside my super-smart friendsand.
+
+And we're just getting started! Come build with us!
+… more
+Indranil Datta
+ • 3rd+
+Early-Stage AI | Capital Raising | CBO, PadUp Ventures | Strategic Advisor, AI Healthtech | PGP AIML - Texas McCombs
+2w • Edited • 
 LLM-on-LLM-on-LLM is the silent killer of AI startups.
 
 Most solutions hitting the market today are token-maxing disasters waiting for their first enterprise invoice. Pure LLM based tech breaks, tokens make them non-viable from get go. 
 
 I’ve being witnessing this more too often these days. 
 Narrow AI still works, python libraries still deliver, clean engineering still wins. The rest is expensive theater
-2 reactions
 2
-Like
-Comment
-Repost
-Send
-Indranil Datta
- • 3rd+
-Early-Stage AI | Capital Raising | CBO, PadUp Ventures | Strategic Advisor, AI Healthtech | PGP AIML - Texas McCombs
-1mo • 
 “50,000 GPUs for 1.4 billion people.
 One guy in the US reportedly has 2 million".
 
 India is capped at importing just 50,000 high-performance GPUs a year under the US AI Diffusion Framework. Tier-2 status. Meanwhile, unverified numbers suggest one American founder aka Elon Musk alone has access to 2 million. The US as a whole? 35–40 million.
 
 Welcome to the real geopolitics of AI in 2026. 🙄 
-2 reactions
-2
-1 comment
-1 comment
-Like
-Comment
-Repost
-Send
-“The winners won’t hate wrappers. They’ll master them.”
-“It’s just a wrapper” — The most misused phrase in AI right now. Just when I thought the “it’s just a wrapper” noise couldn’t get louder, a16z drops the take I’ve been quietly chewing on for months.
-
-If a lawyer tells you they’ve built a legal AI product, don’t roll your eyes and call it a wrapper.
-Ask the real questions instead:
-- Does it actually work at scale? 
-- What’s the engineering? 
-- How have they cracked the compute economics? 
-- Is the workflow genuinely better than the old ways? 
-
-Because the difference between a toy and a defensible product almost always sits in that “wrapper.”
-
-Shoutout toand thefor not dismissing the wrapper conversation
-the "AI wrapper" critique assumes the wrapper is the easy part
-
-But being the wrapper also includes figuring out:
-- getting distribution without paying infinite CAC
-- creating an amazing UX that's AI native, not derivative
-- building a brand, trust in a very noisy landscape
-- creating an ecosystem/community
-- generating network effects
-- making customer service great
-- ... plus pricing, hiring, raising money, and everything else
-
-these are not easy!
-…
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 
@@ -295,21 +207,21 @@ Founder at ESTATE BRIDGE
 Connect
 Show all
 Explore Premium profiles
-Nitin Hans 
+Nikhil Sharma 
 · 3rd+
-AI Student | Java Developer | Machine Learning & Intelligent Systems Enthusiast | B.Tech CSE at The NorthCap University | Data Structures | Java | Python | Problem Solver |
+made a developer 
 Connect
-Yajesh Dave 
+Rajesh Markantewar 
 · 3rd+
-CS Executive Aspirant | Company Secretary Aspirant | B.Com Student at Agrawal P.G. College Jaipur | Interested in Corporate Law, Compliance & Finance
+PCET’S Nutan Maharashtra Institute of Engineering & Technology Student at Savitribai Phule Pune University
 Connect
-Harshita Gaur 
+Deepanshu Kumar pal 
 · 3rd+
-Student at Dr. A.P.J. Abdul Kalam Technical University (AKTU), Lucknow
+--
 Connect
-Kapil Kumar 
+Ankit S. 
 · 3rd+
-Central University Of Haryana(2023-2027) | FULL STACK DEVELOPER | PYTHON | C | C++ | SQL | Computer Network | React | DSA IN JAVA AND C++
+Student at
 Connect
 About
 Accessibility
@@ -375,23 +287,23 @@ Home
 My Network
 Jobs
 Messaging
-21
+24
 Notifications
 Me
 For Business
 Try Premium for ₹0
 Indranil Datta
 Early-Stage AI | Capital Raising | CBO, PadUp Ventures | Strategic Advisor, AI Healthtech | PGP AIML - Texas McCombs
-Message
+Message Indranil
 Follow
 Experience
 Founder
 iGaps
 Apr 2026 - Present · 3 mos
 Gurgaon, Haryana, India · On-site
-I am building igaps.ai — an AI-native investment layer designed to curate high impact AI start-ups to build high conviction deal flows to investors. 
+I am building igaps.ai — an AI-native venture scout designed to curate high impact AI start-ups, build high conviction deal flows to investors. 
 
-Goal: To ensure high impact AI start- ups get access to funds, fast
+Goal: To ensure high impact start- ups do not get lost in the noise. They get access to funds, fast
 Strategic Advisor
 Dectrocel Healthcare and Research
 Mar 2025 - Feb 2026 · 1 yr
@@ -558,14 +470,14 @@ Home
 My Network
 Jobs
 Messaging
-21
+24
 Notifications
 Me
 For Business
 Try Premium for ₹0
 Indranil Datta
 Early-Stage AI | Capital Raising | CBO, PadUp Ventures | Strategic Advisor, AI Healthtech | PGP AIML - Texas McCombs
-Message
+Message Indranil
 Follow
 Education
 Institute of Management Technology, Nagpur
@@ -663,21 +575,26 @@ Türkçe (Turkish)
 Tiếng Việt (Vietnamese)
 简体中文 (Chinese (Simplified))
 正體中文 (Chinese (Traditional))
+Messaging
+You are on the messaging overlay. Press enter to open the list of conversations.
+Compose message
+You are on the messaging overlay. Press enter to open the list of conversations.
 
 === SKILLS ===
 0 notifications
 Home
 My Network
 Jobs
+1
 Messaging
-21
+24
 Notifications
 Me
 For Business
 Try Premium for ₹0
 Indranil Datta
 Early-Stage AI | Capital Raising | CBO, PadUp Ventures | Strategic Advisor, AI Healthtech | PGP AIML - Texas McCombs
-Message
+Message Indranil
 Follow
 Skills
 All
@@ -782,5 +699,10 @@ Tiếng Việt (Vietnamese)
 正體中文 (Chinese (Traditional))
 Messaging
 You are on the messaging overlay. Press enter to open the list of conversations.
+1
 Compose message
 You are on the messaging overlay. Press enter to open the list of conversations.
+LinkedIn
+Close your conversation with {0} and Mozingo Raj
+
+🔍 After reviewing your profile, we’ve identified three key updates that can boost your visibility to recruiters and expand your professional network.

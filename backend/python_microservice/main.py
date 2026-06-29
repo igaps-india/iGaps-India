@@ -20,7 +20,12 @@ os.environ["COOKIES_PATH"] = os.path.join(scrapers_dir, "linkedin_cookies.pkl")
 
 from google_pipeline import run_google_pipeline
 from linkedin_pipeline import run_pipeline as run_linkedin_pipeline
-from VectorSimilarityScorer import score_with_vector_similarity, get_anchor_cache
+from VectorSimilarityScorer import score_with_vector_similarity, get_anchor_cache, get_model
+
+# The canonical name of the embedding model used throughout this microservice.
+# This constant is stored in SignalExample.embeddingModel so we can detect
+# if the model ever changes and flag stale embeddings that need recomputation.
+EMBEDDING_MODEL_NAME = "sentence-transformers/all-MiniLM-L6-v2"
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
@@ -61,6 +66,9 @@ class LinkedinScrapeRequest(BaseModel):
 class VectorScoreRequest(BaseModel):
     signal_key: str    # e.g. "openQ4_persona_vividity_score"
     answer_text: str   # The founder's raw answer text
+
+class EmbedRequest(BaseModel):
+    text: str  # The raw text to embed
 
 
 # ── Routes ────────────────────────────────────────────────────────────────────
@@ -117,6 +125,27 @@ async def score_vector(request: VectorScoreRequest):
         return result
     except Exception as e:
         logger.error(f"Vector scoring failed for signal '{request.signal_key}': {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+@app.post("/embed")
+async def embed_text(req: EmbedRequest):
+    """
+    Embed a text string using the pre-warmed sentence-transformer model.
+    Used by KNNRetriever to encode new founder answers before KNN lookup,
+    and by backfillSignalExamples.ts to encode historical answers.
+
+    Returns:
+      embedding: list[float]  — 384-dim vector from all-MiniLM-L6-v2
+      model: str              — canonical model name, stored in SignalExample.embeddingModel
+    """
+    if not req.text or not req.text.strip():
+        raise HTTPException(status_code=400, detail="text must be non-empty")
+    try:
+        model = get_model()  # Returns the already-warmed singleton, <1ms
+        vector = model.encode(req.text.strip()).tolist()
+        return {"embedding": vector, "model": EMBEDDING_MODEL_NAME}
+    except Exception as e:
+        logger.error(f"Embed failed: {str(e)}")
         raise HTTPException(status_code=500, detail=str(e))
 
 @app.get("/health")

@@ -1,4 +1,11 @@
+// ── Windows IPv4 fix ──────────────────────────────────────────────────────────
+// Node.js on Windows resolves DNS to IPv6 by default, which causes fetch()
+// calls to external APIs (Gemini) to fail with "fetch failed". Force IPv4.
+import { setDefaultResultOrder } from 'dns';
+setDefaultResultOrder('ipv4first');
+
 import express from 'express';
+
 import cors from 'cors';
 import { config } from './config';
 import { connectDb } from './db';
