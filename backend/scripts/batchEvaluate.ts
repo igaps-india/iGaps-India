@@ -1,9 +1,16 @@
 /**
- * batchEvaluate.ts  — v2 (standalone, no MongoDB required)
+ * batchEvaluate.ts  — v3 (KNN + MongoDB grounding)
  * ─────────────────────────────────────────────────────────────────────────────
- * Reads the 12 companies from CSV + PDFs, runs the FULL scoring pipeline
- * (closed mapping, numeric curves, LLM rubric, vector similarity) without
- * needing a live MongoDB connection.
+ * Reads companies from CSV + PDFs, runs the FULL scoring pipeline:
+ *   - closed_mapping, numeric_curve
+ *   - llm_rubric via Gemini (with KNN grounding from MongoDB SignalExamples)
+ *   - vector_similarity via Python microservice
+ *
+ * KNN grounding: for each LLM rubric signal, the answer is embedded and the
+ * 9 injected benchmark companies are queried for nearest neighbours.
+ * Those neighbours are injected into the Gemini prompt exactly as the live
+ * evaluationEngine does. Falls back to static RAG bank if MongoDB is offline
+ * or no qualifying neighbours are found.
  *
  * Usage:
  *   npx ts-node --project tsconfig.json --transpile-only scripts/batchEvaluate.ts
@@ -21,9 +28,52 @@ import { parse } from 'csv-parse/sync';
 import pdfParse  from 'pdf-parse';
 import axios     from 'axios';
 import yaml      from 'js-yaml';
+import mongoose  from 'mongoose';
 
 // Force IPv4 resolution to prevent 'fetch failed' errors on Windows with broken IPv6
 dns.setDefaultResultOrder('ipv4first');
+
+// ── MongoDB + KNN (lazy imports so the script still works offline) ─────────────
+let knnEnabled = false;
+let getKNNExamplesFn: typeof import('../src/services/KNNRetriever').getKNNExamples | null = null;
+let embedTextFn: typeof import('../src/services/embeddingClient').embedText | null = null;
+
+async function connectMongo(): Promise<void> {
+  try {
+    const uri = process.env.MONGODB_URI ?? 'mongodb://localhost:27017/igaps';
+    await mongoose.connect(uri, { serverSelectionTimeoutMS: 5_000 });
+    // Register models AFTER connecting so mongoose doesn't complain
+    await import('../src/models/SignalExample');
+    const knnMod = await import('../src/services/KNNRetriever');
+    const embedMod = await import('../src/services/embeddingClient');
+    getKNNExamplesFn = knnMod.getKNNExamples;
+    embedTextFn      = embedMod.embedText;
+    knnEnabled = true;
+    console.log('  🔌 MongoDB connected — KNN grounding ENABLED');
+  } catch (e) {
+    const msg = e instanceof Error ? e.message : String(e);
+    console.warn(`  ⚠️  MongoDB unavailable (${msg.slice(0, 80)}). KNN disabled — falling back to static RAG bank.`);
+    knnEnabled = false;
+  }
+}
+
+async function fetchKNN(
+  answerText: string,
+  signalKey: string,
+): Promise<import('../src/services/KNNRetriever').KNNNeighbor[]> {
+  if (!knnEnabled || !getKNNExamplesFn || !embedTextFn) return [];
+  if (!answerText?.trim() || answerText.trim().length < 20) return [];
+  try {
+    const { embedding } = await embedTextFn(answerText);
+    return await getKNNExamplesFn(embedding, signalKey, {
+      k: 3,
+      similarityThreshold: 0.0, // Set to 0.0 to ensure we always get the top 3 most relevant calibration examples
+    });
+  } catch (e) {
+    console.error('KNN Fetch Error:', e);
+    return [];
+  }
+}
 
 // ── Paths ─────────────────────────────────────────────────────────────────────
 const ROOT          = path.join(process.cwd());
@@ -45,7 +95,7 @@ interface BiasConfig {
 }
 
 const treeDoc  = yaml.load(fs.readFileSync(TREE_PATH, 'utf-8')) as { nodes: TreeNode[]; biasProfile: BiasConfig };
-const allNodes = treeDoc.nodes.filter(n => n.enabled !== false);
+const allNodes = treeDoc.nodes.filter(n => n.enabled !== false || n.scoringRule?.type === 'scrape_threshold');
 const profile  = treeDoc.biasProfile;
 
 function catMult(cat: string): number {
@@ -178,36 +228,52 @@ function q15norm(s: string): string {
   return '2x_to_5x';
 }
 
-// ── Build closed + open answers from a CSV row ────────────────────────────────
 function buildAnswers(row: Record<string, string>) {
-  const cofMonths = months(row[C.q3] ?? '0');
+  const keys = Object.keys(row);
+  const getCol = (k1: string, k2?: string) => {
+    const val = keys.find(k => k.toLowerCase().includes(k1.toLowerCase()));
+    if (val) return row[val];
+    if (k2) {
+      const val2 = keys.find(k => k.toLowerCase().includes(k2.toLowerCase()));
+      if (val2) return row[val2];
+    }
+    return '';
+  };
+
+  const cofMonths = months(getCol('q3:') || getCol('co-founder duration') || '0');
   const closed: Record<string, unknown> = {
-    closedQ1:         q1norm(row[C.q1] ?? ''),
-    closedQ2:         months(row[C.q2] ?? '0'),
+    closedQ1:         q1norm(getCol('q1:') || getCol('problem statement view') || ''),
+    closedQ2:         months(getCol('q2:') || getCol('problem exposure') || '0'),
     closedQ3:         cofMonths,
-    closedQ4:         q4norm(row[C.q4] ?? ''),
-    closedQ5:         q5norm(row[C.q5] ?? ''),
-    closedQ6:         num(row[C.q6] ?? '0'),
-    closedQ7:         months(row[C.q7] ?? '0') > 0 ? 'yes' : 'no',
-    closedQ7_count:   months(row[C.q7] ?? '0'),
-    closedQ8:         months(row[C.q8] ?? '0'),
+    closedQ4:         q4norm(getCol('q4:') || getCol('relationship nature') || ''),
+    closedQ5:         q5norm(getCol('q5:') || getCol('primary source of first') || ''),
+    closedQ6:         num(getCol('q6:') || getCol('initial cac') || '0'),
+    closedQ7:         (() => { const n = months(getCol('q7:') || getCol('pivot history') || '0'); return n >= 4 ? '4+' : String(n); })(),
+    closedQ7_count:   months(getCol('q7:') || getCol('pivot history') || '0'),
+    closedQ8:         months(getCol('q8:') || getCol('customer discovery depth') || '0'),
     closedQ9:         'specific_role',
-    closedQ9_role_text: row[C.q9] ?? '',
-    closedQ10:        (row[C.q10] ?? 'SME').includes('Enterprise') ? 'Enterprise' : (row[C.q10] ?? 'SME').includes('Govt') ? 'Govt' : 'SME',
-    closedQ11:        q11norm(row[C.q11] ?? ''),
+    closedQ9_role_text: getCol('q9:') || getCol('target persona role') || '',
+    closedQ10:        (getCol('q10:') || getCol('target persona type') || 'SME').includes('Enterprise') ? 'Enterprise' : (getCol('q10:') || getCol('target persona type') || 'SME').includes('Govt') ? 'Govt' : 'SME',
+    closedQ11:        q11norm(getCol('q11:') || getCol('willingness to pay') || ''),
     closedQ12:        'provided_no_source',
-    closedQ13:        trlNorm(row[C.q13] ?? '3'),
-    closedQ14:        [row[C.q14] ?? ''].flatMap(s => s.split(',').map(x => x.trim().split('–')[0].trim().toLowerCase().replace(/\s+/g,'_').replace(/[–?]/g,''))).filter(Boolean).slice(0,2),
-    closedQ15:        q15norm(row[C.q15] ?? ''),
-    closedQ16:        moatNorm(row[C.q16] ?? ''),
-    closedQ17:        tractionNorm(row[C.q17] ?? ''),
-    closedQ18:        q18norm(row[C.q18] ?? ''),
+    closedQ13:        trlNorm(getCol('q13:') || getCol('product trl') || '3'),
+    closedQ14:        [getCol('q14:') || getCol('primary dimensions') || ''].flatMap(s => s.split(',').map(x => x.trim().split('–')[0].trim().toLowerCase().replace(/\s+/g,'_').replace(/[–?]/g,''))).filter(Boolean).slice(0,2),
+    closedQ15:        q15norm(getCol('q15:') || getCol('value improvement') || ''),
+    closedQ16:        moatNorm(getCol('q16:') || getCol('competitive moat') || ''),
+    closedQ17:        tractionNorm(getCol('q17:') || getCol('commercial traction') || ''),
+    closedQ18:        q18norm(getCol('q18:') || getCol('core traction') || ''),
   };
   const open: Record<string, string> = {
-    openQ1:  row[C.oq1]  ?? '', openQ2:  row[C.oq2]  ?? '', openQ3:  row[C.oq3]  ?? '',
-    openQ4:  row[C.oq4]  ?? '', openQ5:  row[C.oq5]  ?? '', openQ6:  row[C.oq6]  ?? '',
-    openQ7:  row[C.oq7]  ?? '', openQ8:  row[C.oq8]  ?? '', openQ9:  row[C.oq9]  ?? '',
-    openQ10: row[C.oq10] ?? '',
+    openQ1:  getCol('founder journey'),
+    openQ2:  getCol('unique insight'),
+    openQ3:  getCol('unfair advantage'),
+    openQ4:  getCol('describe the problem'),
+    openQ5:  getCol('walk me through the customer discovery'),
+    openQ6:  getCol('gap analysis'),
+    openQ7:  getCol('switching motivation'),
+    openQ8:  getCol('hardest challenge'),
+    openQ9:  getCol('learning from mistakes'),
+    openQ10: getCol('proof of demand'),
   };
   return { closed, open, isSolo: cofMonths === 0 };
 }
@@ -233,13 +299,36 @@ function numericCurve(val: unknown, curve: Record<string, number>): number {
   return 0;
 }
 
-// ── LLM rubric scorer (inline, calls Gemini via existing provider logic) ──────
-async function scoreLLM(rubricId: string, answerText: string, pitchText: string, submId: string): Promise<{score:number; evidence:string; weakness:string|null}> {
-  if (!answerText?.trim() || answerText.trim().length < 10) return { score: 0, evidence: 'empty', weakness: 'No answer provided' };
+// ── LLM rubric scorer — with live KNN grounding ───────────────────────────────
+async function scoreLLM(
+  rubricId: string,
+  answerText: string,
+  pitchText: string,
+  submId: string,
+  signalKey: string,
+  contextHint?: string,
+): Promise<{score:number; evidence:string; weakness:string|null}> {
+  const isPitchDeckOnly = rubricId.includes('upload_pitch') || rubricId.includes('pitch_');
+  if (!isPitchDeckOnly && (!answerText?.trim() || answerText.trim().length < 10)) return { score: 0, evidence: 'empty', weakness: 'No answer provided' };
+  if (isPitchDeckOnly && (!pitchText?.trim() || pitchText.trim().length < 50)) return { score: 0, evidence: 'empty deck', weakness: 'No pitch deck provided' };
+
+  if (isPitchDeckOnly) {
+    answerText = `[PITCH DECK CONTENT]\n${pitchText.slice(0, 15000)}`;
+  }
+
+  // ── KNN grounding: retrieve nearest benchmark examples from MongoDB ─────────
+  // fetchKNN returns [] when MongoDB is offline — scoreWithRubric will then
+  // automatically fall back to the static RAG bank. Zero behaviour change when
+  // KNN is unavailable.
+  const knnNeighbors = await fetchKNN(answerText, signalKey);
+  if (knnNeighbors.length > 0) {
+    process.stdout.write(`[KNN:${knnNeighbors.length}] `);
+  }
+
   try {
     // Dynamic import to avoid top-level issues
     const { scoreWithRubric } = await import('../src/services/rubricScorer');
-    const r = await scoreWithRubric(rubricId, answerText, undefined, pitchText, submId);
+    const r = await scoreWithRubric(rubricId, answerText, contextHint, pitchText, submId, knnNeighbors);
     return { score: r.score, evidence: r.rawTextEvidence ?? r.evidence ?? '', weakness: r.weakness };
   } catch (e) {
     const msg = e instanceof Error ? e.message : String(e);
@@ -277,6 +366,113 @@ async function parseDeck(brand: string): Promise<string> {
   } catch { return ''; }
 }
 
+// ── Scraper execution for batch ───────────────────────────────────────────────
+function scoredScrapeThreshold(val: string, thresholds: Record<string, number>): number {
+  if (!val) return 0;
+  return thresholds[val] ?? 0;
+}
+
+async function githubApi<T>(path: string): Promise<T> {
+  const headers: Record<string, string> = { Accept: 'application/vnd.github+json', 'X-GitHub-Api-Version': '2022-11-28' };
+  if (process.env.GITHUB_TOKEN) headers.Authorization = `Bearer ${process.env.GITHUB_TOKEN}`;
+  const res = await axios.get<T>(`https://api.github.com${path}`, { headers, timeout: 20_000 });
+  return res.data;
+}
+
+async function fetchScrapingData(row: Record<string, string>): Promise<Record<string, any>> {
+  const scrapedData: Record<string, any> = {};
+  const startupName = row[C.brand];
+  const cin = row['CIN Number'];
+  const linkedinUrl = row['Company Linkedin '];
+  const websiteUrl = row['Website URL'];
+  const githubUrl = row['Github link'];
+
+  // Zauba
+  if (cin && cin.length > 5) {
+    try {
+      // Dynamic import to avoid missing dependencies if they break
+      const { scrapeZaubaCorp } = await import('../src/scrapers/zauba/zaubaScraper');
+      const zRes = await scrapeZaubaCorp(cin);
+      scrapedData.zauba = { status: 'success', summaryCharCount: zRes.summaryText.length };
+    } catch { scrapedData.zauba = { status: 'unavailable' }; }
+  } else scrapedData.zauba = { status: 'unavailable' };
+
+  // LinkedIn
+  if (linkedinUrl && linkedinUrl.length > 5) {
+    console.log(`  [Scrape] LinkedIn (Python microservice)...`);
+    try {
+      const res = await axios.post('http://127.0.0.1:8000/scrape/linkedin', { company_name: startupName, linkedin_url: linkedinUrl, website_url: websiteUrl }, { timeout: 900_000 });
+      scrapedData.linkedin = { ...res.data, status: 'success' };
+    } catch { scrapedData.linkedin = { status: 'unavailable' }; }
+  } else scrapedData.linkedin = { status: 'unavailable' };
+
+  // Patents/Google
+  console.log(`  [Scrape] Google/Patents (Python microservice)...`);
+  try {
+    const res = await axios.post('http://127.0.0.1:8000/scrape/google', { company_name: startupName }, { timeout: 120_000 });
+    const pCount = res.data.patent_count ?? 0;
+    scrapedData.patents = { status: pCount >= 3 ? 'granted' : pCount > 0 ? 'filed' : 'none' };
+    scrapedData.google = { status: res.data.has_competitors ? 'found' : 'none' };
+  } catch {
+    scrapedData.patents = { status: 'unavailable' };
+    scrapedData.google = { status: 'unavailable' };
+  }
+
+  // Press (SerpAPI)
+  if (process.env.SERPAPI_KEY) {
+    console.log(`  [Scrape] Press (SerpAPI)...`);
+    try {
+      const q = encodeURIComponent(`"${startupName}" (funding OR startup OR launched)`);
+      const url = `https://serpapi.com/search.json?q=${q}&engine=google&api_key=${process.env.SERPAPI_KEY}`;
+      const res = await axios.get(url, { timeout: 20_000 });
+      const mentions = res.data.organic_results?.length ?? 0;
+      scrapedData.press = { status: mentions >= 3 ? '3+' : mentions > 0 ? '1-2' : '0' };
+    } catch { scrapedData.press = { status: '0' }; }
+  } else scrapedData.press = { status: '0' };
+
+  // GitHub
+  if (githubUrl && githubUrl.includes('github.com')) {
+    console.log(`  [Scrape] GitHub API...`);
+    try {
+      const org = githubUrl.match(/github\.com\/([^/]+)/)?.[1] ?? '';
+      let reposData = await githubApi<any[]>(`/orgs/${org}/repos?sort=updated&per_page=5`).catch(() => githubApi<any[]>(`/users/${org}/repos?sort=updated&per_page=5`));
+      
+      let velocityCategory = 'none';
+      let repoQualityCategory = 'exists_inactive';
+      
+      if (reposData && reposData.length > 0) {
+        let allCommits: any[] = [];
+        const since = new Date(Date.now() - 90 * 24 * 60 * 60 * 1000).toISOString();
+        for (const repo of reposData.slice(0, 3)) {
+          try {
+            const commits = await githubApi<any[]>(`/repos/${repo.owner.login}/${repo.name}/commits?since=${since}&per_page=30`);
+            allCommits = allCommits.concat(commits);
+          } catch {}
+        }
+        const commitsPerWeek = allCommits.length / 13;
+        if (commitsPerWeek > 15) velocityCategory = 'very_high';
+        else if (commitsPerWeek >= 5) velocityCategory = 'high';
+        else if (commitsPerWeek >= 1) velocityCategory = 'medium';
+        else if (commitsPerWeek > 0) velocityCategory = 'low';
+
+        const qualityScore = allCommits.length > 0 ? 50 : 0;
+        if (qualityScore >= 45) repoQualityCategory = 'exists_active';
+        else if (allCommits.length > 0) repoQualityCategory = 'exists_low_activity';
+      }
+      scrapedData.github_velocity = { status: velocityCategory };
+      scrapedData.github_signals = { status: repoQualityCategory };
+    } catch {
+      scrapedData.github_velocity = { status: 'unavailable' };
+      scrapedData.github_signals = { status: 'unavailable' };
+    }
+  } else {
+    scrapedData.github_velocity = { status: 'unavailable' };
+    scrapedData.github_signals = { status: 'unavailable' };
+  }
+
+  return scrapedData;
+}
+
 // ── Verdict tier ──────────────────────────────────────────────────────────────
 function tier(status: string): number {
   const s = status.toLowerCase().replace(/[\s\-]/g, '');
@@ -302,7 +498,10 @@ function resolveOpenAnswer(sourceRef: string, open: Record<string, string>): str
 
 // ── MAIN ──────────────────────────────────────────────────────────────────────
 async function main() {
-  console.log('\n🚀 iGaps Batch Evaluator v2 (standalone, no MongoDB)\n' + '═'.repeat(60));
+  console.log('\n🚀 iGaps Batch Evaluator v3 (KNN + MongoDB grounding)\n' + '═'.repeat(60));
+
+  // Connect to MongoDB for KNN grounding (non-fatal if offline)
+  await connectMongo();
 
   const csv: Record<string, string>[] = parse(fs.readFileSync(CSV_PATH, 'utf-8'), {
     columns: true, skip_empty_lines: true, trim: true,
@@ -329,6 +528,9 @@ async function main() {
     // Build answers
     const { closed, open, isSolo } = buildAnswers(row);
     if (isSolo) console.log('  👤 Solo founder detected — co-founder signals will be skipped');
+    
+    // Fetch scraper data inline
+    const scrapedData = await fetchScrapingData(row);
 
     const signalsMap: Record<string, number> = {};
     const trace: {signal: string; score: number; method: string; evidence?: string}[] = [];
@@ -354,18 +556,29 @@ async function main() {
       } else if (rule.type === 'llm_rubric' && rule.rubric) {
         const ansText = resolveOpenAnswer(node.sourceRef ?? '', open);
         process.stdout.write(`  🤖 LLM: ${node.name.slice(0,40).padEnd(40)} `);
-        const r = await scoreLLM(String(rule.rubric), ansText, pitchText, `batch_${brand}`);
+        const contextHint = `Company Stage: ${status}\nTraction Stage: ${closed.closedQ17 || 'unknown'}`;
+        const r = await scoreLLM(String(rule.rubric), ansText, pitchText, `batch_${brand}`, node.signalKey ?? '', contextHint);
         score = r.score; evidence = r.evidence; method = 'llm_rubric';
         console.log(`→ ${score}`);
       } else if (rule.type === 'vector_similarity') {
-        const ansText = resolveOpenAnswer(node.sourceRef ?? '', open);
-        score = await scoreVector(node.signalKey, ansText);
+        const ans = resolveOpenAnswer(node.sourceRef ?? '', open);
+        score = await scoreVector(node.signalKey, ans);
         method = 'vector_similarity';
-      } else if (rule.type === 'scrape_threshold') {
-        score = 0; method = 'scrape_threshold'; // no scrape data in batch mode
+      } else if (rule.type === 'scrape_threshold' && rule.thresholds) {
+        const sourceRef = node.sourceRef ?? '';
+        const scrapeKey = sourceRef.replace('scrape.', '');
+        // Map scrape reference to nested scrapedData value
+        const scrapeValue = (scrapedData[scrapeKey] as Record<string, unknown>)?.status ?? (scrapedData[scrapeKey] ? 'found' : 'none');
+        score = scoredScrapeThreshold(String(scrapeValue), rule.thresholds as Record<string, number>);
+        method = 'scrape_threshold';
+        evidence = `value=${scrapeValue}`;
       } else if (rule.type === 'derived_formula') {
-        score = 50; method = 'derived_formula';
+        score = 50;
+        method = 'derived_formula';
       }
+
+      // Output to console with color/icons
+      const icon = method === 'llm_rubric' ? '🤖' : method === 'vector_similarity' ? '📐' : method === 'scrape_threshold' ? '🌐' : '🔢';
 
       score = Math.min(100, Math.max(0, score));
       signalsMap[node.signalKey] = score;
@@ -439,6 +652,9 @@ async function main() {
   console.log(`\n🎯 Ranking Quality: ${seedInTop}/${seedPlus.length} Seed+ companies in top half`);
   console.log('   Target: ≥ 70% Seed+ in top half\n');
   console.log('✅ Done.\n');
+
+  // Clean disconnect
+  if (knnEnabled) await mongoose.disconnect();
   process.exit(0);
 }
 

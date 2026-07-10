@@ -9,5 +9,3 @@ requests>=2.31.0
 # Loads .env file into os.environ at runtime
 python-dotenv>=1.0.0
 
-# Official Supabase Python SDK (includes postgrest-py, gotrue, etc.)
-supabase>=2.3.0

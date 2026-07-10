@@ -229,7 +229,40 @@ in the mission strongly" deserves a LOW score — regardless of formal grammar.
 
 `;
 
-  const systemContent = LANGUAGE_BIAS_GUARD + rubricContent;
+  // ── Maturity benchmark guard ──────────────────────────────────────────────
+  // This block teaches the LLM to calibrate scores against BUSINESS MATURITY,
+  // not just against answer eloquence. A Pre-Series A founder with ₹2Cr ARR
+  // should score higher than a Pre-Seed founder who writes a beautifully
+  // articulated but entirely theoretical answer.
+  //
+  // This is the single most important guard for ensuring the model correctly
+  // ranks later-stage companies above earlier-stage ones without hardcoding ranks.
+  // It relies on the calibration examples (KNN/RAG) to provide the baseline —
+  // the LLM is instructed to read those examples and understand what "good"
+  // looks like at different maturity stages.
+  const MATURITY_BENCHMARK_GUARD = `## Strict Maturity & Stage-Based Scoring Hierarchy
+  
+You must strictly scale your score according to the company's maturity stage (provided in the Additional Context). The business stage dictates the absolute ceiling and baseline of the score.
+
+**CRITICAL RANKING RULES BY STAGE:**
+1. **Pre-Series A / Series A:** These companies have demonstrated significant revenue, product-market fit, and scale. They MUST receive the HIGHEST baseline scores (e.g., 85-100) if they provide concrete metrics, ignoring any brief or informal writing.
+2. **Seed:** These companies have early traction and revenue but lack scale. Their scores MUST BE STRICTLY LOWER than Pre-Series A companies, generally in the mid-range (e.g., 50-80), regardless of how beautifully written their answers are.
+3. **Pre-Seed / Idea Stage:** These companies have zero or negligible revenue and rely mostly on theoretical answers. Their scores MUST BE THE LOWEST (e.g., 0-50). Even if a Pre-Seed founder writes a perfect, articulate essay, their score CANNOT exceed that of a Seed company with real traction.
+
+**Core principle: Traction and proven execution IS the substance.**
+Do NOT let eloquent writing, jargon, or long answers from a Pre-Seed company outscore a brief, informal, or poorly written answer from a Pre-Series A company that has actual revenue and customers.
+
+**Scoring rule:**
+- Look at the "Company Stage" in the Additional Context.
+- Enforce the hierarchy: Pre-Series A > Seed > Pre-Seed.
+- If an answer is entirely theoretical (common in Pre-Seed), score it very low.
+- If an answer has verifiable traction (Pre-Series A), score it very high.
+
+---
+
+`;
+
+  const systemContent = LANGUAGE_BIAS_GUARD + MATURITY_BENCHMARK_GUARD + rubricContent;
 
   const userMessage = [
     pitchDeckContext ? pitchDeckContext : '',

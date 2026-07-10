@@ -29,9 +29,9 @@ STEP 4 — Data Transformation & Grouping
       Group_2_Company_Specific: work_experience    | domain_skills
   • Retries up to 3 times on bad JSON before falling back to regex rescue.
 
-STEP 5 — Database Load
-  • Upsert Company_Overview, Founder_Insights, CoFounder_Insights into the
-    `startup_insights` Supabase table via save_startup_insights() in db.py.
+STEP 5 — Return Payload
+  • Returns a JSON dictionary containing Company_Overview, Founder_Insights,
+    and CoFounder_Insights.
 
 Usage (CLI):
     python pipeline.py \\
@@ -43,7 +43,7 @@ Usage (CLI):
         [--founder-linkedin-url "https://www.linkedin.com/in/janedoe"] \\
         [--dry-run]
 
-    --dry-run  Runs all steps but skips the Supabase write. Useful for testing.
+    --dry-run  Runs all steps but skips any final processing. Useful for testing.
 
 Usage (as a module):
     from pipeline import run_pipeline
@@ -56,8 +56,6 @@ Usage (as a module):
     )
 
 Environment variables:
-    SUPABASE_URL   — Supabase project URL
-    SUPABASE_KEY   — Supabase service-role key
     COOKIES_PATH   — (optional) path to linkedin_cookies.pkl
 """
 
@@ -218,7 +216,7 @@ def run_pipeline(
         linkedin_url:         LinkedIn company page URL (optional).
         founder_linkedin_url: Direct LinkedIn /in/ URL for the founder.
                               Skips the URL-discovery step when provided.
-        dry_run:              If True, skip the Supabase write.
+        dry_run:              If True, skips final processing.
 
     Returns:
         {
@@ -635,7 +633,7 @@ def _build_arg_parser() -> argparse.ArgumentParser:
         prog="pipeline.py",
         description=(
             "Founder Insights Pipeline — scrape LinkedIn + website data for a "
-            "startup and push structured insights to Supabase."
+            "startup and return structured insights."
         ),
         formatter_class=argparse.RawDescriptionHelpFormatter,
         epilog=r"""
@@ -729,7 +727,7 @@ def main() -> None:
     )
 
     if not result.get("saved") and not args.dry_run:
-        logger.error("Pipeline finished but record was NOT saved to Supabase.")
+        logger.error("Pipeline finished but record was NOT saved.")
         sys.exit(1)
 
     sys.exit(0)

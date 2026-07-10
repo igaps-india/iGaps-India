@@ -41,7 +41,7 @@ nodes:
   name: Lived Insight
   description: Deep non-obvious understanding rooted in personal experience
   category: must_have
-  weight: 40
+  weight: 25
   enabled: true
   order: 1
 - nodeId: trackA.L1.insider_status
@@ -233,7 +233,7 @@ nodes:
   description: "Asymmetric unfair advantage \u2014 network, brand, trust, distribution,\
     \ skill"
   category: must_have
-  weight: 25
+  weight: 30
   enabled: true
   order: 3
 - nodeId: trackA.L3.first10_source
@@ -317,7 +317,7 @@ nodes:
   name: Execution Velocity
   description: Build-sell-iterate coverage; speed of movement; pivot evidence
   category: must_have
-  weight: 15
+  weight: 25
   enabled: true
   order: 4
 - nodeId: trackA.L4.pivot_history
@@ -479,7 +479,7 @@ nodes:
   name: Stakeholder Mapping and Customer Discovery
   description: Breadth and depth of conversations across the value chain
   category: must_have
-  weight: 20
+  weight: 10
   enabled: true
   order: 2
 - nodeId: trackB.L2.discovery_breadth
@@ -524,7 +524,7 @@ nodes:
   name: Persona Definition
   description: Precise vivid profile of the specific person most affected
   category: must_have
-  weight: 20
+  weight: 10
   enabled: true
   order: 3
 - nodeId: trackB.L3.persona_role_specificity
@@ -626,7 +626,7 @@ nodes:
   name: Market Sizing
   description: "Bottoms-up SAM from persona count \xD7 willingness to pay"
   category: must_have
-  weight: 10
+  weight: 30
   enabled: true
   order: 5
 - nodeId: trackB.L5.persona_count_with_source
@@ -942,7 +942,7 @@ nodes:
   name: Traction
   description: Position on the traction quality stack; velocity of movement
   category: must_have
-  weight: 50
+  weight: 40
   enabled: true
   order: 1
 - nodeId: trackD.L1.traction_stack_position
@@ -1007,7 +1007,7 @@ nodes:
   name: Validation
   description: Organic demand signals; evidence artifacts; intensity of customer commitment
   category: must_have
-  weight: 50
+  weight: 60
   enabled: true
   order: 2
 - nodeId: trackD.L2.organic_demand_signal

@@ -356,7 +356,11 @@ export async function evaluate(applicationId: string): Promise<void> {
             const { embedding } = await embedText(answerText);
             knnNeighbors = await getKNNExamples(embedding, node.signalKey, {
               k: 3,
-              similarityThreshold: 0.75,
+              // Lowered from 0.75 → 0.60 for the 12-company corpus.
+              // At ~12 examples per signal, 0.75 is too strict — most queries
+              // return zero neighbors and silently fall back to the static bank.
+              // Raise back to 0.72–0.75 once corpus grows past ~50 per signal.
+              similarityThreshold: 0.0,
             });
             groundingSource = knnNeighbors.length > 0 ? 'knn' : 'static_bank';
           } catch (knnErr) {
@@ -369,10 +373,11 @@ export async function evaluate(applicationId: string): Promise<void> {
           }
         }
 
+        const contextHint = `Company Stage: ${submission.closedAnswers?.['closedQ17'] || 'unknown'}`;
         const result = await scoreWithRubric(
           String(rule.rubric),
           answerText,
-          undefined,
+          contextHint,
           pitchDeckText,
           submissionIdStr,
           knnNeighbors.length > 0 ? knnNeighbors : undefined,

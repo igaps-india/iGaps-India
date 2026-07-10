@@ -5,8 +5,8 @@ pipeline.py
 Startup IP & License Intelligence Pipeline
 -------------------------------------------
 Scrapes Google Patents (via SerpApi) and business licensing signals
-(via Google Custom Search) for a given startup, then persists the
-structured results into a Supabase PostgreSQL database.
+(via Google Custom Search) for a given startup, then prints the
+structured results into a local output.
 
 Usage (live):
     python pipeline.py \\
@@ -15,7 +15,7 @@ Usage (live):
         --founder-name  "Indranil Datta" \\
         --linkedin-url  "https://www.linkedin.com/company/igaps"
 
-Usage (dry-run — no network calls, no DB writes):
+Usage (dry-run — no network calls):
     python pipeline.py \\
         --company-name  "igaps" \\
         --website-url   "igaps.ai" \\
@@ -23,12 +23,10 @@ Usage (dry-run — no network calls, no DB writes):
         --linkedin-url  "https://www.linkedin.com/company/igaps" \\
         --dry-run
 
-Required .env keys (live mode only):
+Required environment variables (.env):
     SERPAPI_API_KEY   — SerpApi account key
-    GOOGLE_API_KEY    — Google Cloud API key (Custom Search enabled)
-    GOOGLE_CSE_ID     — Google Programmable Search Engine ID
-    SUPABASE_URL      — https://<project-ref>.supabase.co
-    SUPABASE_KEY      — Supabase service-role key (NOT the anon key)
+    GOOGLE_API_KEY    — Google Cloud API key
+    GOOGLE_CSE_ID     — Programmable Search Engine ID
 """
 
 from __future__ import annotations
@@ -44,15 +42,6 @@ from typing import Any
 import requests
 from dotenv import load_dotenv
 
-# ---------------------------------------------------------------------------
-# Optional Supabase import — only required for live mode
-# ---------------------------------------------------------------------------
-try:
-    from supabase import Client, create_client  # type: ignore
-except ImportError:
-    create_client = None  # will be caught at runtime if live mode is used
-    Client = None
-
 
 # ===========================================================================
 # 1. CLI ARGUMENT PARSING
@@ -62,11 +51,7 @@ def build_arg_parser() -> argparse.ArgumentParser:
     """Return a fully configured ArgumentParser for the pipeline CLI."""
     parser = argparse.ArgumentParser(
         prog="pipeline.py",
-        description=(
-            "Startup IP & Licensing Intelligence Pipeline — "
-            "scrapes Google Patents and business licence signals "
-            "and persists results in Supabase."
-        ),
+        description="Runs Google Intelligence pipeline and prints results.",
         formatter_class=argparse.RawDescriptionHelpFormatter,
     )
 
@@ -104,7 +89,7 @@ def build_arg_parser() -> argparse.ArgumentParser:
         action="store_true",
         default=False,
         help=(
-            "Mock all API calls, simulate the DB payload, "
+            "Mock all API calls, simulate the payload, "
             "print to console, and exit without writing anything."
         ),
     )
@@ -156,8 +141,6 @@ _REQUIRED_LIVE_KEYS = (
     "SERPAPI_API_KEY",
     "GOOGLE_API_KEY",
     "GOOGLE_CSE_ID",
-    "SUPABASE_URL",
-    "SUPABASE_KEY",
 )
 
 
@@ -376,120 +359,6 @@ def check_license_signals(
 
 
 # ===========================================================================
-# 5. SUPABASE INTEGRATION MODULE
-# ===========================================================================
-
-def save_to_supabase(
-    startup_data: dict[str, Any],
-    patent_data: list[dict[str, Any]],
-    license_data: list[dict[str, Any]],
-    supabase_url: str,
-    supabase_key: str,
-) -> None:
-    """
-    Persist the scraped intelligence into Supabase.
-
-    Steps:
-        1. Insert the startup profile → retrieve the generated UUID.
-        2. Batch-insert all patent records linked to that UUID.
-        3. Batch-insert all licence signals linked to that UUID.
-
-    Parameters
-    ----------
-    startup_data  : dict with keys company_name, website_url,
-                    founder_name, linkedin_url
-    patent_data   : list returned by check_google_patents()
-    license_data  : list returned by check_license_signals()
-    supabase_url  : Supabase project URL
-    supabase_key  : Supabase service-role key
-    """
-    if create_client is None:
-        print(
-            "[DB][ERROR] supabase-py is not installed. "
-            "Run: pip install supabase",
-            file=sys.stderr,
-        )
-        sys.exit(1)
-
-    print("[DB] Connecting to Supabase …")
-
-    try:
-        client: Client = create_client(supabase_url, supabase_key)
-    except Exception as exc:
-        print(f"[DB][ERROR] Could not initialise Supabase client: {exc}", file=sys.stderr)
-        sys.exit(1)
-
-    # ------------------------------------------------------------------
-    # Step 1 — Insert startup profile
-    # ------------------------------------------------------------------
-    print(f"[DB] Inserting startup: {startup_data['company_name']!r}")
-
-    try:
-        response = (
-            client.table("startups")
-            .insert(startup_data)
-            .execute()
-        )
-        inserted = response.data
-        if not inserted:
-            raise ValueError("Supabase returned no data after startup insert.")
-        startup_id: str = inserted[0]["id"]
-        print(f"[DB] Startup inserted — id={startup_id}")
-    except Exception as exc:
-        print(
-            f"[DB][ERROR] Failed to insert startup record. "
-            f"Reason: {type(exc).__name__}: {exc}",
-            file=sys.stderr,
-        )
-        sys.exit(1)
-
-    # ------------------------------------------------------------------
-    # Step 2 — Batch-insert patents
-    # ------------------------------------------------------------------
-    if patent_data:
-        print(f"[DB] Inserting {len(patent_data)} patent record(s) …")
-        patent_rows = [
-            {**p, "startup_id": startup_id}
-            for p in patent_data
-        ]
-        try:
-            client.table("patents").insert(patent_rows).execute()
-            print("[DB] Patents inserted.")
-        except Exception as exc:
-            print(
-                f"[DB][ERROR] Failed to insert patents. "
-                f"Reason: {type(exc).__name__}: {exc}",
-                file=sys.stderr,
-            )
-            # Non-fatal — continue to licences
-    else:
-        print("[DB] No patents to insert.")
-
-    # ------------------------------------------------------------------
-    # Step 3 — Batch-insert licence signals
-    # ------------------------------------------------------------------
-    if license_data:
-        print(f"[DB] Inserting {len(license_data)} licence signal(s) …")
-        license_rows = [
-            {**lic, "startup_id": startup_id}
-            for lic in license_data
-        ]
-        try:
-            client.table("licenses").insert(license_rows).execute()
-            print("[DB] Licence signals inserted.")
-        except Exception as exc:
-            print(
-                f"[DB][ERROR] Failed to insert licences. "
-                f"Reason: {type(exc).__name__}: {exc}",
-                file=sys.stderr,
-            )
-    else:
-        print("[DB] No licence signals to insert.")
-
-    print("[DB] All done. ✓")
-
-
-# ===========================================================================
 # 6. DRY-RUN MOCK DATA GENERATOR
 # ===========================================================================
 
@@ -551,19 +420,17 @@ def _mock_licenses(company: str) -> list[dict[str, Any]]:
 
 def run_dry_run(args: argparse.Namespace) -> None:
     """
-    Execute the pipeline entirely with mock data — no network calls,
-    no database writes.  Prints structured JSON to stdout.
+    Execute the pipeline entirely with mock data — no network calls.
+    Prints structured JSON to stdout.
     """
     banner = "=" * 64
     print(banner)
-    print("  DRY-RUN MODE — No API calls or DB writes will be made")
+    print("  DRY-RUN MODE — No API calls will be made")
     print(banner)
 
     now_iso = datetime.now(tz=timezone.utc).isoformat()
-    fake_startup_id = str(uuid.uuid4())
-
+    
     startup_payload: dict[str, Any] = {
-        "id":           fake_startup_id,
         "company_name": args.company_name,
         "website_url":  args.website_url,
         "founder_name": args.founder_name,
@@ -574,29 +441,17 @@ def run_dry_run(args: argparse.Namespace) -> None:
     patent_records = _mock_patents(args.company_name, args.founder_name)
     license_records = _mock_licenses(args.company_name)
 
-    # Attach startup_id to each child record (as would happen on DB insert)
-    patent_db_rows = [
-        {**p, "startup_id": fake_startup_id, "id": str(uuid.uuid4())}
-        for p in patent_records
-    ]
-    license_db_rows = [
-        {**lic, "startup_id": fake_startup_id, "id": str(uuid.uuid4()),
-         "found_at": now_iso}
-        for lic in license_records
-    ]
-
     output = {
         "dry_run":  True,
         "startup":  startup_payload,
-        "patents":  patent_db_rows,
-        "licenses": license_db_rows,
+        "patents":  patent_records,
+        "licenses": license_records,
     }
 
-    print("\n[DRY-RUN] Simulated database payload:\n")
+    print("\n[DRY-RUN] Simulated payload:\n")
     print(json.dumps(output, indent=2, ensure_ascii=False))
-    print(f"\n[DRY-RUN] Would insert 1 startup, "
-          f"{len(patent_db_rows)} patent(s), "
-          f"{len(license_db_rows)} licence signal(s).")
+    print(f"\n[DRY-RUN] Found {len(patent_records)} patent(s), "
+          f"{len(license_records)} licence signal(s).")
     print("[DRY-RUN] Exiting cleanly — nothing was written.")
 
 
@@ -621,13 +476,6 @@ def main() -> None:
     # -----------------------------------------------------------------------
     config = load_env()
 
-    startup_data: dict[str, Any] = {
-        "company_name": args.company_name,
-        "website_url":  args.website_url,
-        "founder_name": args.founder_name,
-        "linkedin_url": args.linkedin_url,
-    }
-
     # -- Module A: Patents ---------------------------------------------------
     patent_data = check_google_patents(
         company=args.company_name,
@@ -642,14 +490,16 @@ def main() -> None:
         cse_id=config["GOOGLE_CSE_ID"],
     )
 
-    # -- Persist results -----------------------------------------------------
-    save_to_supabase(
-        startup_data=startup_data,
-        patent_data=patent_data,
-        license_data=license_data,
-        supabase_url=config["SUPABASE_URL"],
-        supabase_key=config["SUPABASE_KEY"],
-    )
+    # -- Final Output -----------------------------------------------------
+    import json
+    output = {
+        "startup": args.company_name,
+        "founder": args.founder_name,
+        "patents": patent_data,
+        "licenses": license_data,
+    }
+    print(json.dumps(output, indent=2, ensure_ascii=False))
+    print("Live mode complete.")
 
     print("\n✓ Pipeline completed successfully.")
 

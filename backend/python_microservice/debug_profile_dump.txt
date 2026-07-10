@@ -3,8 +3,9 @@
 Home
 My Network
 Jobs
+1
 Messaging
-24
+25
 Notifications
 Me
 For Business
@@ -15,19 +16,19 @@ Gurugram, Haryana, India
 ·
 Contact info
 iGaps
-4,630 followers
+4,635 followers
 ·
 500+
 connections
 Follow
-Message Indranil
+Message
 About
 I help early-stage AI founders raise capital and structure deals. I combine operator experience in AI (Strategic Advisor, Dectrocel) with portfolio-level investing and fundraising as CBO at PadUp Ventures, where I have supported Rs. 18 Cr+ in funding across 30+ startups. My work sits at the intersection of AI, finance, and strategy: translating technical depth into investor-ready narratives, robust financial models, and clean deal structures. I am currently pursuing a PGP in AI/ML from Texas McCombs, strengthening my ability to evaluate AI products, data moats, and long-term value creation for both founders and investors.
 … more
 Top skills
 Business Development • Strategic Partnerships • Negotiation • Team Building • P&L Management
 Activity
-4,630 followers
+4,635 followers
 Follow
 Posts
 Comments
@@ -47,7 +48,7 @@ Not surprised to see serious teams now solving auditability — tracing decision
 Ranjan Rajagopalan
   • 3rd+
 Founder | Dreamer
-1w • Edited • 
+2w • Edited • 
 Today, I'm thrilled to announce Pramaana's $27M seed, led by Khosla Ventures.
 The foundational domains that hold the world together: tax, law, finance, healthcare; all run on certainty. Probabilistic AI can't give them that. We’ve been asked to accept wrong answers with AI as ‘hallucinations’, while in traditional software terms, it’s just a bug. And a wrong answer in such mission-critical domains is more than just a bug, it's a liability that could have catastrophic impact.
  
@@ -64,7 +65,7 @@ And we're just getting started! Come build with us!
 Indranil Datta
  • 3rd+
 Early-Stage AI | Capital Raising | CBO, PadUp Ventures | Strategic Advisor, AI Healthtech | PGP AIML - Texas McCombs
-2w • Edited • 
+3w • Edited • 
 LLM-on-LLM-on-LLM is the silent killer of AI startups.
 
 Most solutions hitting the market today are token-maxing disasters waiting for their first enterprise invoice. Pure LLM based tech breaks, tokens make them non-viable from get go. 
@@ -207,21 +208,21 @@ Founder at ESTATE BRIDGE
 Connect
 Show all
 Explore Premium profiles
-Nikhil Sharma 
+Jeevan Jim Joseph 
 · 3rd+
-made a developer 
+I build modern, conversion-focused websites and apps — from landing pages to full SaaS dashboards. I also build automation and AI tools that save businesses time. Open to new client work.
 Connect
-Rajesh Markantewar 
+Samir Rahane 
 · 3rd+
-PCET’S Nutan Maharashtra Institute of Engineering & Technology Student at Savitribai Phule Pune University
+🚀 Aspiring Software Developer | JavaScript | TypeScript | Node.js | React.js | Express.js | MongoDB | Fastify | Java | Building Scalable Web Applications
 Connect
-Deepanshu Kumar pal 
+Akshobhya Raj Singh 
 · 3rd+
---
+Class 12th Student
 Connect
-Ankit S. 
+Bhuvan Vijay 
 · 3rd+
-Student at
+Student at Bennett University
 Connect
 About
 Accessibility
@@ -280,26 +281,32 @@ Türkçe (Turkish)
 Tiếng Việt (Vietnamese)
 简体中文 (Chinese (Simplified))
 正體中文 (Chinese (Traditional))
+Messaging
+You are on the messaging overlay. Press enter to open the list of conversations.
+1
+Compose message
+You are on the messaging overlay. Press enter to open the list of conversations.
 
 === EXPERIENCE ===
 0 notifications
 Home
 My Network
 Jobs
+1
 Messaging
-24
+25
 Notifications
 Me
 For Business
 Try Premium for ₹0
 Indranil Datta
 Early-Stage AI | Capital Raising | CBO, PadUp Ventures | Strategic Advisor, AI Healthtech | PGP AIML - Texas McCombs
-Message Indranil
+Message
 Follow
 Experience
 Founder
 iGaps
-Apr 2026 - Present · 3 mos
+Apr 2026 - Present · 4 mos
 Gurgaon, Haryana, India · On-site
 I am building igaps.ai — an AI-native venture scout designed to curate high impact AI start-ups, build high conviction deal flows to investors. 
 
@@ -463,21 +470,26 @@ Türkçe (Turkish)
 Tiếng Việt (Vietnamese)
 简体中文 (Chinese (Simplified))
 正體中文 (Chinese (Traditional))
+Messaging
+You are on the messaging overlay. Press enter to open the list of conversations.
+Compose message
+You are on the messaging overlay. Press enter to open the list of conversations.
 
 === EDUCATION ===
 0 notifications
 Home
 My Network
 Jobs
+1
 Messaging
-24
+25
 Notifications
 Me
 For Business
 Try Premium for ₹0
 Indranil Datta
 Early-Stage AI | Capital Raising | CBO, PadUp Ventures | Strategic Advisor, AI Healthtech | PGP AIML - Texas McCombs
-Message Indranil
+Message
 Follow
 Education
 Institute of Management Technology, Nagpur
@@ -577,6 +589,7 @@ Tiếng Việt (Vietnamese)
 正體中文 (Chinese (Traditional))
 Messaging
 You are on the messaging overlay. Press enter to open the list of conversations.
+1
 Compose message
 You are on the messaging overlay. Press enter to open the list of conversations.
 
@@ -587,14 +600,14 @@ My Network
 Jobs
 1
 Messaging
-24
+25
 Notifications
 Me
 For Business
 Try Premium for ₹0
 Indranil Datta
 Early-Stage AI | Capital Raising | CBO, PadUp Ventures | Strategic Advisor, AI Healthtech | PGP AIML - Texas McCombs
-Message Indranil
+Message
 Follow
 Skills
 All
@@ -702,7 +715,3 @@ You are on the messaging overlay. Press enter to open the list of conversations.
 1
 Compose message
 You are on the messaging overlay. Press enter to open the list of conversations.
-LinkedIn
-Close your conversation with {0} and Mozingo Raj
-
-🔍 After reviewing your profile, we’ve identified three key updates that can boost your visibility to recruiters and expand your professional network.

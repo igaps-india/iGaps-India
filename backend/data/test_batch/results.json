@@ -1,283 +1,19 @@
 [
   {
-    "brand": "Tensor Dynamics",
-    "status": "PreSeed",
-    "tier": 3,
-    "sector": "Artificial Intelligence / Climate Tech",
-    "composite": 45.8,
-    "band": "passed_with_gaps",
-    "tracks": {
-      "A": 60.721153846153854,
-      "B": 47.675000000000004,
-      "C": 45.16190476190477,
-      "D": 18
-    },
-    "gaps": [
-      "Leverage specificity",
-      "Pivot history",
-      "Pivot quality",
-      "Problem in customer words",
-      "Problem severity quantification",
-      "Discovery breadth",
-      "Persona vividity",
-      "Solution in persona words",
-      "Differentiation dimension",
-      "Improvement multiple",
-      "Pitch deck technical coherence",
-      "Moat compounding evidence",
-      "Traction stack position",
-      "Market proof",
-      "Pitch deck traction claims",
-      "Customer-initiated evidence"
-    ],
-    "trace": [
-      {
-        "signal": "Insider status",
-        "score": 100,
-        "method": "closed_mapping",
-        "evidence": ""
-      },
-      {
-        "signal": "Domain immersion duration",
-        "score": 100,
-        "method": "numeric_curve",
-        "evidence": ""
-      },
-      {
-        "signal": "Causality chain coherence",
-        "score": 92,
-        "method": "llm_rubric",
-        "evidence": "my academic background at IIT Delhi, where I completed my M.Tech in Atmospheric Sciences and Meteorology... Before found"
-      },
-      {
-        "signal": "Non-obvious insight",
-        "score": 82,
-        "method": "llm_rubric",
-        "evidence": "Someone who hasn't lived this wouldn't see that real-time, 15-minute refresh cycles are the difference between a stable "
-      },
-      {
-        "signal": "Co-founder known duration",
-        "score": 50,
-        "method": "solo_founder_skip",
-        "evidence": ""
-      },
-      {
-        "signal": "Relationship type strength",
-        "score": 50,
-        "method": "solo_founder_skip",
-        "evidence": ""
-      },
-      {
-        "signal": "Source of first 10 customers",
-        "score": 90,
-        "method": "closed_mapping",
-        "evidence": ""
-      },
-      {
-        "signal": "CAC for first 10 customers",
-        "score": 100,
-        "method": "numeric_curve",
-        "evidence": ""
-      },
-      {
-        "signal": "Leverage specificity",
-        "score": 30,
-        "method": "vector_similarity",
-        "evidence": ""
-      },
-      {
-        "signal": "Pivot history",
-        "score": 0,
-        "method": "closed_mapping",
-        "evidence": ""
-      },
-      {
-        "signal": "Pivot quality",
-        "score": 35,
-        "method": "llm_rubric",
-        "evidence": "Therefore we are potentially exploring a pivot where this kind of weather information can also be used for other industr"
-      },
-      {
-        "signal": "Days from incorporation to first traction",
-        "score": 50,
-        "method": "derived_formula",
-        "evidence": ""
-      },
-      {
-        "signal": "Problem in customer words",
-        "score": 30,
-        "method": "vector_similarity",
-        "evidence": ""
-      },
-      {
-        "signal": "Problem severity quantification",
-        "score": 0,
-        "method": "vector_similarity",
-        "evidence": ""
-      },
-      {
-        "signal": "Persona spend on workarounds",
-        "score": 75,
-        "method": "closed_mapping",
-        "evidence": ""
-      },
-      {
-        "signal": "Discovery breadth",
-        "score": 0,
-        "method": "numeric_curve",
-        "evidence": ""
-      },
-      {
-        "signal": "Discovery quality",
-        "score": 92,
-        "method": "llm_rubric",
-        "evidence": "What surprised us most was that high accuracy alone wasn't enough to solve the \"distrust\" in the market; we needed to pr"
-      },
-      {
-        "signal": "Persona role specificity",
-        "score": 100,
-        "method": "closed_mapping",
-        "evidence": ""
-      },
-      {
-        "signal": "Persona segment type",
-        "score": 90,
-        "method": "closed_mapping",
-        "evidence": ""
-      },
-      {
-        "signal": "Persona vividity",
-        "score": 30,
-        "method": "vector_similarity",
-        "evidence": ""
-      },
-      {
-        "signal": "Need gap precision",
-        "score": 92,
-        "method": "llm_rubric",
-        "evidence": "What's missing today is an integrated platform. Currently, the market is scattered: you have companies for weather data,"
-      },
-      {
-        "signal": "Persona count with source",
-        "score": 50,
-        "method": "closed_mapping",
-        "evidence": ""
-      },
-      {
-        "signal": "SAM calculation derived",
-        "score": 50,
-        "method": "derived_formula",
-        "evidence": ""
-      },
-      {
-        "signal": "Solution in persona words",
-        "score": 30,
-        "method": "vector_similarity",
-        "evidence": ""
-      },
-      {
-        "signal": "Technology Readiness Level",
-        "score": 100,
-        "method": "numeric_curve",
-        "evidence": ""
-      },
-      {
-        "signal": "Differentiation dimension",
-        "score": 0,
-        "method": "closed_mapping",
-        "evidence": ""
-      },
-      {
-        "signal": "Improvement multiple",
-        "score": 40,
-        "method": "closed_mapping",
-        "evidence": ""
-      },
-      {
-        "signal": "Switching reason specificity",
-        "score": 85,
-        "method": "llm_rubric",
-        "evidence": "Someone would switch to Skycaster because we offer 15-minute real-time weather data and integrated GIS monitoring, where"
-      },
-      {
-        "signal": "Impact multiple evidence",
-        "score": 50,
-        "method": "derived_formula",
-        "evidence": ""
-      },
-      {
-        "signal": "Hard problem articulation",
-        "score": 88,
-        "method": "llm_rubric",
-        "evidence": "The hardest problem we�ve solved is maintaining 85% forecasting accuracy while integrating disparate data sources like s"
-      },
-      {
-        "signal": "Pitch deck technical coherence",
-        "score": 0,
-        "method": "llm_rubric",
-        "evidence": "empty"
-      },
-      {
-        "signal": "Moat category",
-        "score": 95,
-        "method": "closed_mapping",
-        "evidence": ""
-      },
-      {
-        "signal": "Moat compounding evidence",
-        "score": 35,
-        "method": "llm_rubric",
-        "evidence": "The part most difficult for a well-funded competitor to replicate is our proprietary \"Dynamics Weather Model\" and the de"
-      },
-      {
-        "signal": "Traction stack position",
-        "score": 20,
-        "method": "closed_mapping",
-        "evidence": ""
-      },
-      {
-        "signal": "Sector-specific traction metric",
-        "score": 100,
-        "method": "closed_mapping",
-        "evidence": ""
-      },
-      {
-        "signal": "Market proof",
-        "score": 0,
-        "method": "llm_rubric",
-        "evidence": "empty"
-      },
-      {
-        "signal": "Pitch deck traction claims",
-        "score": 0,
-        "method": "llm_rubric",
-        "evidence": "empty"
-      },
-      {
-        "signal": "Customer-initiated evidence",
-        "score": 0,
-        "method": "vector_similarity",
-        "evidence": ""
-      }
-    ]
-  },
-  {
     "brand": "TruScholar (Assetchain)",
     "status": "Pre- Series A",
     "tier": 4,
     "sector": "EdTech / Blockchain Credentials",
-    "composite": 44.2,
+    "composite": 57.5,
     "band": "passed_with_gaps",
     "tracks": {
-      "A": 55.74873481781376,
-      "B": 41.475,
-      "C": 41.35119047619048,
-      "D": 30
+      "A": 65.87378542510123,
+      "B": 47.955000000000005,
+      "C": 51.83333333333333,
+      "D": 60.315
     },
     "gaps": [
       "Insider status",
-      "Leverage specificity",
-      "Pivot history",
       "Problem in customer words",
       "Problem severity quantification",
       "Discovery breadth",
@@ -285,9 +21,6 @@
       "Solution in persona words",
       "Differentiation dimension",
       "Improvement multiple",
-      "Pitch deck technical coherence",
-      "Market proof",
-      "Pitch deck traction claims",
       "Customer-initiated evidence"
     ],
     "trace": [
@@ -305,15 +38,15 @@
       },
       {
         "signal": "Causality chain coherence",
-        "score": 55,
+        "score": 88,
         "method": "llm_rubric",
         "evidence": "My journey is rooted in my 15 years of experience as a Chartered Accountant, specialized in Risk Management and System A"
       },
       {
         "signal": "Non-obvious insight",
-        "score": 60,
+        "score": 88,
         "method": "llm_rubric",
-        "evidence": "The non-obvious insight we’ve gained is that the \"verification gap\" is actually a massive \"trust tax\" that handicaps the"
+        "evidence": "The non-obvious insight we’ve gained is that the 'verification gap' is actually a massive 'trust tax' that handicaps the"
       },
       {
         "signal": "Co-founder known duration",
@@ -341,21 +74,21 @@
       },
       {
         "signal": "Leverage specificity",
-        "score": 30,
+        "score": 52,
         "method": "vector_similarity",
         "evidence": ""
       },
       {
         "signal": "Pivot history",
-        "score": 0,
+        "score": 50,
         "method": "closed_mapping",
         "evidence": ""
       },
       {
         "signal": "Pivot quality",
-        "score": 65,
+        "score": 90,
         "method": "llm_rubric",
-        "evidence": "We assumed that being listed on national platforms would lead to immediate API access, but we learned that navigation th"
+        "evidence": "Earlier in our journey, we underestimated the complexity of accessing existing government-led digital ecosystems. We ass"
       },
       {
         "signal": "Days from incorporation to first traction",
@@ -365,7 +98,7 @@
       },
       {
         "signal": "Problem in customer words",
-        "score": 30,
+        "score": 49,
         "method": "vector_similarity",
         "evidence": ""
       },
@@ -389,7 +122,7 @@
       },
       {
         "signal": "Discovery quality",
-        "score": 78,
+        "score": 90,
         "method": "llm_rubric",
         "evidence": "The biggest surprise was that while we initially looked at a broad market, we learned that Online Education and E-Learni"
       },
@@ -407,15 +140,15 @@
       },
       {
         "signal": "Persona vividity",
-        "score": 30,
+        "score": 48,
         "method": "vector_similarity",
         "evidence": ""
       },
       {
         "signal": "Need gap precision",
-        "score": 68,
+        "score": 90,
         "method": "llm_rubric",
-        "evidence": "Today, the process is manual, time-consuming, and prone to error. Our customers want a unified digital wallet where a si"
+        "evidence": "What is missing today is a bridge between fragmented, paper-based records and the immediate, secure verification that mo"
       },
       {
         "signal": "Persona count with source",
@@ -431,7 +164,7 @@
       },
       {
         "signal": "Solution in persona words",
-        "score": 30,
+        "score": 46,
         "method": "vector_similarity",
         "evidence": ""
       },
@@ -455,7 +188,7 @@
       },
       {
         "signal": "Switching reason specificity",
-        "score": 80,
+        "score": 85,
         "method": "llm_rubric",
         "evidence": "Someone currently using a traditional digital system (like simple PDFs) would switch to TrueScholar because we offer 100"
       },
@@ -467,15 +200,15 @@
       },
       {
         "signal": "Hard problem articulation",
-        "score": 55,
+        "score": 88,
         "method": "llm_rubric",
-        "evidence": "The hardest problem we solved was building a blockchain architecture that remains secure and immutable while being user-"
+        "evidence": "The part of our solution that would be most difficult to replicate is our proprietary \"Self-Sovereign Identity\" stack, w"
       },
       {
         "signal": "Pitch deck technical coherence",
-        "score": 0,
+        "score": 65,
         "method": "llm_rubric",
-        "evidence": "empty"
+        "evidence": "A blockchain-based digital credentialing platform designed to revolutionize the education sector... Decentralized Storag"
       },
       {
         "signal": "Moat category",
@@ -485,530 +218,9 @@
       },
       {
         "signal": "Moat compounding evidence",
-        "score": 50,
-        "method": "llm_rubric",
-        "evidence": "The part of our solution that would be most difficult to replicate is our proprietary 'Self-Sovereign Identity' stack, w"
-      },
-      {
-        "signal": "Traction stack position",
-        "score": 100,
-        "method": "closed_mapping",
-        "evidence": ""
-      },
-      {
-        "signal": "Sector-specific traction metric",
-        "score": 100,
-        "method": "closed_mapping",
-        "evidence": ""
-      },
-      {
-        "signal": "Market proof",
-        "score": 0,
-        "method": "llm_rubric",
-        "evidence": "empty"
-      },
-      {
-        "signal": "Pitch deck traction claims",
-        "score": 0,
-        "method": "llm_rubric",
-        "evidence": "empty"
-      },
-      {
-        "signal": "Customer-initiated evidence",
-        "score": 0,
-        "method": "vector_similarity",
-        "evidence": ""
-      }
-    ]
-  },
-  {
-    "brand": "Ayudyog",
-    "status": "PreSeed",
-    "tier": 3,
-    "sector": "IoT/ AI/ Pharma",
-    "composite": 50.3,
-    "band": "passed_with_gaps",
-    "tracks": {
-      "A": 66.94935897435897,
-      "B": 53.775000000000006,
-      "C": 46.141666666666666,
-      "D": 21
-    },
-    "gaps": [
-      "Leverage specificity",
-      "Pivot history",
-      "Problem in customer words",
-      "Problem severity quantification",
-      "Persona vividity",
-      "Solution in persona words",
-      "Differentiation dimension",
-      "Improvement multiple",
-      "Pitch deck technical coherence",
-      "Traction stack position",
-      "Market proof",
-      "Pitch deck traction claims",
-      "Customer-initiated evidence"
-    ],
-    "trace": [
-      {
-        "signal": "Insider status",
-        "score": 100,
-        "method": "closed_mapping",
-        "evidence": ""
-      },
-      {
-        "signal": "Domain immersion duration",
-        "score": 100,
-        "method": "numeric_curve",
-        "evidence": ""
-      },
-      {
-        "signal": "Causality chain coherence",
-        "score": 92,
-        "method": "llm_rubric",
-        "evidence": "I hold an M. Pharm and spent 8 years on the front lines of quality testing and the chemical market... The turning point "
-      },
-      {
-        "signal": "Non-obvious insight",
-        "score": 82,
-        "method": "llm_rubric",
-        "evidence": "The non-obvious insight is that the 'quality problem' isn't just about bad intent; it’s a massive bottleneck in the prod"
-      },
-      {
-        "signal": "Co-founder known duration",
-        "score": 83.33333333333333,
-        "method": "numeric_curve",
-        "evidence": ""
-      },
-      {
-        "signal": "Relationship type strength",
-        "score": 70,
-        "method": "closed_mapping",
-        "evidence": ""
-      },
-      {
-        "signal": "Source of first 10 customers",
-        "score": 90,
-        "method": "closed_mapping",
-        "evidence": ""
-      },
-      {
-        "signal": "CAC for first 10 customers",
-        "score": 100,
-        "method": "numeric_curve",
-        "evidence": ""
-      },
-      {
-        "signal": "Leverage specificity",
-        "score": 30,
-        "method": "vector_similarity",
-        "evidence": ""
-      },
-      {
-        "signal": "Pivot history",
-        "score": 0,
-        "method": "closed_mapping",
-        "evidence": ""
-      },
-      {
-        "signal": "Pivot quality",
-        "score": 72,
-        "method": "llm_rubric",
-        "evidence": "arly on, our problem statement was too broad focusing on \"transparency and traceability across the value chain\". We assu"
-      },
-      {
-        "signal": "Days from incorporation to first traction",
-        "score": 50,
-        "method": "derived_formula",
-        "evidence": ""
-      },
-      {
-        "signal": "Problem in customer words",
-        "score": 30,
-        "method": "vector_similarity",
-        "evidence": ""
-      },
-      {
-        "signal": "Problem severity quantification",
-        "score": 0,
-        "method": "vector_similarity",
-        "evidence": ""
-      },
-      {
-        "signal": "Persona spend on workarounds",
-        "score": 75,
-        "method": "closed_mapping",
-        "evidence": ""
-      },
-      {
-        "signal": "Discovery breadth",
-        "score": 65,
-        "method": "numeric_curve",
-        "evidence": ""
-      },
-      {
-        "signal": "Discovery quality",
-        "score": 92,
-        "method": "llm_rubric",
-        "evidence": "We spoke extensively to QA-QC managers in pharmaceutical manufacturing units. What surprised us most was how much they h"
-      },
-      {
-        "signal": "Persona role specificity",
-        "score": 100,
-        "method": "closed_mapping",
-        "evidence": ""
-      },
-      {
-        "signal": "Persona segment type",
-        "score": 90,
-        "method": "closed_mapping",
-        "evidence": ""
-      },
-      {
-        "signal": "Persona vividity",
-        "score": 30,
-        "method": "vector_similarity",
-        "evidence": ""
-      },
-      {
-        "signal": "Need gap precision",
-        "score": 90,
-        "method": "llm_rubric",
-        "evidence": "Today, QC is a \"stop-and-wait\" process—you take a sample, go to a lab, use reagents, and wait hours or days for a result"
-      },
-      {
-        "signal": "Persona count with source",
-        "score": 50,
-        "method": "closed_mapping",
-        "evidence": ""
-      },
-      {
-        "signal": "SAM calculation derived",
-        "score": 50,
-        "method": "derived_formula",
-        "evidence": ""
-      },
-      {
-        "signal": "Solution in persona words",
-        "score": 30,
-        "method": "vector_similarity",
-        "evidence": ""
-      },
-      {
-        "signal": "Technology Readiness Level",
-        "score": 85,
-        "method": "numeric_curve",
-        "evidence": ""
-      },
-      {
-        "signal": "Differentiation dimension",
-        "score": 0,
-        "method": "closed_mapping",
-        "evidence": ""
-      },
-      {
-        "signal": "Improvement multiple",
-        "score": 40,
-        "method": "closed_mapping",
-        "evidence": ""
-      },
-      {
-        "signal": "Switching reason specificity",
-        "score": 80,
-        "method": "llm_rubric",
-        "evidence": "A customer using the best alternative—expensive, stationary lab equipment—would switch because we offer 90% savings in r"
-      },
-      {
-        "signal": "Impact multiple evidence",
-        "score": 50,
-        "method": "derived_formula",
-        "evidence": ""
-      },
-      {
-        "signal": "Hard problem articulation",
-        "score": 80,
-        "method": "llm_rubric",
-        "evidence": "The hardest problem was perfecting the AI-driven chemometric models to achieve 95-98% accuracy across different drug mol"
-      },
-      {
-        "signal": "Pitch deck technical coherence",
-        "score": 0,
-        "method": "llm_rubric",
-        "evidence": "empty"
-      },
-      {
-        "signal": "Moat category",
-        "score": 95,
-        "method": "closed_mapping",
-        "evidence": ""
-      },
-      {
-        "signal": "Moat compounding evidence",
-        "score": 72,
-        "method": "llm_rubric",
-        "evidence": "• Subscription: • Cloud-BasedAI&Analytics ... • CustomizedSolution:Specificmodeland Library"
-      },
-      {
-        "signal": "Traction stack position",
-        "score": 40,
-        "method": "closed_mapping",
-        "evidence": ""
-      },
-      {
-        "signal": "Sector-specific traction metric",
-        "score": 100,
-        "method": "closed_mapping",
-        "evidence": ""
-      },
-      {
-        "signal": "Market proof",
-        "score": 0,
-        "method": "llm_rubric",
-        "evidence": "empty"
-      },
-      {
-        "signal": "Pitch deck traction claims",
-        "score": 0,
-        "method": "llm_rubric",
-        "evidence": "empty"
-      },
-      {
-        "signal": "Customer-initiated evidence",
-        "score": 0,
-        "method": "vector_similarity",
-        "evidence": ""
-      }
-    ]
-  },
-  {
-    "brand": "Intellewings",
-    "status": "Pre- Series A",
-    "tier": 4,
-    "sector": "RegTech / FinTech / Anti-Money Laundering (AML)",
-    "composite": 44.4,
-    "band": "passed_with_gaps",
-    "tracks": {
-      "A": 63.80617408906883,
-      "B": 46.699999999999996,
-      "C": 37.03571428571429,
-      "D": 15
-    },
-    "gaps": [
-      "Leverage specificity",
-      "Pivot history",
-      "Problem in customer words",
-      "Problem severity quantification",
-      "Persona vividity",
-      "Need gap precision",
-      "Solution in persona words",
-      "Technology Readiness Level",
-      "Differentiation dimension",
-      "Improvement multiple",
-      "Pitch deck technical coherence",
-      "Moat compounding evidence",
-      "Sector-specific traction metric",
-      "Market proof",
-      "Pitch deck traction claims",
-      "Customer-initiated evidence"
-    ],
-    "trace": [
-      {
-        "signal": "Insider status",
-        "score": 100,
-        "method": "closed_mapping",
-        "evidence": ""
-      },
-      {
-        "signal": "Domain immersion duration",
-        "score": 100,
-        "method": "numeric_curve",
-        "evidence": ""
-      },
-      {
-        "signal": "Causality chain coherence",
-        "score": 92,
-        "method": "llm_rubric",
-        "evidence": "I spent years delivering IT modernization and digital journey solutions to global giants like Bank of America, Morgan St"
-      },
-      {
-        "signal": "Non-obvious insight",
-        "score": 85,
-        "method": "llm_rubric",
-        "evidence": "The non-obvious insight I've gained is that for most financial institutions, the biggest enemy isn't just the money laun"
-      },
-      {
-        "signal": "Co-founder known duration",
-        "score": 50,
-        "method": "solo_founder_skip",
-        "evidence": ""
-      },
-      {
-        "signal": "Relationship type strength",
-        "score": 50,
-        "method": "solo_founder_skip",
-        "evidence": ""
-      },
-      {
-        "signal": "Source of first 10 customers",
-        "score": 90,
-        "method": "closed_mapping",
-        "evidence": ""
-      },
-      {
-        "signal": "CAC for first 10 customers",
-        "score": 100,
-        "method": "numeric_curve",
-        "evidence": ""
-      },
-      {
-        "signal": "Leverage specificity",
-        "score": 30,
-        "method": "vector_similarity",
-        "evidence": ""
-      },
-      {
-        "signal": "Pivot history",
-        "score": 0,
-        "method": "closed_mapping",
-        "evidence": ""
-      },
-      {
-        "signal": "Pivot quality",
-        "score": 75,
-        "method": "llm_rubric",
-        "evidence": "Earlier in our journey, we out of desparation to get business got into a predatory long term contract with a distributio"
-      },
-      {
-        "signal": "Days from incorporation to first traction",
-        "score": 50,
-        "method": "derived_formula",
-        "evidence": ""
-      },
-      {
-        "signal": "Problem in customer words",
-        "score": 30,
-        "method": "vector_similarity",
-        "evidence": ""
-      },
-      {
-        "signal": "Problem severity quantification",
-        "score": 0,
-        "method": "vector_similarity",
-        "evidence": ""
-      },
-      {
-        "signal": "Persona spend on workarounds",
-        "score": 100,
-        "method": "closed_mapping",
-        "evidence": ""
-      },
-      {
-        "signal": "Discovery breadth",
-        "score": 100,
-        "method": "numeric_curve",
-        "evidence": ""
-      },
-      {
-        "signal": "Discovery quality",
-        "score": 65,
-        "method": "llm_rubric",
-        "evidence": "Our discovery process involved deep conversations with over 180 clients, including HDFC Bank, Tata Payments, and Star He"
-      },
-      {
-        "signal": "Persona role specificity",
-        "score": 100,
-        "method": "closed_mapping",
-        "evidence": ""
-      },
-      {
-        "signal": "Persona segment type",
-        "score": 90,
-        "method": "closed_mapping",
-        "evidence": ""
-      },
-      {
-        "signal": "Persona vividity",
-        "score": 30,
-        "method": "vector_similarity",
-        "evidence": ""
-      },
-      {
-        "signal": "Need gap precision",
-        "score": 45,
-        "method": "llm_rubric",
-        "evidence": "Today, things work in a piece-meal, expensive, and manual fashion. Customers want a solution that is 70% more efficient "
-      },
-      {
-        "signal": "Persona count with source",
-        "score": 50,
-        "method": "closed_mapping",
-        "evidence": ""
-      },
-      {
-        "signal": "SAM calculation derived",
-        "score": 50,
-        "method": "derived_formula",
-        "evidence": ""
-      },
-      {
-        "signal": "Solution in persona words",
-        "score": 30,
-        "method": "vector_similarity",
-        "evidence": ""
-      },
-      {
-        "signal": "Technology Readiness Level",
-        "score": 10,
-        "method": "numeric_curve",
-        "evidence": ""
-      },
-      {
-        "signal": "Differentiation dimension",
-        "score": 0,
-        "method": "closed_mapping",
-        "evidence": ""
-      },
-      {
-        "signal": "Improvement multiple",
-        "score": 40,
-        "method": "closed_mapping",
-        "evidence": ""
-      },
-      {
-        "signal": "Switching reason specificity",
-        "score": 75,
-        "method": "llm_rubric",
-        "evidence": "Someone using the \"best\" alternative would switch to us because we provide exclusive features like Graphical Network Ana"
-      },
-      {
-        "signal": "Impact multiple evidence",
-        "score": 50,
-        "method": "derived_formula",
-        "evidence": ""
-      },
-      {
-        "signal": "Hard problem articulation",
         "score": 60,
         "method": "llm_rubric",
-        "evidence": "The hardest problem we solved was building an AI model that could accurately identify suspicious transactions that 'snea"
-      },
-      {
-        "signal": "Pitch deck technical coherence",
-        "score": 0,
-        "method": "llm_rubric",
-        "evidence": "empty"
-      },
-      {
-        "signal": "Moat category",
-        "score": 95,
-        "method": "closed_mapping",
-        "evidence": ""
-      },
-      {
-        "signal": "Moat compounding evidence",
-        "score": 45,
-        "method": "llm_rubric",
-        "evidence": "This \"Outlier Logic\" and our proprietary \"Intellewings' EYE\" for graphical network analysis are the hardest for well-fun"
+        "evidence": "The part of our solution that would be most difficult to replicate is our proprietary \"Self-Sovereign Identity\" stack, w"
       },
       {
         "signal": "Traction stack position",
@@ -1018,25 +230,25 @@
       },
       {
         "signal": "Sector-specific traction metric",
-        "score": 0,
+        "score": 100,
         "method": "closed_mapping",
         "evidence": ""
       },
       {
         "signal": "Market proof",
-        "score": 0,
+        "score": 96,
         "method": "llm_rubric",
-        "evidence": "empty"
+        "evidence": "We saw our revenue jump from 10L in October to 25L in December, with a consistent pipeline of new institutional orders. "
       },
       {
         "signal": "Pitch deck traction claims",
-        "score": 0,
+        "score": 95,
         "method": "llm_rubric",
-        "evidence": "empty"
+        "evidence": "Current Metrics... Revenue (in Lacs) FY 22-23: 14.34, FY 23-24: 250.88... 4 Cr. PO IN Hand... No. of Certificates Issued"
       },
       {
         "signal": "Customer-initiated evidence",
-        "score": 0,
+        "score": 37,
         "method": "vector_similarity",
         "evidence": ""
       }
@@ -1047,29 +259,21 @@
     "status": "Seed",
     "tier": 3,
     "sector": "FinTech / Supply Chain Finance / Blockchain",
-    "composite": 45.3,
+    "composite": 54.3,
     "band": "passed_with_gaps",
     "tracks": {
-      "A": 54.46609311740891,
-      "B": 54.87500000000001,
-      "C": 47.615476190476194,
-      "D": 15
+      "A": 62.02555668016194,
+      "B": 53.395,
+      "C": 52.55714285714286,
+      "D": 43.800000000000004
     },
     "gaps": [
       "Insider status",
-      "Leverage specificity",
-      "Pivot history",
-      "Pivot quality",
-      "Problem in customer words",
       "Problem severity quantification",
-      "Persona vividity",
       "Solution in persona words",
       "Differentiation dimension",
       "Improvement multiple",
-      "Pitch deck technical coherence",
       "Traction stack position",
-      "Market proof",
-      "Pitch deck traction claims",
       "Customer-initiated evidence"
     ],
     "trace": [
@@ -1087,15 +291,15 @@
       },
       {
         "signal": "Causality chain coherence",
-        "score": 58,
+        "score": 82,
         "method": "llm_rubric",
         "evidence": "It was when working on a consulting gig, where I was working on cross border ecosystem for The project I was working on "
       },
       {
         "signal": "Non-obvious insight",
-        "score": 85,
+        "score": 88,
         "method": "llm_rubric",
-        "evidence": "The real breakthrough isn't just a digital document; it's the recent legal recognition of electronic transferable record"
+        "evidence": "The non-obvious insight I've gained is that the \"Trade Finance Gap\" isn't just a lack of money; it's a \"Trust and Docume"
       },
       {
         "signal": "Co-founder known duration",
@@ -1123,21 +327,21 @@
       },
       {
         "signal": "Leverage specificity",
-        "score": 30,
+        "score": 55,
         "method": "vector_similarity",
         "evidence": ""
       },
       {
         "signal": "Pivot history",
-        "score": 0,
+        "score": 85,
         "method": "closed_mapping",
         "evidence": ""
       },
       {
         "signal": "Pivot quality",
-        "score": 45,
+        "score": 68,
         "method": "llm_rubric",
-        "evidence": "Early on, we underestimated the difficulty of raising funds without clear revenue traction. We also faced challenges wit"
+        "evidence": "Early on, we underestimated the difficulty of raising funds without clear revenue traction...We recognized these issues "
       },
       {
         "signal": "Days from incorporation to first traction",
@@ -1147,7 +351,7 @@
       },
       {
         "signal": "Problem in customer words",
-        "score": 30,
+        "score": 51,
         "method": "vector_similarity",
         "evidence": ""
       },
@@ -1189,15 +393,15 @@
       },
       {
         "signal": "Persona vividity",
-        "score": 30,
+        "score": 50,
         "method": "vector_similarity",
         "evidence": ""
       },
       {
         "signal": "Need gap precision",
-        "score": 78,
+        "score": 90,
         "method": "llm_rubric",
-        "evidence": "Our customers want to move from 2-week paperwork cycles to Day 0 closure."
+        "evidence": "Currently, trade relies on physical paper for \"possession\" and \"transfer.\" Our customers want to move from 2-week paperw"
       },
       {
         "signal": "Persona count with source",
@@ -1213,7 +417,7 @@
       },
       {
         "signal": "Solution in persona words",
-        "score": 30,
+        "score": 48,
         "method": "vector_similarity",
         "evidence": ""
       },
@@ -1237,7 +441,7 @@
       },
       {
         "signal": "Switching reason specificity",
-        "score": 80,
+        "score": 85,
         "method": "llm_rubric",
         "evidence": "A bank or exporter currently using the best available alternative (courier and manual verification) would switch to Cred"
       },
@@ -1249,15 +453,15 @@
       },
       {
         "signal": "Hard problem articulation",
-        "score": 88,
+        "score": 78,
         "method": "llm_rubric",
         "evidence": "The most difficult part to replicate is our verified compliance with international laws like MLETR across 10 markets (US"
       },
       {
         "signal": "Pitch deck technical coherence",
-        "score": 0,
+        "score": 82,
         "method": "llm_rubric",
-        "evidence": "empty"
+        "evidence": "How Credore Infrastructure Works? zkCredore Public & Permissioned Blockchains ... 1. Trade Finance data and business wor"
       },
       {
         "signal": "Moat category",
@@ -1285,1600 +489,19 @@
       },
       {
         "signal": "Market proof",
-        "score": 0,
-        "method": "llm_rubric",
-        "evidence": "empty"
-      },
-      {
-        "signal": "Pitch deck traction claims",
-        "score": 0,
-        "method": "llm_rubric",
-        "evidence": "empty"
-      },
-      {
-        "signal": "Customer-initiated evidence",
-        "score": 0,
-        "method": "vector_similarity",
-        "evidence": ""
-      }
-    ]
-  },
-  {
-    "brand": "Wegomeds",
-    "status": "PreSeed",
-    "tier": 3,
-    "sector": "Health & Wellness",
-    "composite": 43,
-    "band": "passed_with_gaps",
-    "tracks": {
-      "A": 46.105769230769226,
-      "B": 55.100000000000016,
-      "C": 41.38809523809525,
-      "D": 24
-    },
-    "gaps": [
-      "Insider status",
-      "Causality chain coherence",
-      "Non-obvious insight",
-      "Leverage specificity",
-      "Pivot history",
-      "Problem in customer words",
-      "Problem severity quantification",
-      "Persona vividity",
-      "Solution in persona words",
-      "Differentiation dimension",
-      "Improvement multiple",
-      "Pitch deck technical coherence",
-      "Moat compounding evidence",
-      "Market proof",
-      "Pitch deck traction claims",
-      "Customer-initiated evidence"
-    ],
-    "trace": [
-      {
-        "signal": "Insider status",
-        "score": 30,
-        "method": "closed_mapping",
-        "evidence": ""
-      },
-      {
-        "signal": "Domain immersion duration",
-        "score": 100,
-        "method": "numeric_curve",
-        "evidence": ""
-      },
-      {
-        "signal": "Causality chain coherence",
-        "score": 38,
-        "method": "llm_rubric",
-        "evidence": "My journey began with a core realization that India’s healthcare sector, while growing rapidly, still suffers from a mas"
-      },
-      {
-        "signal": "Non-obvious insight",
-        "score": 0,
-        "method": "llm_rubric",
-        "evidence": "LLM error: {\"error\":{\"message\":\"<!DOCTYPE html>\\n<html lang=en>\\n  <meta charset=utf-8>\\n  "
-      },
-      {
-        "signal": "Co-founder known duration",
-        "score": 91.66666666666666,
-        "method": "numeric_curve",
-        "evidence": ""
-      },
-      {
-        "signal": "Relationship type strength",
-        "score": 80,
-        "method": "closed_mapping",
-        "evidence": ""
-      },
-      {
-        "signal": "Source of first 10 customers",
-        "score": 90,
-        "method": "closed_mapping",
-        "evidence": ""
-      },
-      {
-        "signal": "CAC for first 10 customers",
-        "score": 50.666666666666664,
-        "method": "numeric_curve",
-        "evidence": ""
-      },
-      {
-        "signal": "Leverage specificity",
-        "score": 30,
-        "method": "vector_similarity",
-        "evidence": ""
-      },
-      {
-        "signal": "Pivot history",
-        "score": 0,
-        "method": "closed_mapping",
-        "evidence": ""
-      },
-      {
-        "signal": "Pivot quality",
-        "score": 55,
-        "method": "llm_rubric",
-        "evidence": "We realized quickly that without technology-enabled quality control, we were just another agency. The mistake was not in"
-      },
-      {
-        "signal": "Days from incorporation to first traction",
-        "score": 50,
-        "method": "derived_formula",
-        "evidence": ""
-      },
-      {
-        "signal": "Problem in customer words",
-        "score": 30,
-        "method": "vector_similarity",
-        "evidence": ""
-      },
-      {
-        "signal": "Problem severity quantification",
-        "score": 0,
-        "method": "vector_similarity",
-        "evidence": ""
-      },
-      {
-        "signal": "Persona spend on workarounds",
-        "score": 100,
-        "method": "closed_mapping",
-        "evidence": ""
-      },
-      {
-        "signal": "Discovery breadth",
-        "score": 65,
-        "method": "numeric_curve",
-        "evidence": ""
-      },
-      {
-        "signal": "Discovery quality",
-        "score": 90,
-        "method": "llm_rubric",
-        "evidence": "What surprised us most during discovery was that cost wasn't the primary deterrent; it was the lack of vetting and trust"
-      },
-      {
-        "signal": "Persona role specificity",
-        "score": 100,
-        "method": "closed_mapping",
-        "evidence": ""
-      },
-      {
-        "signal": "Persona segment type",
-        "score": 90,
-        "method": "closed_mapping",
-        "evidence": ""
-      },
-      {
-        "signal": "Persona vividity",
-        "score": 30,
-        "method": "vector_similarity",
-        "evidence": ""
-      },
-      {
-        "signal": "Need gap precision",
-        "score": 92,
-        "method": "llm_rubric",
-        "evidence": "Customers want to see their loved one's vitals on their phone in real-time, but today they just get a verbal 'he's fine'"
-      },
-      {
-        "signal": "Persona count with source",
-        "score": 50,
-        "method": "closed_mapping",
-        "evidence": ""
-      },
-      {
-        "signal": "SAM calculation derived",
-        "score": 50,
-        "method": "derived_formula",
-        "evidence": ""
-      },
-      {
-        "signal": "Solution in persona words",
-        "score": 30,
-        "method": "vector_similarity",
-        "evidence": ""
-      },
-      {
-        "signal": "Technology Readiness Level",
-        "score": 100,
-        "method": "numeric_curve",
-        "evidence": ""
-      },
-      {
-        "signal": "Differentiation dimension",
-        "score": 0,
-        "method": "closed_mapping",
-        "evidence": ""
-      },
-      {
-        "signal": "Improvement multiple",
-        "score": 40,
-        "method": "closed_mapping",
-        "evidence": ""
-      },
-      {
-        "signal": "Switching reason specificity",
-        "score": 85,
-        "method": "llm_rubric",
-        "evidence": "Someone using a traditional agency would switch to Wegomeds because we offer 100% allied services (compared to 50-80% fo"
-      },
-      {
-        "signal": "Impact multiple evidence",
-        "score": 50,
-        "method": "derived_formula",
-        "evidence": ""
-      },
-      {
-        "signal": "Hard problem articulation",
-        "score": 65,
-        "method": "llm_rubric",
-        "evidence": "A well-funded competitor can't easily replicate our Smart Matching Algorithm which considers 50+ parameters, including p"
-      },
-      {
-        "signal": "Pitch deck technical coherence",
-        "score": 0,
-        "method": "llm_rubric",
-        "evidence": "empty"
-      },
-      {
-        "signal": "Moat category",
-        "score": 65,
-        "method": "closed_mapping",
-        "evidence": ""
-      },
-      {
-        "signal": "Moat compounding evidence",
-        "score": 38,
-        "method": "llm_rubric",
-        "evidence": "A well-funded competitor can't easily replicate our Smart Matching Algorithm which considers 50+ parameters, including p"
-      },
-      {
-        "signal": "Traction stack position",
-        "score": 100,
-        "method": "closed_mapping",
-        "evidence": ""
-      },
-      {
-        "signal": "Sector-specific traction metric",
-        "score": 60,
-        "method": "closed_mapping",
-        "evidence": ""
-      },
-      {
-        "signal": "Market proof",
-        "score": 0,
-        "method": "llm_rubric",
-        "evidence": "empty"
-      },
-      {
-        "signal": "Pitch deck traction claims",
-        "score": 0,
-        "method": "llm_rubric",
-        "evidence": "empty"
-      },
-      {
-        "signal": "Customer-initiated evidence",
-        "score": 0,
-        "method": "vector_similarity",
-        "evidence": ""
-      }
-    ]
-  },
-  {
-    "brand": "Carewell 360",
-    "status": "PreSeed",
-    "tier": 3,
-    "sector": "HealthTech / Holistic Patient Care / Chronic Condition Monitoring",
-    "composite": 43.5,
-    "band": "passed_with_gaps",
-    "tracks": {
-      "A": 53.928761808367064,
-      "B": 56.80000000000002,
-      "C": 39.94047619047619,
-      "D": 12
-    },
-    "gaps": [
-      "Insider status",
-      "Non-obvious insight",
-      "Relationship type strength",
-      "Leverage specificity",
-      "Pivot history",
-      "Problem in customer words",
-      "Problem severity quantification",
-      "Persona vividity",
-      "Solution in persona words",
-      "Differentiation dimension",
-      "Improvement multiple",
-      "Pitch deck technical coherence",
-      "Traction stack position",
-      "Market proof",
-      "Pitch deck traction claims",
-      "Customer-initiated evidence"
-    ],
-    "trace": [
-      {
-        "signal": "Insider status",
-        "score": 30,
-        "method": "closed_mapping",
-        "evidence": ""
-      },
-      {
-        "signal": "Domain immersion duration",
-        "score": 100,
-        "method": "numeric_curve",
-        "evidence": ""
-      },
-      {
-        "signal": "Causality chain coherence",
-        "score": 92,
-        "method": "llm_rubric",
-        "evidence": "The real seed was planted back in 2015 with a venture we called Project Salmon... We were providing discrete online solu"
-      },
-      {
-        "signal": "Non-obvious insight",
-        "score": 38,
-        "method": "llm_rubric",
-        "evidence": "Health issues is considered a taboo and these women are unable to share their health related needs with the men of the f"
-      },
-      {
-        "signal": "Co-founder known duration",
-        "score": 83.33333333333333,
-        "method": "numeric_curve",
-        "evidence": ""
-      },
-      {
-        "signal": "Relationship type strength",
-        "score": 40,
-        "method": "closed_mapping",
-        "evidence": ""
-      },
-      {
-        "signal": "Source of first 10 customers",
-        "score": 60,
-        "method": "closed_mapping",
-        "evidence": ""
-      },
-      {
-        "signal": "CAC for first 10 customers",
-        "score": 100,
-        "method": "numeric_curve",
-        "evidence": ""
-      },
-      {
-        "signal": "Leverage specificity",
-        "score": 30,
-        "method": "vector_similarity",
-        "evidence": ""
-      },
-      {
-        "signal": "Pivot history",
-        "score": 0,
-        "method": "closed_mapping",
-        "evidence": ""
-      },
-      {
-        "signal": "Pivot quality",
-        "score": 88,
-        "method": "llm_rubric",
-        "evidence": "The assumption I got wrong was that technology alone could bridge the healthcare gap. I quickly realized through the Hel"
-      },
-      {
-        "signal": "Days from incorporation to first traction",
-        "score": 50,
-        "method": "derived_formula",
-        "evidence": ""
-      },
-      {
-        "signal": "Problem in customer words",
-        "score": 30,
-        "method": "vector_similarity",
-        "evidence": ""
-      },
-      {
-        "signal": "Problem severity quantification",
-        "score": 0,
-        "method": "vector_similarity",
-        "evidence": ""
-      },
-      {
-        "signal": "Persona spend on workarounds",
-        "score": 100,
-        "method": "closed_mapping",
-        "evidence": ""
-      },
-      {
-        "signal": "Discovery breadth",
-        "score": 80,
-        "method": "numeric_curve",
-        "evidence": ""
-      },
-      {
-        "signal": "Discovery quality",
-        "score": 92,
-        "method": "llm_rubric",
-        "evidence": "I personally interviewed 30 women in Sunam... what surprised me most was the 'smartphone paradox'—these women have the f"
-      },
-      {
-        "signal": "Persona role specificity",
-        "score": 100,
-        "method": "closed_mapping",
-        "evidence": ""
-      },
-      {
-        "signal": "Persona segment type",
-        "score": 90,
-        "method": "closed_mapping",
-        "evidence": ""
-      },
-      {
-        "signal": "Persona vividity",
-        "score": 30,
-        "method": "vector_similarity",
-        "evidence": ""
-      },
-      {
-        "signal": "Need gap precision",
-        "score": 92,
-        "method": "llm_rubric",
-        "evidence": "Right now, if a woman has a gynecological issue, she’s facing a massive wall of social stigma and a complete lack of loc"
-      },
-      {
-        "signal": "Persona count with source",
-        "score": 50,
-        "method": "closed_mapping",
-        "evidence": ""
-      },
-      {
-        "signal": "SAM calculation derived",
-        "score": 50,
-        "method": "derived_formula",
-        "evidence": ""
-      },
-      {
-        "signal": "Solution in persona words",
-        "score": 30,
-        "method": "vector_similarity",
-        "evidence": ""
-      },
-      {
-        "signal": "Technology Readiness Level",
-        "score": 60,
-        "method": "numeric_curve",
-        "evidence": ""
-      },
-      {
-        "signal": "Differentiation dimension",
-        "score": 0,
-        "method": "closed_mapping",
-        "evidence": ""
-      },
-      {
-        "signal": "Improvement multiple",
-        "score": 40,
-        "method": "closed_mapping",
-        "evidence": ""
-      },
-      {
-        "signal": "Switching reason specificity",
-        "score": 80,
-        "method": "llm_rubric",
-        "evidence": "Instead of a day-long journey that costs a fortune and risks their privacy, they get a discrete video consultation on Wh"
-      },
-      {
-        "signal": "Impact multiple evidence",
-        "score": 50,
-        "method": "derived_formula",
-        "evidence": ""
-      },
-      {
-        "signal": "Hard problem articulation",
-        "score": 55,
-        "method": "llm_rubric",
-        "evidence": "The hardest hurdle we've cleared so far has been navigating the 'smartphone paradox' in Tier 2 and Tier 3 cities. It�s o"
-      },
-      {
-        "signal": "Pitch deck technical coherence",
-        "score": 0,
-        "method": "llm_rubric",
-        "evidence": "empty"
-      },
-      {
-        "signal": "Moat category",
-        "score": 90,
-        "method": "closed_mapping",
-        "evidence": ""
-      },
-      {
-        "signal": "Moat compounding evidence",
-        "score": 55,
-        "method": "llm_rubric",
-        "evidence": "We�ve had to meticulously bridge that gap by moving from a purely digital concept to a 'phygital' reality that patients "
-      },
-      {
-        "signal": "Traction stack position",
-        "score": 20,
-        "method": "closed_mapping",
-        "evidence": ""
-      },
-      {
-        "signal": "Sector-specific traction metric",
-        "score": 60,
-        "method": "closed_mapping",
-        "evidence": ""
-      },
-      {
-        "signal": "Market proof",
-        "score": 0,
-        "method": "llm_rubric",
-        "evidence": "empty"
-      },
-      {
-        "signal": "Pitch deck traction claims",
-        "score": 0,
-        "method": "llm_rubric",
-        "evidence": "empty"
-      },
-      {
-        "signal": "Customer-initiated evidence",
-        "score": 0,
-        "method": "vector_similarity",
-        "evidence": ""
-      }
-    ]
-  },
-  {
-    "brand": "Flixdrop",
-    "status": "Pre- Series A",
-    "tier": 4,
-    "sector": "AgriTech / IOT/ AI",
-    "composite": 41.7,
-    "band": "passed_with_gaps",
-    "tracks": {
-      "A": 57.15878879892038,
-      "B": 44.699999999999996,
-      "C": 28.500000000000004,
-      "D": 24
-    },
-    "gaps": [
-      "Non-obvious insight",
-      "Co-founder known duration",
-      "Relationship type strength",
-      "Leverage specificity",
-      "Pivot history",
-      "Problem in customer words",
-      "Problem severity quantification",
-      "Discovery quality",
-      "Persona vividity",
-      "Need gap precision",
-      "Solution in persona words",
-      "Differentiation dimension",
-      "Improvement multiple",
-      "Switching reason specificity",
-      "Hard problem articulation",
-      "Pitch deck technical coherence",
-      "Moat compounding evidence",
-      "Market proof",
-      "Pitch deck traction claims",
-      "Customer-initiated evidence"
-    ],
-    "trace": [
-      {
-        "signal": "Insider status",
-        "score": 100,
-        "method": "closed_mapping",
-        "evidence": ""
-      },
-      {
-        "signal": "Domain immersion duration",
-        "score": 100,
-        "method": "numeric_curve",
-        "evidence": ""
-      },
-      {
-        "signal": "Causality chain coherence",
-        "score": 92,
-        "method": "llm_rubric",
-        "evidence": "I come from a family of agriculture where my larger family in my hometown or in my village We run a cattle farm with alm"
-      },
-      {
-        "signal": "Non-obvious insight",
-        "score": 45,
-        "method": "llm_rubric",
-        "evidence": "with my research back in the US II figured that with a collar on the neck of a Buffalo or a cow or cattle you are able t"
-      },
-      {
-        "signal": "Co-founder known duration",
-        "score": 6.666666666666666,
-        "method": "numeric_curve",
-        "evidence": ""
-      },
-      {
-        "signal": "Relationship type strength",
-        "score": 40,
-        "method": "closed_mapping",
-        "evidence": ""
-      },
-      {
-        "signal": "Source of first 10 customers",
-        "score": 100,
-        "method": "closed_mapping",
-        "evidence": ""
-      },
-      {
-        "signal": "CAC for first 10 customers",
-        "score": 100,
-        "method": "numeric_curve",
-        "evidence": ""
-      },
-      {
-        "signal": "Leverage specificity",
-        "score": 30,
-        "method": "vector_similarity",
-        "evidence": ""
-      },
-      {
-        "signal": "Pivot history",
-        "score": 0,
-        "method": "closed_mapping",
-        "evidence": ""
-      },
-      {
-        "signal": "Pivot quality",
-        "score": 72,
-        "method": "llm_rubric",
-        "evidence": "Earlier we were trying to recover the cost of the Hardware affront... we realized that for a farm with 50 animals the ab"
-      },
-      {
-        "signal": "Days from incorporation to first traction",
-        "score": 50,
-        "method": "derived_formula",
-        "evidence": ""
-      },
-      {
-        "signal": "Problem in customer words",
-        "score": 30,
-        "method": "vector_similarity",
-        "evidence": ""
-      },
-      {
-        "signal": "Problem severity quantification",
-        "score": 0,
-        "method": "vector_similarity",
-        "evidence": ""
-      },
-      {
-        "signal": "Persona spend on workarounds",
-        "score": 100,
-        "method": "closed_mapping",
-        "evidence": ""
-      },
-      {
-        "signal": "Discovery breadth",
-        "score": 100,
-        "method": "numeric_curve",
-        "evidence": ""
-      },
-      {
-        "signal": "Discovery quality",
-        "score": 45,
-        "method": "llm_rubric",
-        "evidence": "There was very strong validation of the need gap of you know a solution which would address the problem that I've been w"
-      },
-      {
-        "signal": "Persona role specificity",
-        "score": 100,
-        "method": "closed_mapping",
-        "evidence": ""
-      },
-      {
-        "signal": "Persona segment type",
-        "score": 90,
-        "method": "closed_mapping",
-        "evidence": ""
-      },
-      {
-        "signal": "Persona vividity",
-        "score": 30,
-        "method": "vector_similarity",
-        "evidence": ""
-      },
-      {
-        "signal": "Need gap precision",
-        "score": 45,
-        "method": "llm_rubric",
-        "evidence": "What is missing is smart tracking of health we have Fitbit for humans why don't we have Fitbit for cattles... if a mid s"
-      },
-      {
-        "signal": "Persona count with source",
-        "score": 50,
-        "method": "closed_mapping",
-        "evidence": ""
-      },
-      {
-        "signal": "SAM calculation derived",
-        "score": 50,
-        "method": "derived_formula",
-        "evidence": ""
-      },
-      {
-        "signal": "Solution in persona words",
-        "score": 30,
-        "method": "vector_similarity",
-        "evidence": ""
-      },
-      {
-        "signal": "Technology Readiness Level",
-        "score": 100,
-        "method": "numeric_curve",
-        "evidence": ""
-      },
-      {
-        "signal": "Differentiation dimension",
-        "score": 0,
-        "method": "closed_mapping",
-        "evidence": ""
-      },
-      {
-        "signal": "Improvement multiple",
-        "score": 40,
-        "method": "closed_mapping",
-        "evidence": ""
-      },
-      {
-        "signal": "Switching reason specificity",
-        "score": 40,
-        "method": "llm_rubric",
-        "evidence": "So in terms of switching they have been attempts by various companies to create similar products in same form factor or "
-      },
-      {
-        "signal": "Impact multiple evidence",
-        "score": 50,
-        "method": "derived_formula",
-        "evidence": ""
-      },
-      {
-        "signal": "Hard problem articulation",
-        "score": 0,
-        "method": "llm_rubric",
-        "evidence": "there's no challenge as such."
-      },
-      {
-        "signal": "Pitch deck technical coherence",
-        "score": 0,
-        "method": "llm_rubric",
-        "evidence": "empty"
-      },
-      {
-        "signal": "Moat category",
-        "score": 100,
-        "method": "closed_mapping",
-        "evidence": ""
-      },
-      {
-        "signal": "Moat compounding evidence",
-        "score": 15,
-        "method": "llm_rubric",
-        "evidence": "they are testifying to others and the word of mouth is happening and there's a very positive feedback so there's no chal"
-      },
-      {
-        "signal": "Traction stack position",
-        "score": 100,
-        "method": "closed_mapping",
-        "evidence": ""
-      },
-      {
-        "signal": "Sector-specific traction metric",
-        "score": 60,
-        "method": "closed_mapping",
-        "evidence": ""
-      },
-      {
-        "signal": "Market proof",
-        "score": 0,
-        "method": "llm_rubric",
-        "evidence": "empty"
-      },
-      {
-        "signal": "Pitch deck traction claims",
-        "score": 0,
-        "method": "llm_rubric",
-        "evidence": "empty"
-      },
-      {
-        "signal": "Customer-initiated evidence",
-        "score": 0,
-        "method": "vector_similarity",
-        "evidence": ""
-      }
-    ]
-  },
-  {
-    "brand": "Starbase",
-    "status": "PreSeed",
-    "tier": 3,
-    "sector": "DeepTech / Robotics / Aerospace Systems",
-    "composite": 44.4,
-    "band": "passed_with_gaps",
-    "tracks": {
-      "A": 61.17788461538461,
-      "B": 41.4,
-      "C": 33.37619047619047,
-      "D": 30
-    },
-    "gaps": [
-      "Insider status",
-      "Leverage specificity",
-      "Pivot history",
-      "Problem in customer words",
-      "Problem severity quantification",
-      "Discovery breadth",
-      "Persona vividity",
-      "Solution in persona words",
-      "Differentiation dimension",
-      "Improvement multiple",
-      "Hard problem articulation",
-      "Pitch deck technical coherence",
-      "Moat compounding evidence",
-      "Market proof",
-      "Pitch deck traction claims",
-      "Customer-initiated evidence"
-    ],
-    "trace": [
-      {
-        "signal": "Insider status",
-        "score": 30,
-        "method": "closed_mapping",
-        "evidence": ""
-      },
-      {
-        "signal": "Domain immersion duration",
-        "score": 65,
-        "method": "numeric_curve",
-        "evidence": ""
-      },
-      {
-        "signal": "Causality chain coherence",
-        "score": 92,
-        "method": "llm_rubric",
-        "evidence": "We spent five years on the ground, working with 630 local self-government departments (LSGDs), 16 waste collectors, and "
-      },
-      {
-        "signal": "Non-obvious insight",
-        "score": 88,
-        "method": "llm_rubric",
-        "evidence": "The non-obvious insight is that 85% of waste transportation fleets are owned by private agencies, creating a massive \"bl"
-      },
-      {
-        "signal": "Co-founder known duration",
-        "score": 100,
-        "method": "numeric_curve",
-        "evidence": ""
-      },
-      {
-        "signal": "Relationship type strength",
-        "score": 90,
-        "method": "closed_mapping",
-        "evidence": ""
-      },
-      {
-        "signal": "Source of first 10 customers",
-        "score": 60,
-        "method": "closed_mapping",
-        "evidence": ""
-      },
-      {
-        "signal": "CAC for first 10 customers",
-        "score": 100,
-        "method": "numeric_curve",
-        "evidence": ""
-      },
-      {
-        "signal": "Leverage specificity",
-        "score": 30,
-        "method": "vector_similarity",
-        "evidence": ""
-      },
-      {
-        "signal": "Pivot history",
-        "score": 0,
-        "method": "closed_mapping",
-        "evidence": ""
-      },
-      {
-        "signal": "Pivot quality",
         "score": 75,
         "method": "llm_rubric",
-        "evidence": "We quickly realized that without digitizing the 85% of the fleet owned by private agencies, we could never achieve 100% "
-      },
-      {
-        "signal": "Days from incorporation to first traction",
-        "score": 50,
-        "method": "derived_formula",
-        "evidence": ""
-      },
-      {
-        "signal": "Problem in customer words",
-        "score": 30,
-        "method": "vector_similarity",
-        "evidence": ""
-      },
-      {
-        "signal": "Problem severity quantification",
-        "score": 0,
-        "method": "vector_similarity",
-        "evidence": ""
-      },
-      {
-        "signal": "Persona spend on workarounds",
-        "score": 100,
-        "method": "closed_mapping",
-        "evidence": ""
-      },
-      {
-        "signal": "Discovery breadth",
-        "score": 0,
-        "method": "numeric_curve",
-        "evidence": ""
-      },
-      {
-        "signal": "Discovery quality",
-        "score": 92,
-        "method": "llm_rubric",
-        "evidence": "What surprised us most was the interest from the private sector; while the government handles collection, private vehicl"
-      },
-      {
-        "signal": "Persona role specificity",
-        "score": 100,
-        "method": "closed_mapping",
-        "evidence": ""
-      },
-      {
-        "signal": "Persona segment type",
-        "score": 90,
-        "method": "closed_mapping",
-        "evidence": ""
-      },
-      {
-        "signal": "Persona vividity",
-        "score": 30,
-        "method": "vector_similarity",
-        "evidence": ""
-      },
-      {
-        "signal": "Need gap precision",
-        "score": 55,
-        "method": "llm_rubric",
-        "evidence": "Today, waste logistics are static and energy-blind. Our customers want a system that works like a ride-hailing model—dyn"
-      },
-      {
-        "signal": "Persona count with source",
-        "score": 50,
-        "method": "closed_mapping",
-        "evidence": ""
-      },
-      {
-        "signal": "SAM calculation derived",
-        "score": 50,
-        "method": "derived_formula",
-        "evidence": ""
-      },
-      {
-        "signal": "Solution in persona words",
-        "score": 30,
-        "method": "vector_similarity",
-        "evidence": ""
-      },
-      {
-        "signal": "Technology Readiness Level",
-        "score": 75,
-        "method": "numeric_curve",
-        "evidence": ""
-      },
-      {
-        "signal": "Differentiation dimension",
-        "score": 0,
-        "method": "closed_mapping",
-        "evidence": ""
-      },
-      {
-        "signal": "Improvement multiple",
-        "score": 40,
-        "method": "closed_mapping",
-        "evidence": ""
-      },
-      {
-        "signal": "Switching reason specificity",
-        "score": 72,
-        "method": "llm_rubric",
-        "evidence": "Someone currently using a manual or basic tracking system would switch to Starbase because we offer exclusive features l"
-      },
-      {
-        "signal": "Impact multiple evidence",
-        "score": 50,
-        "method": "derived_formula",
-        "evidence": ""
-      },
-      {
-        "signal": "Hard problem articulation",
-        "score": 40,
-        "method": "llm_rubric",
-        "evidence": "The hardest problem we�ve solved is building a vendor-agnostic, end-to-end tracking system that can scale across differe"
-      },
-      {
-        "signal": "Pitch deck technical coherence",
-        "score": 0,
-        "method": "llm_rubric",
-        "evidence": "empty"
-      },
-      {
-        "signal": "Moat category",
-        "score": 90,
-        "method": "closed_mapping",
-        "evidence": ""
-      },
-      {
-        "signal": "Moat compounding evidence",
-        "score": 0,
-        "method": "llm_rubric",
-        "evidence": "The hardest problem we�ve solved is building a vendor-agnostic, end-to-end tracking system that can scale across differe"
-      },
-      {
-        "signal": "Traction stack position",
-        "score": 100,
-        "method": "closed_mapping",
-        "evidence": ""
-      },
-      {
-        "signal": "Sector-specific traction metric",
-        "score": 100,
-        "method": "closed_mapping",
-        "evidence": ""
-      },
-      {
-        "signal": "Market proof",
-        "score": 0,
-        "method": "llm_rubric",
-        "evidence": "empty"
+        "evidence": "We have received an INR 23.5 Lakh equity-free grant from HDFC Bank and a $100,000 project grant for our smart bill of la"
       },
       {
         "signal": "Pitch deck traction claims",
-        "score": 0,
+        "score": 68,
         "method": "llm_rubric",
-        "evidence": "empty"
+        "evidence": "Traction\n\nFinanciers: Console Freight and Originate Capital\nInvoice Size: 130K USD\nExporter - Sigma Foods\nImporter - Ana"
       },
       {
         "signal": "Customer-initiated evidence",
-        "score": 0,
-        "method": "vector_similarity",
-        "evidence": ""
-      }
-    ]
-  },
-  {
-    "brand": "Waypal",
-    "status": "PreSeed",
-    "tier": 3,
-    "sector": "InsurTech",
-    "composite": 34.7,
-    "band": "not_passed",
-    "tracks": {
-      "A": 41.929908906882595,
-      "B": 54.97500000000001,
-      "C": 25.565476190476193,
-      "D": 6
-    },
-    "gaps": [
-      "Insider status",
-      "Domain immersion duration",
-      "Non-obvious insight",
-      "Leverage specificity",
-      "Pivot history",
-      "Pivot quality",
-      "Problem in customer words",
-      "Problem severity quantification",
-      "Persona vividity",
-      "Solution in persona words",
-      "Technology Readiness Level",
-      "Differentiation dimension",
-      "Improvement multiple",
-      "Switching reason specificity",
-      "Hard problem articulation",
-      "Pitch deck technical coherence",
-      "Moat compounding evidence",
-      "Traction stack position",
-      "Sector-specific traction metric",
-      "Market proof",
-      "Pitch deck traction claims",
-      "Customer-initiated evidence"
-    ],
-    "trace": [
-      {
-        "signal": "Insider status",
-        "score": 30,
-        "method": "closed_mapping",
-        "evidence": ""
-      },
-      {
-        "signal": "Domain immersion duration",
-        "score": 0,
-        "method": "numeric_curve",
-        "evidence": ""
-      },
-      {
-        "signal": "Causality chain coherence",
-        "score": 60,
-        "method": "llm_rubric",
-        "evidence": "I tried motor insurance to begin with and I've had long conversations with them Gradually I realized that data can be us"
-      },
-      {
-        "signal": "Non-obvious insight",
-        "score": 35,
-        "method": "llm_rubric",
-        "evidence": "Most of the people in the insurance industry do not come from big data background insurance today is still an underwritt"
-      },
-      {
-        "signal": "Co-founder known duration",
-        "score": 50,
-        "method": "solo_founder_skip",
-        "evidence": ""
-      },
-      {
-        "signal": "Relationship type strength",
-        "score": 50,
-        "method": "solo_founder_skip",
-        "evidence": ""
-      },
-      {
-        "signal": "Source of first 10 customers",
-        "score": 100,
-        "method": "closed_mapping",
-        "evidence": ""
-      },
-      {
-        "signal": "CAC for first 10 customers",
-        "score": 100,
-        "method": "numeric_curve",
-        "evidence": ""
-      },
-      {
-        "signal": "Leverage specificity",
-        "score": 30,
-        "method": "vector_similarity",
-        "evidence": ""
-      },
-      {
-        "signal": "Pivot history",
-        "score": 0,
-        "method": "closed_mapping",
-        "evidence": ""
-      },
-      {
-        "signal": "Pivot quality",
         "score": 45,
-        "method": "llm_rubric",
-        "evidence": "I was wrong about my thesis on motor insurance earlier I thought uh the insurance companies would gladly invest in techn"
-      },
-      {
-        "signal": "Days from incorporation to first traction",
-        "score": 50,
-        "method": "derived_formula",
-        "evidence": ""
-      },
-      {
-        "signal": "Problem in customer words",
-        "score": 30,
-        "method": "vector_similarity",
-        "evidence": ""
-      },
-      {
-        "signal": "Problem severity quantification",
-        "score": 0,
-        "method": "vector_similarity",
-        "evidence": ""
-      },
-      {
-        "signal": "Persona spend on workarounds",
-        "score": 75,
-        "method": "closed_mapping",
-        "evidence": ""
-      },
-      {
-        "signal": "Discovery breadth",
-        "score": 65,
-        "method": "numeric_curve",
-        "evidence": ""
-      },
-      {
-        "signal": "Discovery quality",
-        "score": 90,
-        "method": "llm_rubric",
-        "evidence": "the biggest surprise that I noticed is the willingness of young people to pay significant amount of money for insurance."
-      },
-      {
-        "signal": "Persona role specificity",
-        "score": 100,
-        "method": "closed_mapping",
-        "evidence": ""
-      },
-      {
-        "signal": "Persona segment type",
-        "score": 100,
-        "method": "closed_mapping",
-        "evidence": ""
-      },
-      {
-        "signal": "Persona vividity",
-        "score": 30,
-        "method": "vector_similarity",
-        "evidence": ""
-      },
-      {
-        "signal": "Need gap precision",
-        "score": 95,
-        "method": "llm_rubric",
-        "evidence": "40% Rejection Rate ... <5% Rejection Rate\nLinear Scaling: Growth requires 1:1 increase in regional managers ... Exponent"
-      },
-      {
-        "signal": "Persona count with source",
-        "score": 50,
-        "method": "closed_mapping",
-        "evidence": ""
-      },
-      {
-        "signal": "SAM calculation derived",
-        "score": 50,
-        "method": "derived_formula",
-        "evidence": ""
-      },
-      {
-        "signal": "Solution in persona words",
-        "score": 30,
-        "method": "vector_similarity",
-        "evidence": ""
-      },
-      {
-        "signal": "Technology Readiness Level",
-        "score": 20,
-        "method": "numeric_curve",
-        "evidence": ""
-      },
-      {
-        "signal": "Differentiation dimension",
-        "score": 0,
-        "method": "closed_mapping",
-        "evidence": ""
-      },
-      {
-        "signal": "Improvement multiple",
-        "score": 40,
-        "method": "closed_mapping",
-        "evidence": ""
-      },
-      {
-        "signal": "Switching reason specificity",
-        "score": 25,
-        "method": "llm_rubric",
-        "evidence": "By augmenting human agents with AI-powered decision-support tools, Waypals standardizes field-level advisory processes a"
-      },
-      {
-        "signal": "Impact multiple evidence",
-        "score": 50,
-        "method": "derived_formula",
-        "evidence": ""
-      },
-      {
-        "signal": "Hard problem articulation",
-        "score": 10,
-        "method": "llm_rubric",
-        "evidence": "In-house custom platform will be Strategic Rationale Usage-based monetization promotes responsible and outcome-linked gr"
-      },
-      {
-        "signal": "Pitch deck technical coherence",
-        "score": 0,
-        "method": "llm_rubric",
-        "evidence": "empty"
-      },
-      {
-        "signal": "Moat category",
-        "score": 100,
-        "method": "closed_mapping",
-        "evidence": ""
-      },
-      {
-        "signal": "Moat compounding evidence",
-        "score": 25,
-        "method": "llm_rubric",
-        "evidence": "In-house custom platform will be Strategic Rationale Usage-based monetization promotes responsible and outcome-linked gr"
-      },
-      {
-        "signal": "Traction stack position",
-        "score": 40,
-        "method": "closed_mapping",
-        "evidence": ""
-      },
-      {
-        "signal": "Sector-specific traction metric",
-        "score": 0,
-        "method": "closed_mapping",
-        "evidence": ""
-      },
-      {
-        "signal": "Market proof",
-        "score": 0,
-        "method": "llm_rubric",
-        "evidence": "empty"
-      },
-      {
-        "signal": "Pitch deck traction claims",
-        "score": 0,
-        "method": "llm_rubric",
-        "evidence": "empty"
-      },
-      {
-        "signal": "Customer-initiated evidence",
-        "score": 0,
-        "method": "vector_similarity",
-        "evidence": ""
-      }
-    ]
-  },
-  {
-    "brand": "Dectrocel",
-    "status": "Seed",
-    "tier": 3,
-    "sector": "HealthTech / AI Diagnostics / Clinical Image Intelligence",
-    "composite": 48.7,
-    "band": "passed_with_gaps",
-    "tracks": {
-      "A": 62.020748987854255,
-      "B": 50.974999999999994,
-      "C": 50.14166666666667,
-      "D": 21
-    },
-    "gaps": [
-      "Causality chain coherence",
-      "Leverage specificity",
-      "Pivot history",
-      "Problem in customer words",
-      "Problem severity quantification",
-      "Discovery breadth",
-      "Persona vividity",
-      "Solution in persona words",
-      "Differentiation dimension",
-      "Improvement multiple",
-      "Pitch deck technical coherence",
-      "Traction stack position",
-      "Market proof",
-      "Pitch deck traction claims",
-      "Customer-initiated evidence"
-    ],
-    "trace": [
-      {
-        "signal": "Insider status",
-        "score": 100,
-        "method": "closed_mapping",
-        "evidence": ""
-      },
-      {
-        "signal": "Domain immersion duration",
-        "score": 65,
-        "method": "numeric_curve",
-        "evidence": ""
-      },
-      {
-        "signal": "Causality chain coherence",
-        "score": 35,
-        "method": "llm_rubric",
-        "evidence": "The turning point was recognizing a staggering gap in Indian healthcare: we have only one pulmonary specialist for every"
-      },
-      {
-        "signal": "Non-obvious insight",
-        "score": 88,
-        "method": "llm_rubric",
-        "evidence": "The non-obvious insight we’ve gained is that in the Indian healthcare landscape, particularly in Tier 2 to Tier 5 cities"
-      },
-      {
-        "signal": "Co-founder known duration",
-        "score": 100,
-        "method": "numeric_curve",
-        "evidence": ""
-      },
-      {
-        "signal": "Relationship type strength",
-        "score": 90,
-        "method": "closed_mapping",
-        "evidence": ""
-      },
-      {
-        "signal": "Source of first 10 customers",
-        "score": 90,
-        "method": "closed_mapping",
-        "evidence": ""
-      },
-      {
-        "signal": "CAC for first 10 customers",
-        "score": 100,
-        "method": "numeric_curve",
-        "evidence": ""
-      },
-      {
-        "signal": "Leverage specificity",
-        "score": 30,
-        "method": "vector_similarity",
-        "evidence": ""
-      },
-      {
-        "signal": "Pivot history",
-        "score": 0,
-        "method": "closed_mapping",
-        "evidence": ""
-      },
-      {
-        "signal": "Pivot quality",
-        "score": 80,
-        "method": "llm_rubric",
-        "evidence": "Early on, we wrongly assumed the \"Physician-First\" model. We spent time trying to get pulmonologists to prescribe our AI"
-      },
-      {
-        "signal": "Days from incorporation to first traction",
-        "score": 50,
-        "method": "derived_formula",
-        "evidence": ""
-      },
-      {
-        "signal": "Problem in customer words",
-        "score": 30,
-        "method": "vector_similarity",
-        "evidence": ""
-      },
-      {
-        "signal": "Problem severity quantification",
-        "score": 0,
-        "method": "vector_similarity",
-        "evidence": ""
-      },
-      {
-        "signal": "Persona spend on workarounds",
-        "score": 75,
-        "method": "closed_mapping",
-        "evidence": ""
-      },
-      {
-        "signal": "Discovery breadth",
-        "score": 20,
-        "method": "numeric_curve",
-        "evidence": ""
-      },
-      {
-        "signal": "Discovery quality",
-        "score": 95,
-        "method": "llm_rubric",
-        "evidence": "The biggest surprise was that while our original thinking focused on physicians as the primary \"paying\" customer, the PM"
-      },
-      {
-        "signal": "Persona role specificity",
-        "score": 100,
-        "method": "closed_mapping",
-        "evidence": ""
-      },
-      {
-        "signal": "Persona segment type",
-        "score": 100,
-        "method": "closed_mapping",
-        "evidence": ""
-      },
-      {
-        "signal": "Persona vividity",
-        "score": 30,
-        "method": "vector_similarity",
-        "evidence": ""
-      },
-      {
-        "signal": "Need gap precision",
-        "score": 95,
-        "method": "llm_rubric",
-        "evidence": "There is currently no quantitative way to characterize disease severity—doctors just get a \"yes/no\" rather than knowing "
-      },
-      {
-        "signal": "Persona count with source",
-        "score": 50,
-        "method": "closed_mapping",
-        "evidence": ""
-      },
-      {
-        "signal": "SAM calculation derived",
-        "score": 50,
-        "method": "derived_formula",
-        "evidence": ""
-      },
-      {
-        "signal": "Solution in persona words",
-        "score": 30,
-        "method": "vector_similarity",
-        "evidence": ""
-      },
-      {
-        "signal": "Technology Readiness Level",
-        "score": 100,
-        "method": "numeric_curve",
-        "evidence": ""
-      },
-      {
-        "signal": "Differentiation dimension",
-        "score": 0,
-        "method": "closed_mapping",
-        "evidence": ""
-      },
-      {
-        "signal": "Improvement multiple",
-        "score": 40,
-        "method": "closed_mapping",
-        "evidence": ""
-      },
-      {
-        "signal": "Switching reason specificity",
-        "score": 85,
-        "method": "llm_rubric",
-        "evidence": "Someone would switch from the current alternative—waiting days for a manual report—because we offer 10x faster turnaroun"
-      },
-      {
-        "signal": "Impact multiple evidence",
-        "score": 50,
-        "method": "derived_formula",
-        "evidence": ""
-      },
-      {
-        "signal": "Hard problem articulation",
-        "score": 92,
-        "method": "llm_rubric",
-        "evidence": "A well-funded competitor would find it difficult to replicate our clinical validation results, which are based on a coho"
-      },
-      {
-        "signal": "Pitch deck technical coherence",
-        "score": 0,
-        "method": "llm_rubric",
-        "evidence": "empty"
-      },
-      {
-        "signal": "Moat category",
-        "score": 100,
-        "method": "closed_mapping",
-        "evidence": ""
-      },
-      {
-        "signal": "Moat compounding evidence",
-        "score": 85,
-        "method": "llm_rubric",
-        "evidence": "A well-funded competitor would find it extremely difficult to replicate our \"Disease Clearance and Treatment Monitoring\""
-      },
-      {
-        "signal": "Traction stack position",
-        "score": 40,
-        "method": "closed_mapping",
-        "evidence": ""
-      },
-      {
-        "signal": "Sector-specific traction metric",
-        "score": 100,
-        "method": "closed_mapping",
-        "evidence": ""
-      },
-      {
-        "signal": "Market proof",
-        "score": 0,
-        "method": "llm_rubric",
-        "evidence": "empty"
-      },
-      {
-        "signal": "Pitch deck traction claims",
-        "score": 0,
-        "method": "llm_rubric",
-        "evidence": "empty"
-      },
-      {
-        "signal": "Customer-initiated evidence",
-        "score": 0,
         "method": "vector_similarity",
         "evidence": ""
       }
@@ -2889,29 +512,28 @@
     "status": "PreSeed",
     "tier": 3,
     "sector": "Edtech/ AI",
-    "composite": 44.8,
+    "composite": 50.3,
     "band": "passed_with_gaps",
     "tracks": {
-      "A": 53.27038917004049,
-      "B": 52.675000000000004,
-      "C": 46.90119047619048,
-      "D": 18
+      "A": 57.772139068825915,
+      "B": 52.48500000000001,
+      "C": 43.96071428571429,
+      "D": 40.925
     },
     "gaps": [
       "Insider status",
       "Causality chain coherence",
+      "Non-obvious insight",
       "Co-founder known duration",
       "Leverage specificity",
-      "Pivot history",
-      "Pivot quality",
       "Problem in customer words",
       "Problem severity quantification",
       "Persona vividity",
-      "Solution in persona words",
       "Differentiation dimension",
       "Improvement multiple",
+      "Hard problem articulation",
       "Pitch deck technical coherence",
-      "Market proof",
+      "Moat compounding evidence",
       "Pitch deck traction claims",
       "Customer-initiated evidence"
     ],
@@ -2936,7 +558,7 @@
       },
       {
         "signal": "Non-obvious insight",
-        "score": 75,
+        "score": 45,
         "method": "llm_rubric",
         "evidence": "The non-obvious insight I've gained is that the barrier to employability in India isn't just a lack of technical knowled"
       },
@@ -2966,19 +588,19 @@
       },
       {
         "signal": "Leverage specificity",
-        "score": 30,
+        "score": 42,
         "method": "vector_similarity",
         "evidence": ""
       },
       {
         "signal": "Pivot history",
-        "score": 0,
+        "score": 100,
         "method": "closed_mapping",
         "evidence": ""
       },
       {
         "signal": "Pivot quality",
-        "score": 45,
+        "score": 65,
         "method": "llm_rubric",
         "evidence": "We initially thought of a pure B2B business model but here we witnessed a lot of inertia from universities at investing "
       },
@@ -2990,7 +612,7 @@
       },
       {
         "signal": "Problem in customer words",
-        "score": 30,
+        "score": 43,
         "method": "vector_similarity",
         "evidence": ""
       },
@@ -3032,15 +654,15 @@
       },
       {
         "signal": "Persona vividity",
-        "score": 30,
+        "score": 39,
         "method": "vector_similarity",
         "evidence": ""
       },
       {
         "signal": "Need gap precision",
-        "score": 65,
+        "score": 92,
         "method": "llm_rubric",
-        "evidence": "What is missing today is the \"bridge\" between an outdated academic curriculum and evolving industry needs. Current syste"
+        "evidence": "Current systems provide undifferentiated, mass-produced content. Customers want a \"Finishing School\" experience that ide"
       },
       {
         "signal": "Persona count with source",
@@ -3056,7 +678,7 @@
       },
       {
         "signal": "Solution in persona words",
-        "score": 30,
+        "score": 53,
         "method": "vector_similarity",
         "evidence": ""
       },
@@ -3092,15 +714,15 @@
       },
       {
         "signal": "Hard problem articulation",
-        "score": 91,
+        "score": 45,
         "method": "llm_rubric",
-        "evidence": "The hardest problem we�ve solved is building a multi-agent system that can accurately orchestrate 120+ specialized agent"
+        "evidence": "The hardest problem we’ve solved is building a multi-agent system that can accurately orchestrate 120+ specialized agent"
       },
       {
         "signal": "Pitch deck technical coherence",
-        "score": 0,
+        "score": 35,
         "method": "llm_rubric",
-        "evidence": "empty"
+        "evidence": "AI Engine is powered by 60+ LLMs with Mixureof Experts (MoE), Reasoning & Deep Research capabilities... LLM optimization"
       },
       {
         "signal": "Moat category",
@@ -3110,7 +732,7 @@
       },
       {
         "signal": "Moat compounding evidence",
-        "score": 55,
+        "score": 45,
         "method": "llm_rubric",
         "evidence": "This \"wisdom-guided merge of crowds\" and our deep fine-tuning for 18+ Indian languages would be incredibly difficult for"
       },
@@ -3128,19 +750,19 @@
       },
       {
         "signal": "Market proof",
-        "score": 0,
+        "score": 95,
         "method": "llm_rubric",
-        "evidence": "empty"
+        "evidence": "we have 4,000+ paid subscribers with an impressive 80% renewal rate. We’ve secured ?92.9 lakhs in angel investment and a"
       },
       {
         "signal": "Pitch deck traction claims",
-        "score": 0,
+        "score": 45,
         "method": "llm_rubric",
-        "evidence": "empty"
+        "evidence": "CURRENT TRACTION(YOY) Revenue FY 23-24: ₹499, FY 24-25: ₹2,897,101, FY 25-26 (Q1 & Q2): ₹1,067,641. Total Paid Subscribe"
       },
       {
         "signal": "Customer-initiated evidence",
-        "score": 0,
+        "score": 42,
         "method": "vector_similarity",
         "evidence": ""
       }

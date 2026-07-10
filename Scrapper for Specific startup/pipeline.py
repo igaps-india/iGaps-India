@@ -29,9 +29,9 @@ STEP 4 — Data Transformation & Grouping
       Group_2_Company_Specific: work_experience    | domain_skills
   • Retries up to 3 times on bad JSON before falling back to regex rescue.
 
-STEP 5 — Database Load
-  • Upsert Company_Overview, Founder_Insights, CoFounder_Insights into the
-    `startup_insights` Supabase table via save_startup_insights() in db.py.
+STEP 5 — Return Payload
+  • Returns a JSON dictionary containing Company_Overview, Founder_Insights,
+    and CoFounder_Insights.
 
 Usage (CLI):
     python pipeline.py \\
@@ -43,7 +43,7 @@ Usage (CLI):
         [--founder-linkedin-url "https://www.linkedin.com/in/janedoe"] \\
         [--dry-run]
 
-    --dry-run  Runs all steps but skips the Supabase write. Useful for testing.
+    --dry-run  Runs all steps but skips any final processing. Useful for testing.
 
 Usage (as a module):
     from pipeline import run_pipeline
@@ -56,8 +56,6 @@ Usage (as a module):
     )
 
 Environment variables:
-    SUPABASE_URL   — Supabase project URL
-    SUPABASE_KEY   — Supabase service-role key
     COOKIES_PATH   — (optional) path to linkedin_cookies.pkl
 """
 
@@ -88,7 +86,6 @@ from founder_scraper import (
 from website_scraper import scrape_specific_url, extract_domain_from_url
 from llm_parser import parse_company_overview
 from insights_formatter import format_profile_insights
-from db import save_startup_insights
 
 # ---------------------------------------------------------------------------
 # Logging
@@ -219,7 +216,7 @@ def run_pipeline(
         linkedin_url:         LinkedIn company page URL (optional).
         founder_linkedin_url: Direct LinkedIn /in/ URL for the founder.
                               Skips the URL-discovery step when provided.
-        dry_run:              If True, skip the Supabase write.
+        dry_run:              If True, skips final processing.
 
     Returns:
         {
@@ -487,32 +484,17 @@ def run_pipeline(
     }
 
     # ══════════════════════════════════════════════════════════════════════════
-    # STEP 5 — Database Load
+    # STEP 5 — Return Payload
     # ══════════════════════════════════════════════════════════════════════════
-    logger.info("\n── STEP 5 ─ Database Load ─────────────────────────────────────────")
+    logger.info("\n── STEP 5 ─ Returning Payload ─────────────────────────────────────────")
 
     if dry_run:
-        logger.info("  [5] DRY RUN — skipping Supabase write.")
+        logger.info("  [5] DRY RUN")
         logger.info("  Payload:\n%s", _pretty(payload))
         payload["saved"] = False
         return payload
 
-    logger.info("  [5] Upserting to Supabase `startup_insights` …")
-    saved = save_startup_insights(
-        company_name=company_name,
-        company_domain=company_domain,
-        founder_name=founder_name,
-        founder_email=founder_email,
-        company_overview=company_overview,
-        founder_insights=founder_insights,
-        cofounder_insights=cofounder_insights,
-    )
-    payload["saved"] = saved is not None
-
-    if saved:
-        logger.info("  ✓ Record saved to Supabase.")
-    else:
-        logger.error("  ✗ Supabase save failed — check logs above.")
+    payload["saved"] = False
 
     logger.info("=" * 68)
     logger.info("Pipeline complete for '%s'.", company_name)
@@ -653,7 +635,7 @@ def _build_arg_parser() -> argparse.ArgumentParser:
         prog="pipeline.py",
         description=(
             "Founder Insights Pipeline — scrape LinkedIn + website data for a "
-            "startup and push structured insights to Supabase."
+            "startup and return structured insights."
         ),
         formatter_class=argparse.RawDescriptionHelpFormatter,
         epilog=r"""
@@ -747,7 +729,7 @@ def main() -> None:
     )
 
     if not result.get("saved") and not args.dry_run:
-        logger.error("Pipeline finished but record was NOT saved to Supabase.")
+        logger.error("Pipeline finished but record was NOT saved.")
         sys.exit(1)
 
     sys.exit(0)
